@@ -358,6 +358,122 @@
             margin-top: 20px;
         }
 
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #ffffff, #f8fbff);
+            border: 1px solid rgba(52, 152, 219, 0.12);
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .metric-label {
+            font-size: 0.82rem;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            line-height: 1.1;
+            color: var(--dark-color);
+        }
+
+        .metric-note {
+            font-size: 0.82rem;
+            color: #64748b;
+            margin-top: 8px;
+        }
+
+        .alert-panel {
+            background: linear-gradient(135deg, #fff7ed, #fff);
+            border: 1px solid #fed7aa;
+            border-radius: 16px;
+            padding: 18px;
+            margin: 20px 0;
+        }
+
+        .alert-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+
+        .alert-panel-header h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #9a3412;
+        }
+
+        .alert-panel-header p {
+            color: #7c2d12;
+            font-size: 0.9rem;
+        }
+
+        .alert-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .alert-item {
+            background: #fff;
+            border: 1px solid #fed7aa;
+            border-radius: 12px;
+            padding: 12px 14px;
+            display: grid;
+            grid-template-columns: 1.1fr 0.8fr 0.8fr 0.9fr;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .alert-item strong {
+            font-size: 0.95rem;
+        }
+
+        .alert-item small {
+            color: #64748b;
+        }
+
+        .alert-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 10px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            width: fit-content;
+        }
+
+        .alert-pill.danger { background: #fee2e2; color: #991b1b; }
+        .alert-pill.warn { background: #fef3c7; color: #92400e; }
+        .alert-pill.ok { background: #dcfce7; color: #166534; }
+
+        .section-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .section-toolbar .button-group {
+            margin-top: 0;
+            justify-content: flex-start;
+        }
+
         .detail-item {
             background: rgba(255, 255, 255, 0.2);
             padding: 15px;
@@ -672,7 +788,7 @@
 
         .analytics-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 25px;
             margin-top: 25px;
         }
@@ -694,9 +810,64 @@
         }
 
         .chart-container {
-            height: 250px;
+            height: 220px;
             position: relative;
             margin-top: 15px;
+        }
+
+        .evaluation-timeline {
+            display: grid;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .timeline-item {
+            background: #f8f9ff;
+            border-radius: 10px;
+            padding: 12px;
+            border: 1px solid rgba(52, 152, 219, 0.12);
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .timeline-label {
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+
+        .timeline-meta {
+            color: #64748b;
+            font-size: 0.82rem;
+        }
+
+        .timeline-bar {
+            height: 14px;
+            border-radius: 999px;
+            background: #e2e8f0;
+            overflow: hidden;
+        }
+
+        .timeline-fill {
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .timeline-footer {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+            font-size: 0.82rem;
+            color: #64748b;
         }
 
         .distribution-bar {
@@ -800,6 +971,14 @@
             opacity: 0.9;
         }
 
+        .dashboard-summary {
+            margin-bottom: 20px;
+        }
+
+        .dashboard-summary .card {
+            margin-bottom: 0;
+        }
+
         /* Responsive Design */
         @media (max-width: 1200px) {
             .container {
@@ -895,6 +1074,10 @@
             .analytics-grid {
                 grid-template-columns: 1fr;
             }
+
+            .dashboard-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
         }
 
         @media (max-width: 480px) {
@@ -917,6 +1100,14 @@
                 right: 10px;
                 padding: 8px 15px;
                 font-size: 14px;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .metric-value {
+                font-size: 1.5rem;
             }
         }
 
@@ -1239,6 +1430,21 @@
                                 <div class="detail-value" id="last-evaluation">-</div>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="dashboard-summary">
+                        <div class="section-toolbar">
+                            <div>
+                                <h2><i class="fas fa-chart-pie"></i> Tableau de bord rapide</h2>
+                                <p style="margin-top:6px;color:#64748b;">Aperçu immédiat des performances, alertes et activité récente.</p>
+                            </div>
+                            <div class="button-group">
+                                <button id="dashboard-refresh" type="button" class="btn-secondary btn-sm no-print" onclick="renderTeacherDashboard()">
+                                    <i class="fas fa-rotate"></i> Actualiser
+                                </button>
+                            </div>
+                        </div>
+                        <div id="teacher-dashboard"></div>
                     </div>
 
                     <!-- Configuration WhatsApp -->
@@ -1739,6 +1945,8 @@
             
             // Afficher un message de confirmation
             showMessage('success', 'Évaluation sauvegardée avec succès');
+
+            renderTeacherDashboard(teacher);
             
             // Envoyer par WhatsApp si activé
             if (whatsappConfig.autoSend && document.getElementById('whatsapp-auto-send').checked) {
@@ -1829,6 +2037,8 @@
                 document.getElementById('last-evaluation').textContent = '-';
             }
 
+            renderTeacherDashboard(teacher);
+
             // Remplir les informations du formulaire
             document.getElementById('teacher').value = teacher.name;
             document.getElementById('subject').value = teacher.subject;
@@ -1863,6 +2073,7 @@
                 "allemand": "Allemand",
                 "espagnol": "Espagnol",
                 "philosophie": "Philosophie",
+                "litterature": "Littérature",
                 "ecm": "Éducation Civique et Morale",
             };
             return subjects[subjectCode] || subjectCode;
@@ -1887,6 +2098,218 @@
                 "terminale-d": "Terminale D"
             };
             return classes[classCode] || classCode;
+        }
+
+        function summarizeEvaluations(evaluations) {
+            return (evaluations || []).map(evalItem => {
+                const grades = (evalItem.students || [])
+                    .map(student => parseFloat(student.grade))
+                    .filter(grade => !Number.isNaN(grade));
+                const total = grades.length ? grades.reduce((a, b) => a + b, 0) : 0;
+                const average = grades.length ? total / grades.length : 0;
+                const max = grades.length ? Math.max(...grades) : 0;
+                const min = grades.length ? Math.min(...grades) : 0;
+                return {
+                    ...evalItem,
+                    subjectName: getSubjectName(evalItem.subject),
+                    className: getClassName(evalItem.class),
+                    typeName: getEvaluationTypeName(evalItem.type),
+                    average,
+                    max,
+                    min,
+                    count: grades.length
+                };
+            }).sort((a, b) => new Date(a.date) - new Date(b.date));
+        }
+
+        function renderEvaluationTimeline(evaluations, maxGrade = 20) {
+            if (!evaluations || evaluations.length === 0) {
+                return '<div class="empty-state"><i class="fas fa-chart-line"></i><p>Aucune donnée d\'évaluation disponible.</p></div>';
+            }
+
+            return `
+                <div class="evaluation-timeline">
+                    ${evaluations.map((evaluation, index) => `
+                        <div class="timeline-item">
+                            <div class="timeline-header">
+                                <div>
+                                    <div class="timeline-label">${index + 1}. ${evaluation.title || 'Évaluation'} - ${evaluation.subjectName || getSubjectName(evaluation.subject)}</div>
+                                    <div class="timeline-meta">${evaluation.className || getClassName(evaluation.class)} • ${evaluation.typeName || getEvaluationTypeName(evaluation.type)}</div>
+                                </div>
+                                <div class="timeline-meta">${evaluation.date ? formatDate(evaluation.date) : 'Date indisponible'}</div>
+                            </div>
+                            <div class="timeline-bar" aria-label="Moyenne ${evaluation.average.toFixed(2)} sur ${maxGrade}">
+                                <div class="timeline-fill" style="width:${Math.max(0, Math.min(100, (evaluation.average / maxGrade) * 100))}%"></div>
+                            </div>
+                            <div class="timeline-footer">
+                                <span>Moyenne: ${evaluation.average.toFixed(2)}/${maxGrade}</span>
+                                <span>Max: ${evaluation.max.toFixed(2)} • Min: ${evaluation.min.toFixed(2)} • Élèves: ${evaluation.count}</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>`;
+        }
+
+        // Calcul synthétique pour le tableau de bord de l'enseignant
+        function buildTeacherDashboardData(teacher) {
+            const evaluations = teacher.evaluations || [];
+            const studentMap = {};
+            const gradeValues = [];
+
+            evaluations.forEach(evalItem => {
+                (evalItem.students || []).forEach(student => {
+                    const grade = parseFloat(student.grade);
+                    if (!studentMap[student.name]) {
+                        studentMap[student.name] = { grades: [], dates: [], count: 0, lastGrade: null };
+                    }
+                    if (!Number.isNaN(grade)) {
+                        studentMap[student.name].grades.push(grade);
+                        gradeValues.push(grade);
+                        studentMap[student.name].lastGrade = grade;
+                    }
+                    studentMap[student.name].dates.push({
+                        date: evalItem.date,
+                        grade: Number.isNaN(grade) ? null : grade
+                    });
+                    studentMap[student.name].count++;
+                });
+            });
+
+            const students = Object.entries(studentMap).map(([name, data]) => {
+                const validGrades = data.grades.filter(v => !Number.isNaN(v));
+                const average = validGrades.length ? validGrades.reduce((a, b) => a + b, 0) / validGrades.length : 0;
+                const ordered = [...data.dates].filter(d => d.grade !== null).sort((a, b) => new Date(a.date) - new Date(b.date));
+                const firstHalfCount = Math.max(1, Math.ceil(ordered.length / 2));
+                const firstHalf = ordered.slice(0, firstHalfCount).map(d => d.grade);
+                const secondHalf = ordered.slice(firstHalfCount).map(d => d.grade);
+                const averageOf = arr => arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : average;
+                const delta = averageOf(secondHalf.length ? secondHalf : firstHalf) - averageOf(firstHalf);
+                const latest = ordered[ordered.length - 1] || {};
+                return {
+                    name,
+                    average,
+                    count: data.count,
+                    lastGrade: data.lastGrade,
+                    latestDate: latest.date || '',
+                    delta,
+                    trend: delta > 1 ? 'up' : delta < -1 ? 'down' : 'stable'
+                };
+            }).sort((a, b) => a.average - b.average);
+
+            const totalEvaluations = evaluations.length;
+            const totalStudents = Object.values(studentMap).reduce((sum, entry) => sum + entry.count, 0);
+            const averageGrade = gradeValues.length ? gradeValues.reduce((a, b) => a + b, 0) / gradeValues.length : 0;
+            const weakest = [...students].filter(s => s.average < 10);
+            const critical = students.filter(s => s.average < 8 || s.trend === 'down');
+            const recentEvaluations = [...evaluations].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 3);
+
+            return {
+                totalEvaluations,
+                totalStudents,
+                averageGrade,
+                strongest: [...students].slice().sort((a, b) => b.average - a.average).slice(0, 3),
+                weakest: weakest.slice(0, 5),
+                critical: critical.slice(0, 5),
+                recentEvaluations,
+                studentCount: students.length,
+                whatsappEnabled: teacher.whatsappEnabled !== false
+            };
+        }
+
+        function renderTeacherDashboard(teacher = getCurrentTeacher()) {
+            const container = document.getElementById('teacher-dashboard');
+            if (!container || !teacher) return;
+
+            const data = buildTeacherDashboardData(teacher);
+
+            if (!teacher.evaluations.length) {
+                container.innerHTML = `
+                    <div class="alert-panel">
+                        <div class="alert-panel-header">
+                            <div>
+                                <h3><i class="fas fa-chart-line"></i> Tableau de bord rapide</h3>
+                                <p>Aucune évaluation enregistrée pour le moment.</p>
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">État</div>
+                            <div class="metric-value">Vide</div>
+                            <div class="metric-note">Ajoutez des évaluations pour activer les indicateurs automatiques.</div>
+                        </div>
+                    </div>`;
+                return;
+            }
+
+            const alertRows = data.critical.map(student => `
+                <div class="alert-item">
+                    <div>
+                        <strong>${student.name}</strong><br>
+                        <small>${student.count} évaluation${student.count > 1 ? 's' : ''}</small>
+                    </div>
+                    <div><span class="alert-pill ${student.average < 8 ? 'danger' : 'warn'}">${student.average.toFixed(1)}/20</span></div>
+                    <div><span class="alert-pill ${student.trend === 'down' ? 'danger' : student.trend === 'up' ? 'ok' : 'warn'}">${student.trend === 'down' ? 'Baisse' : student.trend === 'up' ? 'Hausse' : 'Stable'}</span></div>
+                    <div><small>${student.latestDate ? formatDate(student.latestDate) : 'Date indisponible'}</small></div>
+                </div>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="dashboard-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Évaluations</div>
+                        <div class="metric-value">${data.totalEvaluations}</div>
+                        <div class="metric-note">Données enregistrées pour cet enseignant</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Élèves évalués</div>
+                        <div class="metric-value">${data.studentCount}</div>
+                        <div class="metric-note">${data.totalStudents} notes saisies au total</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Moyenne générale</div>
+                        <div class="metric-value">${data.averageGrade.toFixed(2)}</div>
+                        <div class="metric-note">Analyse sur l'ensemble des notes</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Alertes</div>
+                        <div class="metric-value" style="color:${data.critical.length ? 'var(--warning-color)' : 'var(--success-color)'}">${data.critical.length}</div>
+                        <div class="metric-note">${data.critical.length ? 'Élèves à surveiller' : 'Aucune alerte critique'}</div>
+                    </div>
+                </div>
+
+                <div class="alert-panel">
+                    <div class="alert-panel-header">
+                        <div>
+                            <h3><i class="fas fa-triangle-exclamation"></i> Élèves à suivre</h3>
+                            <p>Détection automatique des baisses et des moyennes fragiles.</p>
+                        </div>
+                        <div class="button-group">
+                            <button type="button" class="btn-secondary btn-sm no-print" onclick="showTeacherAnalytics()">
+                                <i class="fas fa-chart-bar"></i> Ouvrir l'analytics
+                            </button>
+                        </div>
+                    </div>
+                    <div class="alert-list">
+                        ${alertRows || '<div class="metric-card"><div class="metric-label">Alerte</div><div class="metric-value">0</div><div class="metric-note">Aucun élève prioritaire pour le moment.</div></div>'}
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Meilleur élève</div>
+                        <div class="metric-value">${data.strongest[0] ? data.strongest[0].average.toFixed(2) : '-'}</div>
+                        <div class="metric-note">${data.strongest[0] ? data.strongest[0].name : 'Aucun élève'}</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">À surveiller</div>
+                        <div class="metric-value">${data.weakest.length}</div>
+                        <div class="metric-note">${data.weakest.length} élève${data.weakest.length > 1 ? 's' : ''} sous 10/20</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Communication WhatsApp</div>
+                        <div class="metric-value" style="color:${data.whatsappEnabled ? 'var(--success-color)' : 'var(--warning-color)'}">${data.whatsappEnabled ? 'Oui' : 'Non'}</div>
+                        <div class="metric-note">Envoi automatique ${data.whatsappEnabled ? 'activé' : 'désactivé'}</div>
+                    </div>
+                </div>`;
         }
 
         // Fonction pour formater la date
@@ -2559,8 +2982,6 @@
         // Fonction pour afficher les analytics globaux
         function displayGlobalAnalytics() {
             const container = document.getElementById('analytics-content');
-            
-            // Calculer les statistiques globales
             let totalEvaluations = 0;
             let totalStudents = 0;
             let totalTeachers = teachers.length;
@@ -2568,21 +2989,19 @@
             let classStats = {};
             let gradeDistribution = { excellent: 0, good: 0, average: 0, poor: 0 };
             let whatsappStats = { sent: 0, total: 0 };
-            
+            let evaluationSeries = [];
+
             teachers.forEach(teacher => {
                 totalEvaluations += teacher.evaluations.length;
-                
-                teacher.evaluations.forEach(eval => {
-                    totalStudents += eval.students.length;
-                    
-                    // Statistiques par matière
-                    subjectStats[eval.subject] = (subjectStats[eval.subject] || 0) + 1;
-                    
-                    // Statistiques par classe
-                    classStats[eval.class] = (classStats[eval.class] || 0) + 1;
-                    
-                    // Distribution des notes
-                    eval.students.forEach(student => {
+
+                teacher.evaluations.forEach(evalItem => {
+                    const summary = summarizeEvaluations([evalItem])[0];
+                    totalStudents += evalItem.students.length;
+                    subjectStats[summary.subjectName] = (subjectStats[summary.subjectName] || 0) + 1;
+                    classStats[summary.className] = (classStats[summary.className] || 0) + 1;
+                    evaluationSeries.push(summary);
+
+                    evalItem.students.forEach(student => {
                         const grade = parseFloat(student.grade);
                         if (!isNaN(grade)) {
                             if (grade >= 16) gradeDistribution.excellent++;
@@ -2591,16 +3010,20 @@
                             else gradeDistribution.poor++;
                         }
                     });
-                    
-                    // Statistiques WhatsApp
-                    if (eval.whatsappSent) whatsappStats.sent++;
+
+                    if (evalItem.whatsappSent) whatsappStats.sent++;
                     whatsappStats.total++;
                 });
             });
-            
+
             const averageStudentsPerEval = totalEvaluations > 0 ? (totalStudents / totalEvaluations).toFixed(1) : 0;
             const whatsappRate = whatsappStats.total > 0 ? ((whatsappStats.sent / whatsappStats.total) * 100).toFixed(1) : 0;
-            
+            const subjectWidth = count => totalEvaluations > 0 ? (count / totalEvaluations * 100).toFixed(1) : 0;
+            const noteWidth = count => totalStudents > 0 ? (count / totalStudents * 100).toFixed(1) : 0;
+            const classWidth = count => totalEvaluations > 0 ? (count / totalEvaluations * 100).toFixed(1) : 0;
+            const timeline = renderEvaluationTimeline(evaluationSeries.slice(-8).reverse());
+            const recentEvaluations = evaluationSeries.slice(-5).reverse();
+
             container.innerHTML = `
                 <div class="analytics-grid">
                     <div class="analytics-card">
@@ -2624,24 +3047,29 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="analytics-card">
                         <h3 class="analytics-title"><i class="fas fa-book"></i> Par matière</h3>
                         <div id="subject-chart" class="chart-container">
                             ${Object.entries(subjectStats).map(([subject, count]) => `
                                 <div>
                                     <div style="display: flex; justify-content: space-between;">
-                                        <span>${getSubjectName(subject)}</span>
+                                        <span>${subject}</span>
                                         <span>${count}</span>
                                     </div>
                                     <div class="distribution-bar">
-                                        <div class="distribution-fill" style="width: ${(count / totalEvaluations * 100)}%"></div>
+                                        <div class="distribution-fill" style="width: ${subjectWidth(count)}%"></div>
                                     </div>
                                 </div>
                             `).join('')}
                         </div>
                     </div>
-                    
+
+                    <div class="analytics-card">
+                        <h3 class="analytics-title"><i class="fas fa-chart-line"></i> Évolution des évaluations</h3>
+                        ${timeline}
+                    </div>
+
                     <div class="analytics-card">
                         <h3 class="analytics-title"><i class="fas fa-graduation-cap"></i> Distribution des notes</h3>
                         <div class="chart-container">
@@ -2650,35 +3078,32 @@
                                 <span>${gradeDistribution.excellent}</span>
                             </div>
                             <div class="distribution-bar">
-                                <div class="distribution-fill" style="width: ${(gradeDistribution.excellent / totalStudents * 100)}%; background: #27ae60"></div>
+                                <div class="distribution-fill" style="width: ${noteWidth(gradeDistribution.excellent)}%; background: #27ae60"></div>
                             </div>
-                            
                             <div class="distribution-label">
                                 <span>✅ Bon (12-15.9)</span>
                                 <span>${gradeDistribution.good}</span>
                             </div>
                             <div class="distribution-bar">
-                                <div class="distribution-fill" style="width: ${(gradeDistribution.good / totalStudents * 100)}%; background: #3498db"></div>
+                                <div class="distribution-fill" style="width: ${noteWidth(gradeDistribution.good)}%; background: #3498db"></div>
                             </div>
-                            
                             <div class="distribution-label">
                                 <span>😐 Moyen (8-11.9)</span>
                                 <span>${gradeDistribution.average}</span>
                             </div>
                             <div class="distribution-bar">
-                                <div class="distribution-fill" style="width: ${(gradeDistribution.average / totalStudents * 100)}%; background: #f39c12"></div>
+                                <div class="distribution-fill" style="width: ${noteWidth(gradeDistribution.average)}%; background: #f39c12"></div>
                             </div>
-                            
                             <div class="distribution-label">
                                 <span>❌ Faible (0-7.9)</span>
                                 <span>${gradeDistribution.poor}</span>
                             </div>
                             <div class="distribution-bar">
-                                <div class="distribution-fill" style="width: ${(gradeDistribution.poor / totalStudents * 100)}%; background: #e74c3c"></div>
+                                <div class="distribution-fill" style="width: ${noteWidth(gradeDistribution.poor)}%; background: #e74c3c"></div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="analytics-card">
                         <h3 class="analytics-title"><i class="fab fa-whatsapp"></i> Communications WhatsApp</h3>
                         <div style="text-align: center; padding: 20px;">
@@ -2689,24 +3114,48 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="analytics-card">
                         <h3 class="analytics-title"><i class="fas fa-calendar"></i> Activité par classe</h3>
                         <div id="class-chart" class="chart-container">
                             ${Object.entries(classStats).map(([cls, count]) => `
                                 <div>
                                     <div style="display: flex; justify-content: space-between;">
-                                        <span>${getClassName(cls)}</span>
+                                        <span>${cls}</span>
                                         <span>${count}</span>
                                     </div>
                                     <div class="distribution-bar">
-                                        <div class="distribution-fill" style="width: ${(count / totalEvaluations * 100)}%; background: #9b59b6"></div>
+                                        <div class="distribution-fill" style="width: ${classWidth(count)}%; background: #9b59b6"></div>
                                     </div>
                                 </div>
                             `).join('')}
                         </div>
                     </div>
-                    
+
+                    <div class="analytics-card">
+                        <h3 class="analytics-title"><i class="fas fa-list"></i> Évaluations récentes</h3>
+                        <div class="evaluation-timeline">
+                            ${recentEvaluations.map((evaluation, index) => `
+                                <div class="timeline-item">
+                                    <div class="timeline-header">
+                                        <div>
+                                            <div class="timeline-label">${index + 1}. ${evaluation.title || 'Évaluation'} - ${evaluation.subjectName}</div>
+                                            <div class="timeline-meta">${evaluation.className} • ${evaluation.typeName}</div>
+                                        </div>
+                                        <div class="timeline-meta">${evaluation.date ? formatDate(evaluation.date) : 'Date indisponible'}</div>
+                                    </div>
+                                    <div class="timeline-bar">
+                                        <div class="timeline-fill" style="width:${Math.max(0, Math.min(100, (evaluation.average / 20) * 100))}%"></div>
+                                    </div>
+                                    <div class="timeline-footer">
+                                        <span>Moyenne: ${evaluation.average.toFixed(2)}/20</span>
+                                        <span>${evaluation.count} élève(s)</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
                     <div class="analytics-card">
                         <h3 class="analytics-title"><i class="fas fa-chart-line"></i> Recommandations</h3>
                         <div style="padding: 10px;">
@@ -2714,11 +3163,9 @@
                                 ${gradeDistribution.poor > totalStudents * 0.3 ? 
                                     '<li><i class="fas fa-exclamation-triangle text-warning"></i> <strong>Attention:</strong> Plus de 30% des notes sont faibles. Pensez à revoir la difficulté des évaluations.</li>' : 
                                     '<li><i class="fas fa-check-circle text-success"></i> La distribution des notes est équilibrée.</li>'}
-                                
                                 ${whatsappRate < 50 ? 
                                     '<li><i class="fas fa-comment-slash text-warning"></i> <strong>Amélioration:</strong> Seulement ' + whatsappRate + '% des évaluations sont communiquées par WhatsApp.</li>' : 
                                     '<li><i class="fas fa-comment-check text-success"></i> Bon taux de communication avec les parents.</li>'}
-                                
                                 ${totalEvaluations < 5 ? 
                                     '<li><i class="fas fa-clipboard-check text-info"></i> <strong>Suggestion:</strong> Encouragez les enseignants à enregistrer plus d\'évaluations.</li>' : 
                                     '<li><i class="fas fa-clipboard-list text-success"></i> Bon niveau d\'activité des enseignants.</li>'}
@@ -2738,34 +3185,25 @@
                 return;
             }
             
+            const subjectName = getSubjectName(teacher.subject);
+            const evaluationSummaries = summarizeEvaluations(teacher.evaluations);
+            const latestEvaluation = evaluationSummaries[evaluationSummaries.length - 1] || null;
+            const timeline = renderEvaluationTimeline(evaluationSummaries.slice(-10));
+
             // Calculer les statistiques de l'enseignant
             let classStats = {};
             let typeStats = {};
             let monthlyStats = {};
-            let gradeTrend = [];
             let studentPerformance = {};
             
-            teacher.evaluations.forEach(eval => {
-                // Statistiques par classe
-                classStats[eval.class] = (classStats[eval.class] || 0) + 1;
+            evaluationSummaries.forEach(evalItem => {
+                classStats[evalItem.className] = (classStats[evalItem.className] || 0) + 1;
+                typeStats[evalItem.typeName] = (typeStats[evalItem.typeName] || 0) + 1;
                 
-                // Statistiques par type
-                typeStats[eval.type] = (typeStats[eval.type] || 0) + 1;
-                
-                // Statistiques mensuelles
-                const month = new Date(eval.date).toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' });
+                const month = new Date(evalItem.date).toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' });
                 monthlyStats[month] = (monthlyStats[month] || 0) + 1;
                 
-                // Tendances des notes
-                gradeTrend.push({
-                    date: eval.date,
-                    average: parseFloat(eval.stats.average),
-                    highest: parseFloat(eval.stats.highest),
-                    lowest: parseFloat(eval.stats.lowest)
-                });
-                
-                // Performance des élèves
-                eval.students.forEach(student => {
+                evalItem.students.forEach(student => {
                     if (!studentPerformance[student.name]) {
                         studentPerformance[student.name] = {
                             grades: [],
@@ -2785,7 +3223,6 @@
                 });
             });
             
-            // Trier les élèves par performance
             const topStudents = Object.entries(studentPerformance)
                 .sort((a, b) => b[1].average - a[1].average)
                 .slice(0, 5);
@@ -2794,14 +3231,19 @@
                 .sort((a, b) => a[1].average - b[1].average)
                 .slice(0, 5);
             
-            // Trier les données par date
-            gradeTrend.sort((a, b) => new Date(a.date) - new Date(b.date));
+            const maxClassCount = Math.max(...Object.values(classStats), 1);
+            const maxTypeCount = Math.max(...Object.values(typeStats), 1);
+            const maxMonthlyCount = Math.max(...Object.values(monthlyStats), 1);
             
             container.innerHTML = `
                 <div class="analytics-grid">
                     <div class="analytics-card">
                         <h3 class="analytics-title"><i class="fas fa-chart-pie"></i> Vue d'ensemble</h3>
                         <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-value">${subjectName}</div>
+                                <div class="stat-label">Matière</div>
+                            </div>
                             <div class="stat-item">
                                 <div class="stat-value">${teacher.evaluations.length}</div>
                                 <div class="stat-label">Évaluations</div>
@@ -2811,13 +3253,35 @@
                                 <div class="stat-label">Classes différentes</div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-value">${gradeTrend.length > 0 ? gradeTrend[gradeTrend.length-1].average.toFixed(1) : 'N/A'}</div>
+                                <div class="stat-value">${latestEvaluation ? latestEvaluation.average.toFixed(1) : 'N/A'}</div>
                                 <div class="stat-label">Dernière moyenne</div>
                             </div>
                             <div class="stat-item">
                                 <div class="stat-value">${Object.keys(studentPerformance).length}</div>
                                 <div class="stat-label">Élèves évalués</div>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="analytics-card">
+                        <h3 class="analytics-title"><i class="fas fa-chart-line"></i> Évolution des évaluations</h3>
+                        ${timeline}
+                    </div>
+                    
+                    <div class="analytics-card">
+                        <h3 class="analytics-title"><i class="fas fa-tags"></i> Répartition par type</h3>
+                        <div style="padding: 10px;">
+                            ${Object.entries(typeStats).map(([type, count]) => `
+                                <div style="margin-bottom: 8px;">
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span>${type}</span>
+                                        <span>${count}</span>
+                                    </div>
+                                    <div class="distribution-bar">
+                                        <div class="distribution-fill" style="width: ${(count / maxTypeCount * 100)}%; background: #17a2b8"></div>
+                                    </div>
+                                </div>
+                            `).join('')}
                         </div>
                     </div>
                     
@@ -2839,27 +3303,6 @@
                     </div>
                     
                     <div class="analytics-card">
-                        <h3 class="analytics-title"><i class="fas fa-chart-line"></i> Évolution des moyennes</h3>
-                        <div style="padding: 10px; height: 200px; position: relative;">
-                            <div style="position: absolute; bottom: 0; left: 0; right: 0; display: flex; height: 150px; align-items: flex-end;">
-                                ${gradeTrend.map((stat, index) => {
-                                    const height = (stat.average / 20 * 100) + '%';
-                                    const width = (100 / gradeTrend.length) + '%';
-                                    const color = stat.average >= 10 ? '#27ae60' : '#e74c3c';
-                                    return `
-                                        <div style="width: ${width}; text-align: center;">
-                                            <div style="height: ${height}; background: ${color}; margin: 0 2px; border-radius: 4px 4px 0 0;"></div>
-                                            <div style="font-size: 0.7rem; margin-top: 5px; transform: rotate(-45deg); white-space: nowrap;">
-                                                ${new Date(stat.date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })}
-                                            </div>
-                                        </div>
-                                    `;
-                                }).join('')}
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="analytics-card">
                         <h3 class="analytics-title"><i class="fas fa-calendar-alt"></i> Activité mensuelle</h3>
                         <div style="padding: 10px;">
                             ${Object.entries(monthlyStats).map(([month, count]) => `
@@ -2869,7 +3312,24 @@
                                         <span>${count}</span>
                                     </div>
                                     <div class="distribution-bar">
-                                        <div class="distribution-fill" style="width: ${(count / Math.max(...Object.values(monthlyStats)) * 100)}%"></div>
+                                        <div class="distribution-fill" style="width: ${(count / maxMonthlyCount * 100)}%"></div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="analytics-card">
+                        <h3 class="analytics-title"><i class="fas fa-book"></i> Répartition par classe</h3>
+                        <div style="padding: 10px;">
+                            ${Object.entries(classStats).map(([cls, count]) => `
+                                <div style="margin-bottom: 8px;">
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span>${cls}</span>
+                                        <span>${count}</span>
+                                    </div>
+                                    <div class="distribution-bar">
+                                        <div class="distribution-fill" style="width: ${(count / maxClassCount * 100)}%; background: #9b59b6"></div>
                                     </div>
                                 </div>
                             `).join('')}
@@ -2897,7 +3357,7 @@
                         <h3 class="analytics-title"><i class="fas fa-lightbulb"></i> Recommandations</h3>
                         <div style="padding: 10px;">
                             <ul style="list-style-type: none; padding-left: 0;">
-                                ${gradeTrend.length >= 2 && gradeTrend[gradeTrend.length-1].average < gradeTrend[gradeTrend.length-2].average ? 
+                                ${evaluationSummaries.length >= 2 && evaluationSummaries[evaluationSummaries.length-1].average < evaluationSummaries[evaluationSummaries.length-2].average ? 
                                     '<li><i class="fas fa-arrow-down text-danger"></i> <strong>Attention:</strong> La dernière moyenne est en baisse par rapport à l\'évaluation précédente.</li>' : 
                                     '<li><i class="fas fa-arrow-up text-success"></i> La performance des élèves est stable ou en amélioration.</li>'}
                                 
@@ -2950,6 +3410,7 @@
             evaluations.forEach(evaluation => {
                 const evaluationItem = document.createElement('div');
                 evaluationItem.className = 'evaluation-item';
+                const subjectName = getSubjectName(evaluation.subject);
                 
                 evaluationItem.innerHTML = `
                     <div class="evaluation-header">
@@ -2957,6 +3418,9 @@
                         <div class="evaluation-date">${formatDate(evaluation.date)}</div>
                     </div>
                     <div class="evaluation-details">
+                        <div>
+                            <strong>Matière:</strong> ${subjectName}
+                        </div>
                         <div>
                             <strong>Classe:</strong> ${getClassName(evaluation.class)}
                         </div>
@@ -3075,6 +3539,7 @@
             
             let details = `Détails de l'évaluation:\n\n`;
             details += `Titre: ${evaluation.title}\n`;
+            details += `Matière: ${getSubjectName(evaluation.subject)}\n`;
             details += `Classe: ${getClassName(evaluation.class)}\n`;
             details += `Date: ${formatDate(evaluation.date)}\n`;
             details += `Type: ${getEvaluationTypeName(evaluation.type)}\n`;
@@ -3144,6 +3609,7 @@
             
             // Afficher un message de confirmation
             showMessage('success', 'Les notes ont été enregistrées avec succès');
+            renderTeacherDashboard(teacher);
             
             // Envoyer par WhatsApp si activé
             if (whatsappConfig.autoSend && document.getElementById('whatsapp-auto-send').checked) {
