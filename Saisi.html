@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Système de Gestion Scolaire - République Togolaise</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #006400;
+            --primary-dark: #004d00;
+            --primary-light: #e8f5e9;
+            --secondary-color: #FF0000;
+            --tertiary-color: #FFD700;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --border-color: #dee2e6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+
+        body { background: linear-gradient(135deg, #f5f7fa 0%, #e3e8f7 100%); min-height: 100vh; padding: 15px; }
+
+        .container { max-width: 1800px; margin: 0 auto; background: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden; border: 1px solid var(--primary-color); }
+
+        .header-main { background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); color: white; padding: 1.5rem; position: relative; border-bottom: 3px solid var(--secondary-color); }
+
+        .logo-section { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        .logo-wrapper { display: flex; align-items: center; gap: 1rem; }
+        .logo { width: 70px; height: 70px; background: linear-gradient(135deg, var(--secondary-color), var(--tertiary-color)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; font-size: 1.5rem; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .school-info { text-align: center; flex: 1; }
+        .school-info h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .togo-flag { display: inline-flex; align-items: center; gap: 8px; margin-top: 10px; padding: 5px 15px; background: rgba(255,255,255,0.1); border-radius: 20px; }
+        .flag-stripe { width: 20px; height: 3px; border-radius: 2px; }
+        .stripe-red { background-color: var(--secondary-color); }
+        .stripe-yellow { background-color: var(--tertiary-color); }
+        .stripe-green { background-color: var(--primary-color); }
+
+        .tabs-container { background: white; border-bottom: 2px solid var(--border-color); overflow-x: auto; }
+        .tabs { display: flex; flex-wrap: wrap; }
+        .tab { padding: 1rem 1.5rem; border: none; background: none; cursor: pointer; font-weight: 600; border-bottom: 3px solid transparent; transition: all 0.3s ease; white-space: nowrap; }
+        .tab:hover { color: var(--primary-color); background: var(--primary-light); }
+        .tab.active { color: var(--primary-color); border-bottom-color: var(--secondary-color); background: var(--primary-light); }
+        .tab-badge { background: var(--secondary-color); color: white; font-size: 0.7rem; padding: 2px 6px; border-radius: 10px; margin-left: 8px; }
+
+        .main-content { padding: 2rem; min-height: 600px; }
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .form-section { background: white; border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem; border: 1px solid var(--border-color); }
+        .form-section h2 { color: var(--primary-color); margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--secondary-color); display: flex; align-items: center; gap: 0.5rem; }
+
+        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { margin-bottom: 0.5rem; font-weight: 600; }
+        .form-control { padding: 0.75rem 1rem; border: 2px solid var(--border-color); border-radius: 8px; font-size: 1rem; transition: all 0.3s ease; }
+        .form-control:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(0,100,0,0.1); }
+
+        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .btn-primary { background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,100,0,0.2); }
+        .btn-success { background: linear-gradient(135deg, #28a745, #218838); color: white; }
+        .btn-danger { background: linear-gradient(135deg, #dc3545, #c82333); color: white; }
+        .btn-info { background: linear-gradient(135deg, #17a2b8, #138496); color: white; }
+        .btn-warning { background: linear-gradient(135deg, #ffc107, #e0a800); color: #333; }
+        .btn-secondary { background: linear-gradient(135deg, #6c757d, #5a6268); color: white; }
+        .btn-sm { padding: 0.5rem 1rem; font-size: 0.875rem; }
+
+        .student-list { max-height: 400px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 8px; }
+        .student-item { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 1rem; padding: 1rem; border-bottom: 1px solid var(--border-color); align-items: center; }
+        .student-item:last-child { border-bottom: none; }
+        .student-item:hover { background: var(--primary-light); }
+        .student-name { font-weight: 600; color: var(--primary-color); }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin: 1.5rem 0; }
+        .stat-card { background: linear-gradient(135deg, white, #f8f9fa); border-radius: 8px; padding: 1.5rem; text-align: center; border: 1px solid var(--border-color); transition: all 0.3s ease; }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
+        .stat-value { font-size: 2.5rem; font-weight: 700; color: var(--primary-color); }
+        .stat-label { color: #6c757d; font-size: 0.875rem; text-transform: uppercase; }
+
+        .notes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem; }
+        .note-card { background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.5rem; }
+        .note-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); }
+        .note-input-group { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+
+        .table-container { overflow-x: auto; margin: 1rem 0; border-radius: 8px; border: 1px solid var(--border-color); }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th { background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)); color: white; padding: 1rem; text-align: left; }
+        .data-table td { padding: 1rem; border-bottom: 1px solid var(--border-color); }
+        .data-table tr:hover { background: var(--primary-light); }
+
+        .alert { padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid; }
+        .alert-info { background: #d1ecf1; color: #0c5460; border-color: var(--info-color); }
+        .alert-warning { background: #fff3cd; color: #856404; border-color: var(--warning-color); }
+
+        .bulletin-preview-container { background: #e9ecef; border-radius: 8px; padding: 2rem; position: relative; overflow-x: auto; }
+        .bulletin-actions { position: sticky; top: 0; right: 0; display: flex; gap: 0.5rem; z-index: 10; flex-wrap: wrap; justify-content: flex-end; margin-bottom: 1rem; background: #e9ecef; padding: 10px; border-radius: 8px; }
+        
+        .bulletin-togo {
+            background: white;
+            width: 21cm;
+            min-height: 29.7cm;
+            margin: 0 auto;
+            padding: 0.8cm;
+            border: 2px solid var(--primary-color);
+            border-radius: 4px;
+            font-family: 'Times New Roman', 'Segoe UI', serif;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            page-break-after: avoid;
+            page-break-inside: avoid;
+        }
+        
+        .bulletin-togo.with-watermark {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="400" height="400" opacity="0.04"><path d="M50,10 C30,10 10,30 10,50 C10,70 30,90 50,90 C70,90 90,70 90,50 C90,30 70,10 50,10 Z M50,30 C63,30 70,43 70,50 C70,57 63,70 50,70 C37,70 30,57 30,50 C30,43 37,30 50,30 Z" fill="%23006400"/><circle cx="50" cy="50" r="15" fill="%23006400"/></svg>');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 350px;
+        }
+        
+        .bulletin-header { text-align: center; margin-bottom: 20px; border-bottom: 3px double var(--secondary-color); padding-bottom: 10px; }
+        .republic-togo { font-size: 14px; font-weight: bold; color: var(--primary-color); letter-spacing: 2px; text-transform: uppercase; }
+        .motto-togo { font-size: 11px; font-style: italic; margin: 3px 0; }
+        .ministry-togo { font-size: 10px; margin: 5px 0; }
+        .title-togo { font-size: 20px; font-weight: bold; color: var(--secondary-color); margin: 8px 0; text-transform: uppercase; letter-spacing: 3px; }
+        
+        .school-info-bulletin { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 15px 0; padding: 10px; background: var(--primary-light); border-radius: 5px; border-left: 4px solid var(--secondary-color); font-size: 11px; }
+        .student-info-bulletin { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 15px 0; padding: 10px; background: #f8f9fa; border-radius: 5px; border: 1px solid var(--border-color); font-size: 11px; }
+        
+        .category-header { font-weight: bold; padding: 6px 10px; margin: 15px 0 8px 0; border-radius: 5px; font-size: 12px; }
+        .category-scientific { background: #bbdefb; color: #1565c0; border-left: 4px solid #1565c0; }
+        .category-literary { background: #e1bee7; color: #6a1b9a; border-left: 4px solid #6a1b9a; }
+        .category-other { background: #dcedc8; color: #33691e; border-left: 4px solid #33691e; }
+        
+        .grades-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 10px; }
+        .grades-table th { background: var(--primary-color); color: white; padding: 6px; text-align: center; border: 1px solid var(--primary-dark); }
+        .grades-table td { padding: 6px; border: 1px solid var(--border-color); text-align: center; }
+        .grades-table td:first-child { text-align: left; font-weight: bold; }
+        
+        .summary-section { background: linear-gradient(135deg, var(--primary-light), white); padding: 12px; margin: 15px 0; border-radius: 8px; border: 1px solid var(--primary-color); }
+        .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px; }
+        .summary-item { text-align: center; padding: 8px; background: white; border-radius: 5px; }
+        .summary-label { font-size: 9px; color: #666; margin-bottom: 3px; text-transform: uppercase; }
+        .summary-value { font-size: 16px; font-weight: bold; color: var(--primary-color); }
+        .summary-value-large { font-size: 22px; color: var(--secondary-color); }
+        
+        .appreciation-box { padding: 10px; background: #f8f9fa; border-radius: 5px; margin-top: 10px; border-left: 3px solid var(--tertiary-color); font-size: 10px; line-height: 1.4; }
+        
+        .signatures-section { display: flex; justify-content: space-between; margin-top: 30px; padding-top: 15px; border-top: 1px dashed var(--border-color); }
+        .signature-box { text-align: center; width: 45%; }
+        .signature-line { border-top: 1px solid #000; margin-top: 35px; padding-top: 5px; font-size: 9px; }
+        
+        .footer-bulletin { text-align: center; margin-top: 15px; font-size: 8px; color: #999; border-top: 1px solid var(--border-color); padding-top: 8px; }
+        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-size: 70px; color: rgba(0,100,0,0.06); z-index: 0; pointer-events: none; white-space: nowrap; font-weight: bold; width: 100%; text-align: center; }
+        
+        .badge { display: inline-block; padding: 0.25rem 0.5rem; font-size: 0.7rem; font-weight: 600; border-radius: 20px; color: white; }
+        .badge-primary { background: var(--primary-color); }
+        .badge-success { background: var(--success-color); }
+        
+        .file-import-area { border: 2px dashed var(--primary-color); border-radius: 8px; padding: 2rem; text-align: center; cursor: pointer; background: var(--primary-light); margin-bottom: 1.5rem; transition: all 0.3s ease; }
+        .file-import-area:hover { background: #d4edda; transform: scale(1.01); }
+        
+        /* Styles d'impression optimisés */
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; padding: 0 !important; margin: 0 !important; }
+            .container { box-shadow: none !important; margin: 0 !important; padding: 0 !important; max-width: 100% !important; }
+            .main-content { padding: 0 !important; margin: 0 !important; }
+            .tab-content { display: block !important; }
+            .tab-content:not(#tab4) { display: none !important; }
+            .bulletin-togo { 
+                margin: 0 auto !important; 
+                box-shadow: none !important; 
+                page-break-after: always !important;
+                page-break-inside: avoid !important;
+                border: 1px solid #000 !important;
+                width: 100% !important;
+                max-width: 21cm !important;
+            }
+            .watermark { opacity: 0.1 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .grades-table th, .grades-table td { border: 1px solid #000 !important; }
+            .signature-line { border-top: 1px solid #000 !important; }
+        }
+        
+        @media screen and (max-width: 768px) {
+            .main-content { padding: 1rem; }
+            .summary-grid { grid-template-columns: repeat(2, 1fr); }
+            .student-info-bulletin { grid-template-columns: repeat(2, 1fr); }
+            .school-info-bulletin { grid-template-columns: repeat(2, 1fr); }
+            .bulletin-togo { width: 100%; padding: 0.5cm; }
+        }
+        
+        .d-flex { display: flex; }
+        .gap-2 { gap: 1rem; }
+        .flex-wrap { flex-wrap: wrap; }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+        .text-center { text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="#" class="btn-retour no-print" onclick="history.back()" style="position: fixed; top: 20px; left: 20px; z-index: 1000; background: var(--primary-color); color: white; padding: 8px 16px; border-radius: 5px; text-decoration: none;"><i class="fas fa-arrow-left"></i> Retour</a>
+
+        <header class="header-main no-print">
+            <div class="logo-section">
+                <div class="logo-wrapper">
+                    <div class="logo">TG</div>
+                    <div class="school-info">
+                        <h1>SYSTÈME DE GESTION SCOLAIRE</h1>
+                        <div class="subtitle">MINISTÈRE DES ENSEIGNEMENTS PRIMAIRE, SECONDAIRE ET TECHNIQUE</div>
+                        <div class="togo-flag">
+                            <div class="flag-stripe stripe-red"></div>
+                            <div class="flag-stripe stripe-yellow"></div>
+                            <div class="flag-stripe stripe-green"></div>
+                            <span>République Togolaise</span>
+                        </div>
+                    </div>
+                    <div class="logo">EDS</div>
+                </div>
+                <div class="user-actions">
+                    <button class="btn btn-secondary btn-sm" onclick="toggleDarkMode()"><i class="fas fa-moon"></i> Mode</button>
+                    <button class="btn btn-info btn-sm" onclick="showHelp()"><i class="fas fa-question-circle"></i> Aide</button>
+                </div>
+            </div>
+        </header>
+
+        <nav class="tabs-container no-print">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab(0)"><i class="fas fa-users"></i> Gestion Classe <span class="tab-badge" id="studentCount">0</span></button>
+                <button class="tab" onclick="switchTab(1)"><i class="fas fa-book"></i> Programmes <span class="tab-badge" id="subjectCount">0</span></button>
+                <button class="tab" onclick="switchTab(2)"><i class="fas fa-edit"></i> Saisie Notes</button>
+                <button class="tab" onclick="switchTab(3)"><i class="fas fa-chart-line"></i> Statistiques</button>
+                <button class="tab" onclick="switchTab(4)"><i class="fas fa-file-alt"></i> Bulletin</button>
+                <button class="tab" onclick="switchTab(5)"><i class="fas fa-database"></i> Archives</button>
+                <button class="tab" onclick="switchTab(6)"><i class="fas fa-cog"></i> Configuration</button>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <!-- Onglet 0: Gestion Classe -->
+            <div class="tab-content active" id="tab0">
+                <div class="form-section">
+                    <h2><i class="fas fa-info-circle"></i> Informations Générales</h2>
+                    <div class="form-row">
+                        <div class="form-group"><label>Année Scolaire</label><input type="text" id="schoolYear" class="form-control" placeholder="2024-2025"></div>
+                        <div class="form-group"><label>Période</label><select id="period" class="form-control"><option value="">Sélectionner</option><option value="1er Trimestre">1er Trimestre</option><option value="2ème Trimestre">2ème Trimestre</option><option value="3ème Trimestre">3ème Trimestre</option></select></div>
+                        <div class="form-group"><label>Date d'Édition</label><input type="date" id="editionDate" class="form-control"></div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2><i class="fas fa-school"></i> Information de l'Établissement</h2>
+                    <div class="form-row">
+                        <div class="form-group"><label>Nom Établissement</label><input type="text" id="schoolName" class="form-control" placeholder="CEG MASSEDENA"></div>
+                        <div class="form-group"><label>Code Établissement</label><input type="text" id="schoolCode" class="form-control" placeholder="000123"></div>
+                        <div class="form-group"><label>Statut</label><select id="schoolStatus" class="form-control"><option value="Public">Public</option><option value="Privé">Privé</option></select></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Direction Régionale</label><input type="text" id="regionalDirection" class="form-control" value="DRE-KARA"></div>
+                        <div class="form-group"><label>Inspection</label><input type="text" id="inspection" class="form-control" value="IESG-Niamtougou"></div>
+                        <div class="form-group"><label>Ville</label><input type="text" id="city" class="form-control" value="KARA"></div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2><i class="fas fa-graduation-cap"></i> Gestion de la Classe</h2>
+                    <div class="form-row">
+                        <div class="form-group"><label>Niveau</label><select id="level" class="form-control"><option value="">Sélectionner</option><option value="college">Collège</option><option value="lycee">Lycée</option></select></div>
+                        <div class="form-group"><label>Classe</label><select id="class" class="form-control"><option value="">Sélectionner</option><option value="6ème">6ème</option><option value="5ème">5ème</option><option value="4ème">4ème</option><option value="3ème">3ème</option><option value="Seconde">Seconde</option><option value="Première">Première</option><option value="Terminale">Terminale</option></select></div>
+                        <div class="form-group"><label>Série</label><select id="series" class="form-control"><option value="">Sélectionner</option><option value="A">Série A</option><option value="C">Série C</option><option value="D">Série D</option></select></div>
+                    </div>
+                    <div class="form-row"><div class="form-group"><label>Effectif</label><input type="number" id="classSize" class="form-control" readonly></div>
+                    <div class="form-group"><label>Filles</label><input type="number" id="girlsCount" class="form-control" readonly></div>
+                    <div class="form-group"><label>Garçons</label><input type="number" id="boysCount" class="form-control" readonly></div></div>
+                </div>
+
+                <div class="form-section">
+                    <h2><i class="fas fa-user-plus"></i> Gestion des Élèves</h2>
+                    <div class="file-import-area" onclick="document.getElementById('jsonFileInput').click()">
+                        <i class="fas fa-file-import fa-3x" style="color: var(--primary-color);"></i>
+                        <p><strong>📂 Importer JSON depuis bull.html</strong></p>
+                        <p style="font-size: 12px; color: #666;">Cliquez ou glissez-déposez un fichier JSON</p>
+                        <input type="file" id="jsonFileInput" accept=".json" style="display: none;" onchange="importFromJSONFile(this)">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Nom</label><input type="text" id="studentLastName" class="form-control"></div>
+                        <div class="form-group"><label>Prénom</label><input type="text" id="studentFirstName" class="form-control"></div>
+                        <div class="form-group"><label>Matricule</label><input type="text" id="studentId" class="form-control"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Sexe</label><select id="studentGender" class="form-control"><option value="">Sélectionner</option><option value="M">Masculin</option><option value="F">Féminin</option></select></div>
+                        <div class="form-group"><label>Date naissance</label><input type="date" id="studentBirthDate" class="form-control"></div>
+                        <div class="form-group"><label>Lieu naissance</label><input type="text" id="studentBirthPlace" class="form-control"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Statut</label><select id="studentStatus" class="form-control"><option value="Nouveau">Nouveau</option><option value="Nouvelle">Nouvelle</option><option value="Redoublant">Redoublant</option><option value="Redoublante">Redoublante</option></select></div>
+                        <div class="form-group"><label>Tuteur</label><input type="text" id="guardianName" class="form-control"></div>
+                        <div class="form-group"><label>Téléphone</label><input type="tel" id="guardianPhone" class="form-control"></div>
+                    </div>
+                    <div class="text-center"><button class="btn btn-success" onclick="addStudent()"><i class="fas fa-plus"></i> Ajouter l'Élève</button></div>
+                </div>
+
+                <div class="form-section">
+                    <h2><i class="fas fa-list"></i> Liste des Élèves</h2>
+                    <div class="student-list" id="studentsList"></div>
+                </div>
+            </div>
+
+            <!-- Onglet 1: Programmes -->
+            <div class="tab-content" id="tab1">
+                <div class="form-section">
+                    <h2><i class="fas fa-book-open"></i> Programme Scolaire</h2>
+                    <div class="alert alert-info"><i class="fas fa-info-circle"></i> Définissez les matières, coefficients et enseignants</div>
+                    <div class="table-container"><table class="data-table"><thead><tr><th>Matière</th><th>Coeff</th><th>Enseignant (Nom & Prénom)</th><th>Heures</th><th>Catégorie</th><th>Actions</th></tr></thead><tbody id="subjectsList"></tbody></table></div>
+                    <div class="d-flex gap-2 flex-wrap"><button class="btn btn-success" onclick="addSubject()"><i class="fas fa-plus"></i> Ajouter matière</button><button class="btn btn-primary" onclick="loadDefaultSubjects()"><i class="fas fa-sync"></i> Programme standard</button></div>
+                </div>
+            </div>
+
+            <!-- Onglet 2: Saisie Notes -->
+            <div class="tab-content" id="tab2">
+                <div class="form-section">
+                    <h2><i class="fas fa-edit"></i> Saisie des Notes</h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group"><label>Élève</label><select id="studentSelect" class="form-control" onchange="loadStudentGrades()"><option value="">Tous</option></select></div>
+                        <div class="form-group"><label>Matière</label><select id="subjectFilter" class="form-control" onchange="filterGrades()"><option value="">Toutes</option></select></div>
+                    </div>
+                    <div class="notes-grid" id="gradesContainer"></div>
+                </div>
+            </div>
+
+            <!-- Onglet 3: Statistiques -->
+            <div class="tab-content" id="tab3">
+                <div class="form-section">
+                    <h2><i class="fas fa-chart-bar"></i> Statistiques</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card"><div class="stat-value" id="classAverage">0.00</div><div class="stat-label">Moyenne classe</div></div>
+                        <div class="stat-card"><div class="stat-value" id="highestAverage">0.00</div><div class="stat-label">Meilleure moyenne</div></div>
+                        <div class="stat-card"><div class="stat-value" id="lowestAverage">0.00</div><div class="stat-label">Plus basse moyenne</div></div>
+                        <div class="stat-card"><div class="stat-value" id="passRate">0%</div><div class="stat-label">Taux réussite</div></div>
+                    </div>
+                    <h3>Classement des élèves</h3>
+                    <div class="table-container"><table class="data-table"><thead><tr><th>Rang</th><th>Élève</th><th>Moyenne</th><th>Mention</th></tr></thead><tbody id="rankingList"></tbody></table></div>
+                </div>
+            </div>
+
+            <!-- Onglet 4: Bulletin -->
+            <div class="tab-content" id="tab4">
+                <div class="form-section">
+                    <h2><i class="fas fa-file-pdf"></i> Génération du Bulletin</h2>
+                    <div class="no-print d-flex gap-2 flex-wrap" style="margin-bottom: 1rem;">
+                        <div class="form-group"><label><input type="checkbox" id="watermarkToggle" checked onchange="toggleWatermark()"> Filigrane</label></div>
+                        <div class="form-group"><label>Élève</label><select id="bulletinStudentSelect" class="form-control" onchange="updateSelectedStudent()"><option value="all">Tous les élèves</option></select></div>
+                        <button class="btn btn-primary" onclick="generateBulletin()"><i class="fas fa-sync"></i> Générer</button>
+                        <button class="btn btn-success" onclick="printSingleBulletin()"><i class="fas fa-print"></i> Imprimer</button>
+                        <button class="btn btn-info" onclick="printAllBulletins()"><i class="fas fa-print"></i> Imprimer tous</button>
+                        <button class="btn btn-warning" onclick="exportPDF()"><i class="fas fa-file-pdf"></i> PDF</button>
+                    </div>
+                    <div class="bulletin-preview-container">
+                        <div class="bulletin-actions no-print">
+                            <button class="btn btn-sm btn-primary" onclick="generateBulletin()"><i class="fas fa-sync"></i> Rafraîchir</button>
+                            <button class="btn btn-sm btn-success" onclick="printSingleBulletin()"><i class="fas fa-print"></i> Imprimer</button>
+                            <button class="btn btn-sm btn-warning" onclick="exportPDF()"><i class="fas fa-file-pdf"></i> PDF</button>
+                        </div>
+                        <div id="bulletinPreview" class="bulletin-togo with-watermark">
+                            <div class="watermark">RÉPUBLIQUE TOGOLAISE</div>
+                            <div class="alert alert-info text-center">📄 Cliquez sur "Générer" pour créer le bulletin</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Onglet 5: Archives -->
+            <div class="tab-content" id="tab5">
+                <div class="form-section">
+                    <h2><i class="fas fa-archive"></i> Archives</h2>
+                    <div class="table-container"><table class="data-table"><thead><tr><th>Date</th><th>Élève</th><th>Classe</th><th>Période</th><th>Moyenne</th></tr></thead><tbody id="archivesList"></tbody></table></div>
+                </div>
+            </div>
+
+            <!-- Onglet 6: Configuration -->
+            <div class="tab-content" id="tab6">
+                <div class="form-section">
+                    <h2><i class="fas fa-cogs"></i> Configuration</h2>
+                    <div class="form-row">
+                        <div class="form-group"><label>Seuil réussite (10/20)</label><input type="number" id="passingGrade" class="form-control" min="0" max="20" step="0.5" value="10" onchange="updatePassingGrade()"></div>
+                    </div>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button class="btn btn-primary" onclick="saveAllData()"><i class="fas fa-save"></i> Sauvegarder</button>
+                        <button class="btn btn-danger" onclick="clearData()"><i class="fas fa-trash"></i> Réinitialiser</button>
+                        <button class="btn btn-info" onclick="exportSchoolData()"><i class="fas fa-download"></i> Exporter données</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="text-center p-3 bg-light no-print"><p>République Togolaise - Travail • Liberté • Patrie © 2025</p></footer>
+    </div>
+
+    <div id="bulletinMultipleContainer" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 10000; overflow-y: auto; padding: 20px;"></div>
+
+    <script>
+        // ==================== VARIABLES GLOBALES ====================
+        let students = [];
+        let subjects = [];
+        let grades = {};
+        let archives = [];
+        let currentSettings = { passingGrade: 10, showWatermark: true };
+        let currentStudentForBulletin = null;
+
+        // ==================== INITIALISATION ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('editionDate').valueAsDate = new Date();
+            document.getElementById('schoolYear').value = `${new Date().getFullYear()}-${new Date().getFullYear()+1}`;
+            loadDefaultSubjects();
+            loadAllData();
+            updateCounters();
+            updateStudentSelect();
+            updateBulletinStudentSelect();
+            showNotification('✅ Système chargé avec succès', 'success');
+        });
+
+        // ==================== IMPORT JSON DEPUIS BULL.HTML ====================
+        function importFromJSONFile(input) {
+            if(!input.files || !input.files[0]) return;
+            const file = input.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    let importedStudents = [];
+                    
+                    if(Array.isArray(data) && data.length > 0 && (data[0].lastName || data[0].nom)) {
+                        importedStudents = data;
+                    }
+                    else if(data.students && Array.isArray(data.students)) {
+                        importedStudents = data.students;
+                    }
+                    else if(data.data && data.data.students) {
+                        importedStudents = data.data.students;
+                    }
+                    
+                    if(importedStudents.length === 0) {
+                        showNotification('❌ Aucun élève trouvé dans le fichier JSON', 'warning');
+                        return;
+                    }
+                    
+                    let count = 0;
+                    importedStudents.forEach(s => {
+                        const lastName = s.lastName || s.nom || '';
+                        const firstName = s.firstName || s.prenom || '';
+                        if(lastName && firstName) {
+                            students.push({
+                                id: Date.now().toString() + Math.random().toString(36).substr(2, 6),
+                                lastName: lastName,
+                                firstName: firstName,
+                                studentId: s.studentId || s.matricule || `MAT-${Date.now().toString().slice(-6)}`,
+                                gender: (s.gender === 'M' || s.gender === 'F') ? s.gender : (s.sexe === 'Masculin' ? 'M' : 'F'),
+                                birthDate: s.birthDate || s.dateNaissance || '',
+                                birthPlace: s.birthPlace || s.lieuNaissance || '',
+                                status: s.status || s.statut || 'Nouveau',
+                                guardianName: s.guardianName || s.tuteur || '',
+                                guardianPhone: s.guardianPhone || s.telephoneTuteur || '',
+                                class: s.className || s.class || s.classe || '6ème'
+                            });
+                            grades[students[students.length-1].id] = {};
+                            count++;
+                        }
+                    });
+                    
+                    if(count > 0) {
+                        updateStudentList();
+                        updateCounters();
+                        updateStudentSelect();
+                        updateBulletinStudentSelect();
+                        saveAllData();
+                        showNotification(`✅ ${count} élève(s) importé(s) avec succès depuis ${file.name}`, 'success');
+                    } else {
+                        showNotification('⚠️ Aucun élève valide trouvé dans le fichier', 'warning');
+                    }
+                } catch(e) {
+                    console.error('Erreur JSON:', e);
+                    showNotification('❌ Erreur lors de la lecture du fichier JSON', 'danger');
+                }
+            };
+            
+            reader.onerror = function() {
+                showNotification('❌ Erreur de lecture du fichier', 'danger');
+            };
+            
+            reader.readAsText(file);
+            input.value = '';
+        }
+
+        // Drag & drop
+        function setupDragAndDrop() {
+            const dropZone = document.querySelector('.file-import-area');
+            if(!dropZone) return;
+            
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.style.background = '#d4edda';
+                dropZone.style.borderColor = '#28a745';
+            });
+            
+            dropZone.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                dropZone.style.background = 'var(--primary-light)';
+                dropZone.style.borderColor = 'var(--primary-color)';
+            });
+            
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.style.background = 'var(--primary-light)';
+                dropZone.style.borderColor = 'var(--primary-color)';
+                const file = e.dataTransfer.files[0];
+                if(file && file.name.endsWith('.json')) {
+                    const fakeInput = { files: [file] };
+                    importFromJSONFile(fakeInput);
+                } else {
+                    showNotification('Veuillez déposer un fichier JSON', 'warning');
+                }
+            });
+        }
+        
+        setTimeout(setupDragAndDrop, 100);
+
+        // ==================== GESTION DES ÉLÈVES ====================
+        function addStudent() {
+            let lastName = document.getElementById('studentLastName').value.trim();
+            let firstName = document.getElementById('studentFirstName').value.trim();
+            if(!lastName || !firstName) { showNotification('⚠️ Nom et prénom requis', 'warning'); return; }
+            
+            students.push({
+                id: Date.now().toString(),
+                lastName: lastName,
+                firstName: firstName,
+                studentId: document.getElementById('studentId').value.trim() || `MAT-${Date.now().toString().slice(-6)}`,
+                gender: document.getElementById('studentGender').value,
+                birthDate: document.getElementById('studentBirthDate').value,
+                birthPlace: document.getElementById('studentBirthPlace').value,
+                status: document.getElementById('studentStatus').value,
+                guardianName: document.getElementById('guardianName').value,
+                guardianPhone: document.getElementById('guardianPhone').value,
+                class: document.getElementById('class').value || '6ème'
+            });
+            grades[students[students.length-1].id] = {};
+            
+            document.getElementById('studentLastName').value = '';
+            document.getElementById('studentFirstName').value = '';
+            document.getElementById('studentId').value = '';
+            document.getElementById('studentGender').value = '';
+            document.getElementById('studentBirthDate').value = '';
+            document.getElementById('studentBirthPlace').value = '';
+            document.getElementById('guardianName').value = '';
+            document.getElementById('guardianPhone').value = '';
+            
+            updateStudentList();
+            updateCounters();
+            updateStudentSelect();
+            updateBulletinStudentSelect();
+            saveAllData();
+            showNotification(`✅ Élève ${lastName} ${firstName} ajouté`, 'success');
+        }
+
+        function updateStudentList() {
+            let container = document.getElementById('studentsList');
+            if(!container) return;
+            if(students.length === 0) { 
+                container.innerHTML = '<div class="alert alert-info text-center">📭 Aucun élève enregistré</div>'; 
+                return; 
+            }
+            container.innerHTML = '';
+            students.forEach(s => {
+                container.innerHTML += `
+                    <div class="student-item">
+                        <div>
+                            <div class="student-name">${escapeHtml(s.lastName)} ${escapeHtml(s.firstName)}</div>
+                            <div style="font-size: 12px; color: #666;">${s.studentId}</div>
+                        </div>
+                        <div>${s.birthDate || '-'}</div>
+                        <div>${s.guardianPhone || '-'}</div>
+                        <div>
+                            <button class="btn btn-sm btn-danger" onclick="deleteStudent('${s.id}')"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('classSize').value = students.length;
+            document.getElementById('girlsCount').value = students.filter(s => s.gender === 'F').length;
+            document.getElementById('boysCount').value = students.filter(s => s.gender === 'M').length;
+        }
+        
+        function escapeHtml(text) {
+            if(!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function deleteStudent(id) { 
+            if(confirm('Supprimer cet élève ?')) { 
+                students = students.filter(s => s.id !== id); 
+                delete grades[id]; 
+                updateStudentList(); 
+                updateCounters(); 
+                updateStudentSelect(); 
+                updateBulletinStudentSelect(); 
+                saveAllData(); 
+                showNotification('🗑️ Élève supprimé', 'success'); 
+            } 
+        }
+
+        // ==================== MATIÈRES ====================
+        function loadDefaultSubjects() {
+            subjects = [
+                { id: 1, name: 'Français', coefficient: 2, teacher: 'M. KOUMA Koffi', hours: 5, category: 'Littéraire' },
+                { id: 2, name: 'Mathématiques', coefficient: 2, teacher: 'Mme. ADJOA Afi', hours: 5, category: 'Scientifique' },
+                { id: 3, name: 'Histoire-Géographie', coefficient: 1, teacher: 'M. SAGBO Kodjo', hours: 4, category: 'Littéraire' },
+                { id: 4, name: 'SVT', coefficient: 1, teacher: 'Mme. DOSSOU Elodie', hours: 4, category: 'Scientifique' },
+                { id: 5, name: 'Physique-Chimie', coefficient: 1, teacher: 'M. AKAKPO Yao', hours: 4, category: 'Scientifique' },
+                { id: 6, name: 'Anglais', coefficient: 1, teacher: 'Mme. JOHNSON Sarah', hours: 3, category: 'Littéraire' },
+                { id: 7, name: 'EPS', coefficient: 1, teacher: 'M. GBEASSOR Komi', hours: 2, category: 'Autre' }
+            ];
+            updateSubjectsList(); 
+            saveAllData();
+            showNotification('✅ Programme standard chargé', 'success');
+        }
+
+        function updateSubjectsList() {
+            let container = document.getElementById('subjectsList');
+            if(!container) return;
+            container.innerHTML = '';
+            subjects.forEach((s, i) => {
+                container.innerHTML += `
+                    <tr>
+                        <td><input type="text" class="form-control" value="${s.name}" onchange="updateSubject(${i},'name',this.value)"></td>
+                        <td><input type="number" class="form-control" value="${s.coefficient}" onchange="updateSubject(${i},'coefficient',parseFloat(this.value))"></td>
+                        <td><input type="text" class="form-control" value="${s.teacher}" placeholder="Nom et Prénom" onchange="updateSubject(${i},'teacher',this.value)"></td>
+                        <td><input type="number" class="form-control" value="${s.hours}" onchange="updateSubject(${i},'hours',parseInt(this.value))"></td>
+                        <td><select class="form-control" onchange="updateSubject(${i},'category',this.value)">
+                            <option ${s.category==='Scientifique'?'selected':''}>Scientifique</option>
+                            <option ${s.category==='Littéraire'?'selected':''}>Littéraire</option>
+                            <option ${s.category==='Autre'?'selected':''}>Autre</option>
+                        </select></td>
+                        <td><button class="btn btn-sm btn-danger" onclick="removeSubject(${i})"><i class="fas fa-trash"></i></button></td>
+                    </tr>
+                `;
+            });
+            document.getElementById('subjectCount').textContent = subjects.length;
+        }
+
+        function updateSubject(idx, field, val) { if(subjects[idx]) { subjects[idx][field] = val; saveAllData(); } }
+        function addSubject() { subjects.push({ id: Date.now(), name: 'Nouvelle matière', coefficient: 1, teacher: '', hours: 2, category: 'Autre' }); updateSubjectsList(); saveAllData(); showNotification('➕ Matière ajoutée', 'success'); }
+        function removeSubject(idx) { if(confirm('Supprimer cette matière ?')) { subjects.splice(idx,1); updateSubjectsList(); saveAllData(); } }
+
+        // ==================== NOTES ====================
+        function updateStudentSelect() {
+            let select = document.getElementById('studentSelect');
+            if(!select) return;
+            select.innerHTML = '<option value="">Tous les élèves</option>';
+            students.forEach(s => { select.innerHTML += `<option value="${s.id}">${s.lastName} ${s.firstName}</option>`; });
+        }
+
+        function loadStudentGrades() { updateGradesDisplay(); }
+        function filterGrades() { updateGradesDisplay(); }
+
+        function updateGradesDisplay() {
+            let container = document.getElementById('gradesContainer');
+            if(!container) return;
+            if(students.length === 0 || subjects.length === 0) { 
+                container.innerHTML = '<div class="alert alert-warning">⚠️ Ajoutez d\'abord des élèves et des matières</div>'; 
+                return; 
+            }
+            let studentId = document.getElementById('studentSelect').value;
+            let filtered = studentId ? students.filter(s => s.id === studentId) : students;
+            container.innerHTML = '';
+            filtered.forEach(s => {
+                let html = `<div class="note-card"><div class="note-header"><h4>${s.lastName} ${s.firstName}</h4><span class="badge badge-primary">${s.studentId}</span></div>`;
+                subjects.forEach(sub => {
+                    let sg = (grades[s.id] && grades[s.id][sub.id]) || {};
+                    html += `
+                        <div>
+                            <label>${sub.name} (coef ${sub.coefficient}) - ${sub.teacher || 'Enseignant non assigné'}</label>
+                            <div class="note-input-group">
+                                <input type="number" min="0" max="20" step="0.5" value="${sg.note1||''}" placeholder="Note 1" class="form-control" onchange="updateGrade('${s.id}','${sub.id}','note1',this.value)">
+                                <input type="number" min="0" max="20" step="0.5" value="${sg.note2||''}" placeholder="Note 2" class="form-control" onchange="updateGrade('${s.id}','${sub.id}','note2',this.value)">
+                            </div>
+                        </div>
+                    `;
+                });
+                html += `<div class="mt-2 text-center"><strong>📊 Moyenne générale: ${calculateStudentAverage(s.id).toFixed(2)}/20</strong></div></div>`;
+                container.innerHTML += html;
+            });
+        }
+
+        function updateGrade(studentId, subjectId, type, value) {
+            if(!grades[studentId]) grades[studentId] = {};
+            if(!grades[studentId][subjectId]) grades[studentId][subjectId] = {};
+            let v = parseFloat(value);
+            grades[studentId][subjectId][type] = (isNaN(v) || v<0 || v>20) ? undefined : v;
+            updateGradesDisplay();
+            calculateStatistics();
+            saveAllData();
+        }
+
+        function calculateSubjectAverage(sg) { 
+            let n1 = sg.note1 || 0, n2 = sg.note2 || 0; 
+            if(n1 === 0 && n2 === 0) return 0; 
+            if(n1 > 0 && n2 === 0) return n1; 
+            if(n1 === 0 && n2 > 0) return n2; 
+            return (n1 + n2) / 2; 
+        }
+        
+        function calculateStudentAverage(id) {
+            let sg = grades[id]; 
+            if(!sg) return 0;
+            let total = 0, coef = 0;
+            subjects.forEach(sub => {
+                if(sg[sub.id]) {
+                    let avg = calculateSubjectAverage(sg[sub.id]);
+                    if(avg > 0) { 
+                        total += avg * sub.coefficient; 
+                        coef += sub.coefficient; 
+                    }
+                }
+            });
+            return coef > 0 ? total / coef : 0;
+        }
+        
+        function calculateCategoryAverage(id, category) {
+            let sg = grades[id]; 
+            if(!sg) return 0;
+            let total = 0, coef = 0;
+            subjects.filter(s => s.category === category).forEach(sub => {
+                if(sg[sub.id]) {
+                    let avg = calculateSubjectAverage(sg[sub.id]);
+                    if(avg > 0) { 
+                        total += avg * sub.coefficient; 
+                        coef += sub.coefficient; 
+                    }
+                }
+            });
+            return coef > 0 ? total / coef : 0;
+        }
+        
+        function calculateClassAverage() {
+            let total = 0, count = 0;
+            students.forEach(s => { 
+                let avg = calculateStudentAverage(s.id); 
+                if(avg > 0) { total += avg; count++; } 
+            });
+            return count > 0 ? total / count : 0;
+        }
+        
+        function getStudentRank(studentId) {
+            let averages = students.map(s => ({ id: s.id, avg: calculateStudentAverage(s.id) })).filter(s => s.avg > 0).sort((a,b) => b.avg - a.avg);
+            let rank = averages.findIndex(s => s.id === studentId) + 1;
+            let total = averages.length;
+            if(rank === 0 || total === 0) return '-';
+            return `${rank}${rank === 1 ? 'er' : 'ème'} sur ${total}`;
+        }
+        
+        function calculateStatistics() {
+            if(students.length === 0) {
+                document.getElementById('classAverage').textContent = '0.00';
+                document.getElementById('highestAverage').textContent = '0.00';
+                document.getElementById('lowestAverage').textContent = '0.00';
+                document.getElementById('passRate').textContent = '0%';
+                document.getElementById('rankingList').innerHTML = '<tr><td colspan="4" class="text-center">Aucune donnée</td></tr>';
+                return;
+            }
+            
+            let total = 0, highest = 0, lowest = 20, passed = 0, count = 0;
+            students.forEach(s => {
+                let avg = calculateStudentAverage(s.id);
+                if(avg > 0) { 
+                    total += avg; 
+                    count++; 
+                    if(avg > highest) highest = avg; 
+                    if(avg < lowest) lowest = avg; 
+                    if(avg >= currentSettings.passingGrade) passed++; 
+                }
+            });
+            
+            document.getElementById('classAverage').textContent = (count > 0 ? (total/count).toFixed(2) : '0.00');
+            document.getElementById('highestAverage').textContent = highest.toFixed(2);
+            document.getElementById('lowestAverage').textContent = lowest.toFixed(2);
+            document.getElementById('passRate').textContent = `${count > 0 ? ((passed/count)*100).toFixed(1) : 0}%`;
+            
+            let ranking = students.map(s => ({...s, avg: calculateStudentAverage(s.id)})).filter(s => s.avg > 0).sort((a,b) => b.avg - a.avg);
+            let rankContainer = document.getElementById('rankingList');
+            if(rankContainer) {
+                rankContainer.innerHTML = '';
+                ranking.forEach((s,i) => {
+                    rankContainer.innerHTML += `<tr><td><strong>${i+1}</strong>${i===0?'er':'ème'}</td><td>${s.lastName} ${s.firstName}</td><td>${s.avg.toFixed(2)}</td><td>${getMention(s.avg)}</td></tr>`;
+                });
+            }
+        }
+        
+        function getMention(avg) { 
+            if(avg >= 16) return 'Très Bien'; 
+            if(avg >= 14) return 'Bien'; 
+            if(avg >= 12) return 'Assez Bien'; 
+            if(avg >= 10) return 'Passable'; 
+            return 'Insuffisant'; 
+        }
+
+        // ==================== BULLETIN ====================
+        function updateBulletinStudentSelect() {
+            let select = document.getElementById('bulletinStudentSelect');
+            if(!select) return;
+            select.innerHTML = '<option value="all">Tous les élèves</option>';
+            students.forEach(s => { select.innerHTML += `<option value="${s.id}">${s.lastName} ${s.firstName}</option>`; });
+        }
+        
+        function updateSelectedStudent() { generateBulletin(document.getElementById('bulletinStudentSelect').value); }
+        
+        function generateBulletin(studentId = null) {
+            let container = document.getElementById('bulletinPreview');
+            if(students.length === 0) { 
+                container.innerHTML = '<div class="alert alert-warning text-center">⚠️ Aucun élève enregistré</div>'; 
+                return; 
+            }
+            let student = (studentId && studentId !== 'all') ? students.find(s => s.id === studentId) : students[0];
+            if(!student) student = students[0];
+            currentStudentForBulletin = student.id;
+            container.innerHTML = createBulletinHTML(student);
+            if(currentSettings.showWatermark) container.classList.add('with-watermark');
+            else container.classList.remove('with-watermark');
+            showNotification(`📄 Bulletin généré pour ${student.firstName} ${student.lastName}`, 'success');
+        }
+        
+        function createBulletinHTML(student) {
+            let avg = calculateStudentAverage(student.id);
+            let classAvg = calculateClassAverage();
+            let scientificAvg = calculateCategoryAverage(student.id, 'Scientifique');
+            let literaryAvg = calculateCategoryAverage(student.id, 'Littéraire');
+            let otherAvg = calculateCategoryAverage(student.id, 'Autre');
+            let rank = getStudentRank(student.id);
+            
+            let schoolYear = document.getElementById('schoolYear').value || '2024-2025';
+            let period = document.getElementById('period').value || '1er Trimestre';
+            let schoolName = document.getElementById('schoolName').value || 'CEG MASSEDENA';
+            let className = document.getElementById('class').value || '6ème';
+            let city = document.getElementById('city').value || 'KARA';
+            let inspection = document.getElementById('inspection').value || 'IESG-Niamtougou';
+            let schoolCode = document.getElementById('schoolCode').value || '-';
+            let editionDate = document.getElementById('editionDate').value ? new Date(document.getElementById('editionDate').value).toLocaleDateString('fr-FR') : new Date().toLocaleDateString('fr-FR');
+            let schoolStatus = document.getElementById('schoolStatus').value || 'Public';
+            let regionalDirection = document.getElementById('regionalDirection').value || 'DRE-KARA';
+            
+            let scientificSubjects = subjects.filter(s => s.category === 'Scientifique');
+            let literarySubjects = subjects.filter(s => s.category === 'Littéraire');
+            let otherSubjects = subjects.filter(s => s.category === 'Autre');
+            
+            let scientificHtml = '', literaryHtml = '', otherHtml = '';
+            
+            scientificSubjects.forEach(sub => {
+                let sg = (grades[student.id] && grades[student.id][sub.id]) || {};
+                let note1 = (sg.note1 && sg.note1 > 0) ? sg.note1.toFixed(1) : '-';
+                let note2 = (sg.note2 && sg.note2 > 0) ? sg.note2.toFixed(1) : '-';
+                let subAvg = calculateSubjectAverage(sg);
+                scientificHtml += `<tr><td style="text-align:left">${sub.name}</td><td>${sub.teacher || '-'}</td><td>${sub.coefficient}</td><td>${note1}</td><td>${note2}</td><td><strong>${subAvg>0 ? subAvg.toFixed(2) : '-'}</strong></td></tr>`;
+            });
+            
+            literarySubjects.forEach(sub => {
+                let sg = (grades[student.id] && grades[student.id][sub.id]) || {};
+                let note1 = (sg.note1 && sg.note1 > 0) ? sg.note1.toFixed(1) : '-';
+                let note2 = (sg.note2 && sg.note2 > 0) ? sg.note2.toFixed(1) : '-';
+                let subAvg = calculateSubjectAverage(sg);
+                literaryHtml += `<tr><td style="text-align:left">${sub.name}</td><td>${sub.teacher || '-'}</td><td>${sub.coefficient}</td><td>${note1}</td><td>${note2}</td><td><strong>${subAvg>0 ? subAvg.toFixed(2) : '-'}</strong></td></tr>`;
+            });
+            
+            otherSubjects.forEach(sub => {
+                let sg = (grades[student.id] && grades[student.id][sub.id]) || {};
+                let note1 = (sg.note1 && sg.note1 > 0) ? sg.note1.toFixed(1) : '-';
+                let note2 = (sg.note2 && sg.note2 > 0) ? sg.note2.toFixed(1) : '-';
+                let subAvg = calculateSubjectAverage(sg);
+                otherHtml += `<tr><td style="text-align:left">${sub.name}</td><td>${sub.teacher || '-'}</td><td>${sub.coefficient}</td><td>${note1}</td><td>${note2}</td><td><strong>${subAvg>0 ? subAvg.toFixed(2) : '-'}</strong></td></tr>`;
+            });
+            
+            let totalCoeff = subjects.reduce((sum, sub) => sum + sub.coefficient, 0);
+            
+            return `
+                <div class="bulletin-header">
+                    <div class="republic-togo">RÉPUBLIQUE TOGOLAISE</div>
+                    <div class="motto-togo">Travail - Liberté - Patrie</div>
+                    <div class="ministry-togo">MINISTÈRE DES ENSEIGNEMENTS PRIMAIRE, SECONDAIRE ET TECHNIQUE</div>
+                    <div class="title-togo">BULLETIN SCOLAIRE OFFICIEL</div>
+                    <div style="font-size: 10px; margin-top: 5px;">Année scolaire: ${schoolYear} | Période: ${period}</div>
+                </div>
+                
+                <div class="school-info-bulletin">
+                    <div><strong>Établissement:</strong> ${schoolName}</div>
+                    <div><strong>Code:</strong> ${schoolCode}</div>
+                    <div><strong>Classe:</strong> ${className}</div>
+                    <div><strong>Inspection:</strong> ${inspection}</div>
+                    <div><strong>Ville:</strong> ${city}</div>
+                    <div><strong>Direction:</strong> ${regionalDirection}</div>
+                    <div><strong>Effectif:</strong> ${students.length} élèves</div>
+                    <div><strong>Statut:</strong> ${schoolStatus}</div>
+                    <div><strong>Date édition:</strong> ${editionDate}</div>
+                </div>
+                
+                <div class="student-info-bulletin">
+                    <div><strong>Nom et prénom:</strong> ${student.lastName} ${student.firstName}</div>
+                    <div><strong>Matricule:</strong> ${student.studentId}</div>
+                    <div><strong>Sexe:</strong> ${student.gender === 'M' ? 'Masculin' : 'Féminin'}</div>
+                    <div><strong>Date naissance:</strong> ${student.birthDate || 'Non précisé'}</div>
+                    <div><strong>Lieu naissance:</strong> ${student.birthPlace || 'Non précisé'}</div>
+                    <div><strong>Statut:</strong> ${student.status}</div>
+                    <div><strong>Tuteur:</strong> ${student.guardianName || 'Non précisé'}</div>
+                    <div><strong>Téléphone:</strong> ${student.guardianPhone || 'Non précisé'}</div>
+                </div>
+                
+                ${scientificSubjects.length > 0 ? `
+                <div class="category-header category-scientific"><i class="fas fa-flask"></i> MATIÈRES SCIENTIFIQUES</div>
+                <table class="grades-table">
+                    <thead><tr><th>DISCIPLINES</th><th>ENSEIGNANT</th><th>COEFF</th><th>NOTE 1</th><th>NOTE 2</th><th>MOYENNE</th></tr></thead>
+                    <tbody>${scientificHtml}</tbody>
+                </table>` : ''}
+                
+                ${literarySubjects.length > 0 ? `
+                <div class="category-header category-literary"><i class="fas fa-book"></i> MATIÈRES LITTÉRAIRES</div>
+                <table class="grades-table">
+                    <thead><tr><th>DISCIPLINES</th><th>ENSEIGNANT</th><th>COEFF</th><th>NOTE 1</th><th>NOTE 2</th><th>MOYENNE</th></tr></thead>
+                    <tbody>${literaryHtml}</tbody>
+                </table>` : ''}
+                
+                ${otherSubjects.length > 0 ? `
+                <div class="category-header category-other"><i class="fas fa-running"></i> AUTRES MATIÈRES</div>
+                <table class="grades-table">
+                    <thead><tr><th>DISCIPLINES</th><th>ENSEIGNANT</th><th>COEFF</th><th>NOTE 1</th><th>NOTE 2</th><th>MOYENNE</th></tr></thead>
+                    <tbody>${otherHtml}</tbody>
+                </table>` : ''}
+                
+                <div class="summary-section">
+                    <div class="summary-grid">
+                        <div class="summary-item"><div class="summary-label">Moyenne Sciences</div><div class="summary-value">${scientificAvg>0 ? scientificAvg.toFixed(2) : '-'}/20</div></div>
+                        <div class="summary-item"><div class="summary-label">Moyenne Lettres</div><div class="summary-value">${literaryAvg>0 ? literaryAvg.toFixed(2) : '-'}/20</div></div>
+                        <div class="summary-item"><div class="summary-label">Moyenne Autres</div><div class="summary-value">${otherAvg>0 ? otherAvg.toFixed(2) : '-'}/20</div></div>
+                        <div class="summary-item"><div class="summary-label">Moyenne Élève</div><div class="summary-value summary-value-large">${avg.toFixed(2)}/20</div></div>
+                        <div class="summary-item"><div class="summary-label">Moyenne Classe</div><div class="summary-value">${classAvg.toFixed(2)}/20</div></div>
+                        <div class="summary-item"><div class="summary-label">Total Coeff</div><div class="summary-value">${totalCoeff}</div></div>
+                        <div class="summary-item"><div class="summary-label">Rang</div><div class="summary-value" style="background:var(--tertiary-color);padding:5px;border-radius:5px;">${rank}</div></div>
+                        <div class="summary-item"><div class="summary-label">Mention</div><div class="summary-value" style="color:${avg>=16?'#28a745':avg>=14?'#17a2b8':avg>=12?'#ffc107':'#dc3545'}">${getMention(avg)}</div></div>
+                    </div>
+                    
+                    <div class="appreciation-box">
+                        <strong>📝 APPRÉCIATION GÉNÉRALE :</strong><br>
+                        ${getAppreciation(avg, classAvg)}
+                    </div>
+                </div>
+                
+                <div class="signatures-section">
+                    <div class="signature-box"><div>Le Chef d'Établissement</div><div class="signature-line"></div><div style="font-size: 8px;">Nom, prénom et cachet</div></div>
+                    <div class="signature-box"><div>Le Professeur Principal</div><div class="signature-line"></div><div style="font-size: 8px;">Nom, prénom et signature</div></div>
+                </div>
+                
+                <div class="footer-bulletin">
+                    <p>Ce bulletin est établi conformément aux textes en vigueur de la République Togolaise</p>
+                    <p>Arrêté N°${Math.floor(Math.random()*1000)}/MEPSTA/DGES - Tout bulletin falsifié est nul et non avenu</p>
+                </div>
+                
+                <div class="watermark">${schoolName.toUpperCase()}</div>
+            `;
+        }
+        
+        function getAppreciation(studentAvg, classAvg) {
+            if(studentAvg >= 18) return "🏆 EXCELLENT ! Félicitations pour ces résultats remarquables. L'élève fait preuve d'une grande maîtrise des connaissances.";
+            if(studentAvg >= 16) return "🌟 TRÈS BON TRAVAIL ! Résultats excellents. L'élève est prometteur et doit maintenir ce niveau.";
+            if(studentAvg >= 14) return "👍 BON TRAVAIL ! Résultats satisfaisants. L'élève peut encore progresser.";
+            if(studentAvg >= 12) return "📚 RÉSULTATS ACCEPTABLES. L'élève doit fournir plus d'efforts.";
+            if(studentAvg >= 10) return "⚠️ RÉSULTATS MOYENS. Un travail plus régulier est recommandé.";
+            return "🔻 RÉSULTATS INSUFFISANTS. Un soutien scolaire est nécessaire.";
+        }
+        
+        // ==================== IMPRESSION CORRIGÉE ====================
+        function printSingleBulletin() {
+            if(!currentStudentForBulletin && students.length > 0) generateBulletin();
+            if(!currentStudentForBulletin) { showNotification('Générez d\'abord un bulletin', 'warning'); return; }
+            let student = students.find(s => s.id === currentStudentForBulletin);
+            if(student) {
+                // Récupérer le contenu exact du bulletin généré
+                let bulletinContent = document.getElementById('bulletinPreview').cloneNode(true);
+                let printWindow = window.open('', '_blank', 'width=800,height=600,toolbar=yes,menubar=yes,scrollbars=yes');
+                
+                printWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Bulletin Scolaire - ${student.lastName} ${student.firstName}</title>
+                        <meta charset="UTF-8">
+                        <style>
+                            /* Copie de tous les styles */
+                            * { margin: 0; padding: 0; box-sizing: border-box; }
+                            :root {
+                                --primary-color: #006400;
+                                --secondary-color: #FF0000;
+                                --tertiary-color: #FFD700;
+                                --border-color: #dee2e6;
+                            }
+                            body { 
+                                background: white; 
+                                padding: 20px; 
+                                margin: 0;
+                                font-family: 'Times New Roman', 'Segoe UI', serif;
+                            }
+                            .bulletin-togo {
+                                background: white;
+                                width: 21cm;
+                                min-height: 29.7cm;
+                                margin: 0 auto;
+                                padding: 0.8cm;
+                                border: 2px solid var(--primary-color);
+                                position: relative;
+                            }
+                            .bulletin-togo.with-watermark {
+                                background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="400" height="400" opacity="0.04"><path d="M50,10 C30,10 10,30 10,50 C10,70 30,90 50,90 C70,90 90,70 90,50 C90,30 70,10 50,10 Z M50,30 C63,30 70,43 70,50 C70,57 63,70 50,70 C37,70 30,57 30,50 C30,43 37,30 50,30 Z" fill="%23006400"/><circle cx="50" cy="50" r="15" fill="%23006400"/></svg>');
+                                background-repeat: no-repeat;
+                                background-position: center;
+                                background-size: 350px;
+                            }
+                            .bulletin-header { text-align: center; margin-bottom: 20px; border-bottom: 3px double var(--secondary-color); padding-bottom: 10px; }
+                            .republic-togo { font-size: 14px; font-weight: bold; color: var(--primary-color); text-transform: uppercase; }
+                            .motto-togo { font-size: 11px; font-style: italic; margin: 3px 0; }
+                            .ministry-togo { font-size: 10px; margin: 5px 0; }
+                            .title-togo { font-size: 20px; font-weight: bold; color: var(--secondary-color); margin: 8px 0; text-transform: uppercase; }
+                            .school-info-bulletin { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 15px 0; padding: 10px; background: #e8f5e9; border-radius: 5px; border-left: 4px solid var(--secondary-color); font-size: 11px; }
+                            .student-info-bulletin { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 15px 0; padding: 10px; background: #f8f9fa; border-radius: 5px; border: 1px solid var(--border-color); font-size: 11px; }
+                            .category-header { font-weight: bold; padding: 6px 10px; margin: 15px 0 8px 0; border-radius: 5px; font-size: 12px; }
+                            .category-scientific { background: #bbdefb; color: #1565c0; border-left: 4px solid #1565c0; }
+                            .category-literary { background: #e1bee7; color: #6a1b9a; border-left: 4px solid #6a1b9a; }
+                            .category-other { background: #dcedc8; color: #33691e; border-left: 4px solid #33691e; }
+                            .grades-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 10px; }
+                            .grades-table th { background: var(--primary-color); color: white; padding: 6px; text-align: center; border: 1px solid #004d00; }
+                            .grades-table td { padding: 6px; border: 1px solid var(--border-color); text-align: center; }
+                            .grades-table td:first-child { text-align: left; font-weight: bold; }
+                            .summary-section { background: linear-gradient(135deg, #e8f5e9, white); padding: 12px; margin: 15px 0; border-radius: 8px; border: 1px solid var(--primary-color); }
+                            .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px; }
+                            .summary-item { text-align: center; padding: 8px; background: white; border-radius: 5px; }
+                            .summary-label { font-size: 9px; color: #666; text-transform: uppercase; }
+                            .summary-value { font-size: 16px; font-weight: bold; color: var(--primary-color); }
+                            .summary-value-large { font-size: 22px; color: var(--secondary-color); }
+                            .appreciation-box { padding: 10px; background: #f8f9fa; border-radius: 5px; margin-top: 10px; border-left: 3px solid var(--tertiary-color); font-size: 10px; }
+                            .signatures-section { display: flex; justify-content: space-between; margin-top: 30px; padding-top: 15px; border-top: 1px dashed var(--border-color); }
+                            .signature-box { text-align: center; width: 45%; }
+                            .signature-line { border-top: 1px solid #000; margin-top: 35px; padding-top: 5px; font-size: 9px; }
+                            .footer-bulletin { text-align: center; margin-top: 15px; font-size: 8px; color: #999; border-top: 1px solid var(--border-color); padding-top: 8px; }
+                            .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-size: 70px; color: rgba(0,100,0,0.06); z-index: 0; pointer-events: none; white-space: nowrap; font-weight: bold; width: 100%; text-align: center; }
+                            .no-print { display: none; }
+                            @media print {
+                                body { padding: 0; margin: 0; }
+                                .bulletin-togo { margin: 0 auto; page-break-after: avoid; box-shadow: none; }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="bulletin-togo ${currentSettings.showWatermark ? 'with-watermark' : ''}">
+                            ${createBulletinHTML(student)}
+                        </div>
+                        <script>
+                            window.onload = function() { 
+                                window.print(); 
+                                setTimeout(function() { window.close(); }, 1000); 
+                            };
+                        <\/script>
+                    </body>
+                    </html>
+                `);
+                printWindow.document.close();
+            }
+        }
+        
+        function printAllBulletins() {
+            if(students.length === 0) { showNotification('Aucun élève', 'warning'); return; }
+            let allHTML = '';
+            students.forEach((s, idx) => { 
+                allHTML += `<div class="bulletin-togo ${currentSettings.showWatermark ? 'with-watermark' : ''}" style="margin-bottom: 20px; page-break-after: always;">${createBulletinHTML(s)}</div>`; 
+            });
+            let printWindow = window.open('', '_blank', 'width=800,height=600,toolbar=yes,menubar=yes,scrollbars=yes');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Bulletins - Classe ${document.getElementById('class').value}</title>
+                    <meta charset="UTF-8">
+                    <style>
+                        * { margin: 0; padding: 0; box-sizing: border-box; }
+                        :root {
+                            --primary-color: #006400;
+                            --secondary-color: #FF0000;
+                            --tertiary-color: #FFD700;
+                            --border-color: #dee2e6;
+                        }
+                        body { background: white; margin: 0; padding: 0; font-family: 'Times New Roman', 'Segoe UI', serif; }
+                        .bulletin-togo {
+                            background: white;
+                            width: 21cm;
+                            min-height: 29.7cm;
+                            margin: 0 auto 20px auto;
+                            padding: 0.8cm;
+                            border: 2px solid #006400;
+                            page-break-after: always;
+                            position: relative;
+                        }
+                        .bulletin-togo.with-watermark {
+                            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="400" height="400" opacity="0.04"><path d="M50,10 C30,10 10,30 10,50 C10,70 30,90 50,90 C70,90 90,70 90,50 C90,30 70,10 50,10 Z M50,30 C63,30 70,43 70,50 C70,57 63,70 50,70 C37,70 30,57 30,50 C30,43 37,30 50,30 Z" fill="%23006400"/><circle cx="50" cy="50" r="15" fill="%23006400"/></svg>');
+                            background-repeat: no-repeat;
+                            background-position: center;
+                            background-size: 350px;
+                        }
+                        .bulletin-header { text-align: center; margin-bottom: 20px; border-bottom: 3px double #FF0000; padding-bottom: 10px; }
+                        .republic-togo { font-size: 14px; font-weight: bold; color: #006400; text-transform: uppercase; }
+                        .motto-togo { font-size: 11px; font-style: italic; margin: 3px 0; }
+                        .ministry-togo { font-size: 10px; margin: 5px 0; }
+                        .title-togo { font-size: 20px; font-weight: bold; color: #FF0000; margin: 8px 0; text-transform: uppercase; }
+                        .school-info-bulletin { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 15px 0; padding: 10px; background: #e8f5e9; border-radius: 5px; border-left: 4px solid #FF0000; font-size: 11px; }
+                        .student-info-bulletin { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 15px 0; padding: 10px; background: #f8f9fa; border-radius: 5px; border: 1px solid #dee2e6; font-size: 11px; }
+                        .category-header { font-weight: bold; padding: 6px 10px; margin: 15px 0 8px 0; border-radius: 5px; font-size: 12px; }
+                        .category-scientific { background: #bbdefb; color: #1565c0; border-left: 4px solid #1565c0; }
+                        .category-literary { background: #e1bee7; color: #6a1b9a; border-left: 4px solid #6a1b9a; }
+                        .category-other { background: #dcedc8; color: #33691e; border-left: 4px solid #33691e; }
+                        .grades-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 10px; }
+                        .grades-table th { background: #006400; color: white; padding: 6px; text-align: center; border: 1px solid #004d00; }
+                        .grades-table td { padding: 6px; border: 1px solid #dee2e6; text-align: center; }
+                        .grades-table td:first-child { text-align: left; font-weight: bold; }
+                        .summary-section { background: linear-gradient(135deg, #e8f5e9, white); padding: 12px; margin: 15px 0; border-radius: 8px; border: 1px solid #006400; }
+                        .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px; }
+                        .summary-item { text-align: center; padding: 8px; background: white; border-radius: 5px; }
+                        .summary-label { font-size: 9px; color: #666; text-transform: uppercase; }
+                        .summary-value { font-size: 16px; font-weight: bold; color: #006400; }
+                        .summary-value-large { font-size: 22px; color: #FF0000; }
+                        .appreciation-box { padding: 10px; background: #f8f9fa; border-radius: 5px; margin-top: 10px; border-left: 3px solid #FFD700; font-size: 10px; }
+                        .signatures-section { display: flex; justify-content: space-between; margin-top: 30px; padding-top: 15px; border-top: 1px dashed #dee2e6; }
+                        .signature-box { text-align: center; width: 45%; }
+                        .signature-line { border-top: 1px solid #000; margin-top: 35px; padding-top: 5px; font-size: 9px; }
+                        .footer-bulletin { text-align: center; margin-top: 15px; font-size: 8px; color: #999; border-top: 1px solid #dee2e6; padding-top: 8px; }
+                        .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-size: 70px; color: rgba(0,100,0,0.06); z-index: 0; pointer-events: none; white-space: nowrap; font-weight: bold; width: 100%; text-align: center; }
+                        @media print {
+                            body { padding: 0; margin: 0; }
+                            .bulletin-togo { page-break-after: always; box-shadow: none; margin: 0 auto; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${allHTML}
+                    <script>
+                        window.onload = function() { window.print(); setTimeout(function() { window.close(); }, 1000); };
+                    <\/script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        }
+        
+        async function exportPDF() {
+            if(!currentStudentForBulletin && students.length > 0) generateBulletin();
+            if(!currentStudentForBulletin) { showNotification('Générez d\'abord un bulletin', 'warning'); return; }
+            try {
+                let element = document.getElementById('bulletinPreview');
+                let canvas = await html2canvas(element, { 
+                    scale: 3, 
+                    backgroundColor: '#ffffff', 
+                    logging: false,
+                    useCORS: true
+                });
+                let imgData = canvas.toDataURL('image/png');
+                let { jsPDF } = window.jspdf;
+                let doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+                let imgWidth = 190;
+                let imgHeight = (canvas.height * imgWidth) / canvas.width;
+                doc.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+                let student = students.find(s => s.id === currentStudentForBulletin);
+                doc.save(`bulletin_${student?.lastName || 'eleve'}_${Date.now()}.pdf`);
+                showNotification('📄 PDF généré avec succès', 'success');
+            } catch(e) { 
+                console.error(e);
+                showNotification('Erreur PDF: ' + e.message, 'danger'); 
+            }
+        }
+        
+        function toggleWatermark() {
+            currentSettings.showWatermark = document.getElementById('watermarkToggle').checked;
+            let bulletin = document.getElementById('bulletinPreview');
+            if(bulletin) {
+                if(currentSettings.showWatermark) bulletin.classList.add('with-watermark');
+                else bulletin.classList.remove('with-watermark');
+            }
+            saveAllData();
+        }
+        
+        function updatePassingGrade() {
+            currentSettings.passingGrade = parseFloat(document.getElementById('passingGrade').value);
+            calculateStatistics();
+            saveAllData();
+        }
+        
+        // ==================== SAUVEGARDE ====================
+        function saveAllData() {
+            let data = { 
+                students, subjects, grades, archives, 
+                settings: currentSettings,
+                schoolInfo: { 
+                    schoolYear: document.getElementById('schoolYear').value, 
+                    period: document.getElementById('period').value,
+                    schoolName: document.getElementById('schoolName').value, 
+                    class: document.getElementById('class').value,
+                    level: document.getElementById('level').value, 
+                    series: document.getElementById('series').value,
+                    schoolCode: document.getElementById('schoolCode').value,
+                    city: document.getElementById('city').value,
+                    inspection: document.getElementById('inspection').value,
+                    regionalDirection: document.getElementById('regionalDirection').value,
+                    schoolStatus: document.getElementById('schoolStatus').value
+                }
+            };
+            localStorage.setItem('schoolData', JSON.stringify(data));
+        }
+        
+        function loadAllData() {
+            let saved = localStorage.getItem('schoolData');
+            if(saved) {
+                try {
+                    let data = JSON.parse(saved);
+                    students = data.students || [];
+                    subjects = data.subjects || [];
+                    grades = data.grades || {};
+                    archives = data.archives || [];
+                    currentSettings = data.settings || currentSettings;
+                    if(data.schoolInfo) {
+                        document.getElementById('schoolYear').value = data.schoolInfo.schoolYear || '';
+                        document.getElementById('period').value = data.schoolInfo.period || '';
+                        document.getElementById('schoolName').value = data.schoolInfo.schoolName || '';
+                        document.getElementById('class').value = data.schoolInfo.class || '';
+                        document.getElementById('level').value = data.schoolInfo.level || '';
+                        document.getElementById('series').value = data.schoolInfo.series || '';
+                        document.getElementById('schoolCode').value = data.schoolInfo.schoolCode || '';
+                        document.getElementById('city').value = data.schoolInfo.city || 'KARA';
+                        document.getElementById('inspection').value = data.schoolInfo.inspection || 'IESG-Niamtougou';
+                        document.getElementById('regionalDirection').value = data.schoolInfo.regionalDirection || 'DRE-KARA';
+                        document.getElementById('schoolStatus').value = data.schoolInfo.schoolStatus || 'Public';
+                    }
+                    document.getElementById('watermarkToggle').checked = currentSettings.showWatermark;
+                    document.getElementById('passingGrade').value = currentSettings.passingGrade;
+                    updateStudentList(); 
+                    updateSubjectsList(); 
+                    updateStudentSelect(); 
+                    updateBulletinStudentSelect();
+                    calculateStatistics();
+                } catch(e) { console.log('Erreur chargement'); }
+            }
+        }
+        
+        function clearData() { 
+            if(confirm('⚠️ Toutes les données seront définitivement perdues. Continuer ?')) { 
+                students = []; 
+                subjects = []; 
+                grades = {}; 
+                archives = []; 
+                saveAllData(); 
+                updateStudentList(); 
+                updateSubjectsList(); 
+                updateStudentSelect(); 
+                updateBulletinStudentSelect(); 
+                calculateStatistics(); 
+                showNotification('🗑️ Données réinitialisées', 'success'); 
+            } 
+        }
+        
+        function exportSchoolData() {
+            let exportData = {
+                students: students,
+                subjects: subjects,
+                grades: grades,
+                exportDate: new Date().toISOString(),
+                schoolInfo: {
+                    schoolYear: document.getElementById('schoolYear').value,
+                    period: document.getElementById('period').value,
+                    schoolName: document.getElementById('schoolName').value,
+                    class: document.getElementById('class').value
+                }
+            };
+            let jsonStr = JSON.stringify(exportData, null, 2);
+            let blob = new Blob([jsonStr], { type: 'application/json' });
+            let url = URL.createObjectURL(blob);
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = `export_scolaire_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showNotification('📁 Données exportées en JSON', 'success');
+        }
+        
+        // ==================== UTILITAIRES ====================
+        function updateCounters() { 
+            document.getElementById('studentCount').textContent = students.length; 
+            document.getElementById('subjectCount').textContent = subjects.length; 
+        }
+        
+        function switchTab(idx) { 
+            document.querySelectorAll('.tab-content').forEach((t,i) => t.classList.toggle('active', i === idx)); 
+            document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', i === idx)); 
+            if(idx === 1) updateSubjectsList(); 
+            if(idx === 2) updateGradesDisplay(); 
+            if(idx === 3) calculateStatistics(); 
+            if(idx === 4 && students.length > 0) generateBulletin(); 
+        }
+        
+        function showNotification(msg, type) { 
+            let n = document.createElement('div'); 
+            n.className = `alert alert-${type}`; 
+            n.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:10000;animation:fadeIn 0.3s;max-width:350px;'; 
+            n.innerHTML = msg; 
+            document.body.appendChild(n); 
+            setTimeout(() => n.remove(), 4000); 
+        }
+        
+        function toggleDarkMode() { 
+            document.body.style.background = document.body.style.background === '#343a40' ? 'linear-gradient(135deg, #f5f7fa 0%, #e3e8f7 100%)' : '#343a40'; 
+            document.querySelector('.container').style.background = document.body.style.background === '#343a40' ? '#2c3035' : 'white'; 
+        }
+        
+        function showHelp() { 
+            alert("📋 SYSTÈME DE GESTION SCOLAIRE - TOGO\n\n• Onglet Gestion Classe: Ajoutez/modifiez les élèves\n• Onglet Programmes: Définissez les matières et enseignants\n• Onglet Saisie Notes: Entrez les notes (2 par matière)\n• Onglet Bulletin: Générez et imprimez les bulletins officiels\n• Import JSON: Importez les élèves depuis bull.html\n• Le rang de l'élève est automatiquement calculé\n• L'impression est optimisée pour le format A4"); 
+        }
+    </script>
+</body>
+</html>

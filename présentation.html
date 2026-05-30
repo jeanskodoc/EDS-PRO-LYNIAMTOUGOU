@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil - Système de Saisie des Notes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #006400; /* Vert togolais */
+            --primary-dark: #004d00;
+            --primary-light: #e8f5e9;
+            --secondary-color: #FF0000; /* Rouge togolais */
+            --tertiary-color: #FFD700; /* Jaune togolais */
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --border-color: #dee2e6;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+            --border-radius: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e3e8f7 100%);
+            color: var(--dark-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(0, 100, 0, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 0, 0, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255, 215, 0, 0.05) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            border: 1px solid var(--primary-color);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Header */
+        .header-main {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 2rem 1.5rem;
+            position: relative;
+            border-bottom: 3px solid var(--secondary-color);
+            text-align: center;
+        }
+
+        .header-main::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                var(--secondary-color) 0%, 
+                var(--secondary-color) 33%, 
+                var(--tertiary-color) 33%, 
+                var(--tertiary-color) 66%, 
+                var(--primary-color) 66%, 
+                var(--primary-color) 100%);
+        }
+
+        .logo-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .logo-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--secondary-color), var(--tertiary-color));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 1.8rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .logo::before {
+            content: '★';
+            position: absolute;
+            color: white;
+            font-size: 28px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+
+        .school-info {
+            text-align: center;
+        }
+
+        .school-info h1 {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+            line-height: 1.2;
+        }
+
+        .school-info .subtitle {
+            font-size: clamp(1rem, 2.5vw, 1.3rem);
+            opacity: 0.9;
+            color: var(--tertiary-color);
+            margin-bottom: 1rem;
+        }
+
+        .togo-flag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 15px;
+            padding: 8px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .flag-stripe {
+            width: 25px;
+            height: 4px;
+            border-radius: 2px;
+        }
+
+        .stripe-red { background-color: var(--secondary-color); }
+        .stripe-yellow { background-color: var(--tertiary-color); }
+        .stripe-green { background-color: var(--primary-color); }
+
+        /* Main Content */
+        .main-content {
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .welcome-section {
+            margin-bottom: 3rem;
+            animation: slideUp 0.8s ease-out 0.3s both;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .welcome-section h2 {
+            color: var(--primary-color);
+            font-size: 2.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .welcome-section p {
+            font-size: 1.1rem;
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            line-height: 1.8;
+        }
+
+        /* Cards Container */
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-top: 2rem;
+            animation: slideUp 0.8s ease-out 0.5s both;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--secondary-color), var(--tertiary-color));
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary-color);
+        }
+
+        .card-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 100, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-icon::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: translate(-50%, -50%) rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translate(-50%, -50%) rotate(45deg) translateX(-150%); }
+            100% { transform: translate(-50%, -50%) rotate(45deg) translateX(150%); }
+        }
+
+        .card h3 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .card p {
+            color: #666;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 2rem;
+        }
+
+        .features li {
+            padding: 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #555;
+        }
+
+        .features li i {
+            color: var(--primary-color);
+            font-size: 0.9rem;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+            font-size: 1.1rem;
+            min-height: 50px;
+            text-decoration: none;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border: 2px solid var(--secondary-color);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 100, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--secondary-color), #cc0000);
+            color: white;
+            border: 2px solid var(--tertiary-color);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #cc0000, var(--secondary-color));
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(255, 0, 0, 0.3);
+        }
+
+        .btn i {
+            font-size: 1.2rem;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 2rem;
+            background: var(--light-color);
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            margin-top: 3rem;
+            animation: slideUp 0.8s ease-out 0.7s both;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .footer .togo-flag {
+            background: rgba(0, 100, 0, 0.1);
+            border: 1px solid rgba(0, 100, 0, 0.2);
+        }
+
+        .footer p {
+            margin: 0.2rem 0;
+            color: #666;
+        }
+
+        .footer strong {
+            color: var(--primary-color);
+        }
+
+        .system-info {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: #777;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                margin: 10px;
+            }
+            
+            .header-main {
+                padding: 1.5rem 1rem;
+            }
+            
+            .logo-wrapper {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .logo {
+                width: 70px;
+                height: 70px;
+                font-size: 1.5rem;
+            }
+            
+            .main-content {
+                padding: 2rem 1rem;
+            }
+            
+            .welcome-section h2 {
+                font-size: 1.8rem;
+            }
+            
+            .cards-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .card {
+                padding: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .school-info h1 {
+                font-size: 1.8rem;
+            }
+            
+            .welcome-section h2 {
+                font-size: 1.5rem;
+            }
+            
+            .card h3 {
+                font-size: 1.5rem;
+            }
+            
+            .btn {
+                padding: 0.8rem 1.5rem;
+                font-size: 1rem;
+            }
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-left: 4px solid;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .notification-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-color: var(--primary-color);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header-main">
+            <div class="logo-section">
+                <div class="logo-wrapper">
+                    <div class="logo" title="République Togolaise">TG</div>
+                    <div class="school-info">
+                        <h1>SYSTÈME DE SAISIE DES NOTES</h1>
+                        <div class="subtitle">MINISTÈRE DES ENSEIGNEMENTS PRIMAIRE, SECONDAIRE ET TECHNIQUE</div>
+                        <div class="togo-flag">
+                            <div class="flag-stripe stripe-red"></div>
+                            <div class="flag-stripe stripe-yellow"></div>
+                            <div class="flag-stripe stripe-green"></div>
+                            <span>République Togolaise</span>
+                        </div>
+                    </div>
+                    <div class="logo" title="École Digitale du Siècle">EDS</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="welcome-section">
+                <h2>
+                    <i class="fas fa-graduation-cap"></i>
+                    Bienvenue dans le Système de Saisie des Notes
+                </h2>
+                <p>
+                    Plateforme dédiée à la gestion académique des établissements scolaires togolais. 
+                    Sélectionnez le mode de saisie adapté à vos besoins pour commencer l'enregistrement 
+                    des notes des élèves.
+                </p>
+            </div>
+
+            <div class="cards-container">
+                <!-- Saisie Individuelle Card -->
+                <div class="card">
+                    <div class="card-icon">
+                        <i class="fas fa-user-edit"></i>
+                    </div>
+                    <h3>Saisie Individuelle</h3>
+                    <p>
+                        Mode de saisie avancé avec interface complète pour la gestion détaillée des notes 
+                        par élève et par matière.
+                    </p>
+                    
+                    <ul class="features">
+                        <li><i class="fas fa-check-circle"></i> Saisie note par note</li>
+                        <li><i class="fas fa-check-circle"></i> Visualisation par élève</li>
+                        <li><i class="fas fa-check-circle"></i> Statistiques détaillées</li>
+                        <li><i class="fas fa-check-circle"></i> Analyse graphique</li>
+                        <li><i class="fas fa-check-circle"></i> Configuration complète</li>
+                    </ul>
+                    
+                    <a href="Saisi.html" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Accéder à la Saisie et gestion des bulletins 
+                    </a>
+                </div>
+
+                <!-- Saisie en Masse Card -->
+                <div class="card">
+                    <div class="card-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Saisie en Masse</h3>
+                    <p>
+                        Interface simplifiée pour la saisie rapide des notes pour toute une classe en une seule fois, 
+                        idéale pour les évaluations standardisées.
+                    </p>
+                    
+                    <ul class="features">
+                        <li><i class="fas fa-check-circle"></i> Tableau de saisie unique</li>
+                        <li><i class="fas fa-check-circle"></i> Import/Export Excel</li>
+                        <li><i class="fas fa-check-circle"></i> Validation rapide</li>
+                        <li><i class="fas fa-check-circle"></i> Interface simplifiée</li>
+                        <li><i class="fas fa-check-circle"></i> Gain de temps optimal</li>
+                    </ul>
+                    
+                    <a href="bull.html" class="btn btn-secondary">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Accéder à la Saisie en Masse des listes d'élèves 
+                    </a>
+                </div>
+            </div>
+
+            <div class="system-info">
+                <div><i class="fas fa-info-circle"></i> Version 2.2</div>
+                <div><i class="fas fa-calendar"></i> Année Scolaire 2024-2025</div>
+                <div><i class="fas fa-shield-alt"></i> Données sécurisées</div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="togo-flag">
+                    <div class="flag-stripe stripe-red"></div>
+                    <div class="flag-stripe stripe-yellow"></div>
+                    <div class="flag-stripe stripe-green"></div>
+                </div>
+                <p><strong>République Togolaise</strong> - Travail • Liberté • Patrie</p>
+                <p>Système de Saisie des Notes © 2024 - Ministère des Enseignements</p>
+                <p class="text-muted">Développé pour les établissements scolaires togolais</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Animation on load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add loading animation
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.5s ease';
+            
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+                showWelcomeNotification();
+            }, 100);
+            
+            // Add hover effects to cards
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                });
+            });
+            
+            // Button click animations
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    // Add click animation
+                    this.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 200);
+                    
+                    // Show loading state
+                    const originalHTML = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Chargement...';
+                    this.disabled = true;
+                    
+                    // Simulate loading for demo
+                    setTimeout(() => {
+                        this.innerHTML = originalHTML;
+                        this.disabled = false;
+                    }, 1500);
+                });
+            });
+        });
+        
+        // Show welcome notification
+        function showWelcomeNotification() {
+            const notification = document.createElement('div');
+            notification.className = 'notification notification-info';
+            notification.innerHTML = `
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    <strong>Bienvenue !</strong> Sélectionnez un mode de saisie pour commencer.
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 5 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 300);
+            }, 5000);
+        }
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // 1 for individual entry
+            if (e.key === '1') {
+                window.location.href = 'saisi.html';
+            }
+            // 2 for bulk entry
+            if (e.key === '2') {
+                window.location.href = 'bull.html';
+            }
+            // F1 for help
+            if (e.key === 'F1') {
+                e.preventDefault();
+                showHelpModal();
+            }
+        });
+        
+        // Show help modal
+        function showHelpModal() {
+            alert('Raccourcis clavier:\n\n' +
+                  '1 - Accéder à la Saisie Individuelle\n' +
+                  '2 - Accéder à la Saisie en Masse\n' +
+                  'F1 - Afficher cette aide\n\n' +
+                  'Navigation:\n' +
+                  'Utilisez les boutons ou les raccourcis clavier pour naviguer entre les différentes fonctionnalités du système.');
+        }
+        
+        // Check if files exist (for demo purposes)
+        function checkFilesAvailability() {
+            const files = ['saisi.html', 'bull.html'];
+            let availableFiles = 0;
+            
+            files.forEach(file => {
+                // This is a simplified check - in real implementation, you'd use fetch or XMLHttpRequest
+                console.log(`Vérification du fichier: ${file}`);
+            });
+            
+            // If no files are found, show warning after 2 seconds
+            setTimeout(() => {
+                // This is just for demo - in real implementation, check actual file existence
+                if (Math.random() > 0.8) { // 20% chance to show demo warning
+                    const warning = document.createElement('div');
+                    warning.className = 'notification';
+                    warning.style.background = '#fff3cd';
+                    warning.style.color = '#856404';
+                    warning.style.borderColor = '#ffc107';
+                    warning.innerHTML = `
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <div>
+                            <strong>Mode démo :</strong> Les fichiers de saisie seront créés lors de votre première utilisation.
+                        </div>
+                    `;
+                    warning.style.position = 'fixed';
+                    warning.style.bottom = '20px';
+                    warning.style.right = '20px';
+                    warning.style.top = 'auto';
+                    
+                    document.body.appendChild(warning);
+                    
+                    setTimeout(() => {
+                        if (warning.parentNode) {
+                            warning.remove();
+                        }
+                    }, 7000);
+                }
+            }, 2000);
+        }
+        
+        // Initialize file check
+        checkFilesAvailability();
+    </script>
+</body>
+</html>

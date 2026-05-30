@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Gestion Scolaire - République Togolaise</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0f4f8 0%, #e0e8f0 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        /* Header responsive */
+        .header {
+            background: linear-gradient(135deg, #006400, #004d00);
+            color: white;
+            padding: 20px 25px;
+            text-align: center;
+            border-bottom: 4px solid #FF0000;
+        }
+
+        .header h1 {
+            font-size: clamp(1.2rem, 5vw, 1.8rem);
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: clamp(0.7rem, 3vw, 0.9rem);
+        }
+
+        .togo-flag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            padding: 4px 15px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .flag-stripe {
+            width: 20px;
+            height: 3px;
+            border-radius: 2px;
+        }
+        .stripe-red { background-color: #FF0000; }
+        .stripe-yellow { background-color: #FFD700; }
+        .stripe-green { background-color: #006400; }
+
+        /* Tabs responsive */
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 12px 15px;
+            background: none;
+            border: none;
+            font-size: clamp(0.75rem, 3.5vw, 0.9rem);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: #495057;
+            white-space: nowrap;
+        }
+
+        .tab-btn i {
+            font-size: clamp(0.8rem, 4vw, 1rem);
+        }
+
+        .tab-btn:hover {
+            background: #e9ecef;
+            color: #006400;
+        }
+
+        .tab-btn.active {
+            color: #006400;
+            background: white;
+            border-bottom: 3px solid #FF0000;
+        }
+
+        .tab-badge {
+            background: #dc3545;
+            color: white;
+            border-radius: 20px;
+            padding: 2px 6px;
+            font-size: 10px;
+            margin-left: 5px;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Form sections responsive */
+        .form-section {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #dee2e6;
+            overflow: hidden;
+        }
+
+        .section-title {
+            background: #f8f9fa;
+            padding: 12px 16px;
+            border-bottom: 2px solid #006400;
+            font-size: clamp(0.9rem, 4vw, 1.1rem);
+            font-weight: 600;
+            color: #006400;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .section-body {
+            padding: 16px;
+        }
+
+        /* Form grid responsive */
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #495057;
+            font-size: clamp(0.7rem, 3.5vw, 0.85rem);
+        }
+
+        .required::after {
+            content: '*';
+            color: #dc3545;
+            margin-left: 4px;
+        }
+
+        .form-control {
+            padding: 8px 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: clamp(0.8rem, 3.5vw, 0.9rem);
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #006400;
+            box-shadow: 0 0 0 3px rgba(0, 100, 0, 0.1);
+        }
+
+        /* Buttons responsive */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: clamp(0.75rem, 3.5vw, 0.85rem);
+        }
+
+        .btn-primary { background: linear-gradient(135deg, #006400, #004d00); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,100,0,0.3); }
+        .btn-success { background: linear-gradient(135deg, #28a745, #218838); color: white; }
+        .btn-danger { background: linear-gradient(135deg, #dc3545, #c82333); color: white; }
+        .btn-warning { background: linear-gradient(135deg, #ffc107, #e0a800); color: #212529; }
+        .btn-info { background: linear-gradient(135deg, #17a2b8, #138496); color: white; }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-sm { padding: 5px 10px; font-size: 11px; }
+
+        /* Filter bar responsive */
+        .filter-bar {
+            background: #f8f9fa;
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: flex-end;
+            border: 1px solid #dee2e6;
+        }
+        .filter-group {
+            flex: 1;
+            min-width: 150px;
+        }
+        .filter-group label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #6c757d;
+            margin-bottom: 4px;
+            display: block;
+        }
+        .filter-group select, .filter-group input {
+            width: 100%;
+            padding: 7px 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        /* Tables responsive */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 12px;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: clamp(0.7rem, 3vw, 0.8rem);
+            min-width: 500px;
+        }
+
+        th {
+            background: linear-gradient(135deg, #006400, #004d00);
+            color: white;
+            padding: 10px 8px;
+            text-align: left;
+            font-weight: 600;
+            font-size: clamp(0.7rem, 3vw, 0.8rem);
+        }
+
+        td {
+            padding: 8px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* Notes cards responsive */
+        .notes-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .note-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            border-left: 4px solid #006400;
+        }
+
+        .note-card h4 {
+            color: #006400;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            font-size: clamp(0.85rem, 3.5vw, 1rem);
+        }
+
+        .grade-input {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .grade-input input {
+            padding: 8px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        /* Stats grid responsive */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f8f9fa, white);
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+        }
+
+        .stat-value {
+            font-size: clamp(1.2rem, 6vw, 1.8rem);
+            font-weight: bold;
+            color: #006400;
+        }
+
+        .stat-label {
+            font-size: clamp(0.6rem, 3vw, 0.7rem);
+            color: #6c757d;
+        }
+
+        /* Alerts responsive */
+        .alert {
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: clamp(0.7rem, 3.5vw, 0.85rem);
+            flex-wrap: wrap;
+        }
+        .alert-success { background: #d4edda; color: #155724; border-left: 4px solid #28a745; }
+        .alert-warning { background: #fff3cd; color: #856404; border-left: 4px solid #ffc107; }
+        .alert-info { background: #d1ecf1; color: #0c5460; border-left: 4px solid #17a2b8; }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+        .badge-primary { background: #006400; color: white; }
+        .badge-success { background: #28a745; color: white; }
+        .badge-warning { background: #ffc107; color: #212529; }
+
+        /* JSON actions */
+        .json-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* Footer */
+        .footer {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: center;
+            border-top: 1px solid #dee2e6;
+            font-size: 11px;
+            color: #6c757d;
+        }
+
+        /* Student items responsive */
+        .student-item {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            padding: 12px;
+            border-bottom: 1px solid #dee2e6;
+            align-items: center;
+        }
+
+        /* Responsive breakpoints */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px;
+            }
+            
+            .tab-content {
+                padding: 12px;
+            }
+            
+            .section-body {
+                padding: 12px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .filter-bar {
+                flex-direction: column;
+            }
+            
+            .filter-group {
+                width: 100%;
+                min-width: auto;
+            }
+            
+            .notes-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .json-actions {
+                width: 100%;
+                justify-content: center;
+                margin-top: 8px;
+            }
+            
+            .section-title {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-top: 5px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .btn-sm {
+                width: auto;
+            }
+            
+            table {
+                font-size: 11px;
+            }
+            
+            th, td {
+                padding: 6px 4px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 12px 15px;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab-btn {
+                justify-content: flex-start;
+                padding: 10px 15px;
+                white-space: normal;
+                text-align: left;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .student-info-bulletin {
+                grid-template-columns: 1fr;
+            }
+            
+            .grade-input {
+                grid-template-columns: 1fr;
+            }
+            
+            .alert {
+                font-size: 11px;
+            }
+        }
+
+        /* Large screens optimization */
+        @media (min-width: 1200px) {
+            .container {
+                margin: 0 auto;
+            }
+            
+            .form-row {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .notes-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Touch-friendly */
+        @media (hover: none) and (pointer: coarse) {
+            .btn, .tab-btn, .action-btn {
+                min-height: 44px;
+            }
+            
+            input, select, textarea {
+                font-size: 16px; /* Prevents zoom on mobile */
+            }
+        }
+
+        /* Utility classes */
+        .filter-active {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+        .clear-filter {
+            cursor: pointer;
+            color: #dc3545;
+            font-size: 11px;
+            margin-left: 8px;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .w-100 {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="togo-flag">
+            <div class="flag-stripe stripe-red"></div>
+            <div class="flag-stripe stripe-yellow"></div>
+            <div class="flag-stripe stripe-green"></div>
+            <span>République Togolaise</span>
+        </div>
+        <h1><i class="fas fa-school"></i> Système de Gestion Scolaire</h1>
+        <p>Ministère des Enseignements Primaire, Secondaire et Technique</p>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab(0)"><i class="fas fa-users"></i> Gestion Classe <span id="studentBadge" class="tab-badge">0</span></button>
+        <button class="tab-btn" onclick="switchTab(1)"><i class="fas fa-book"></i> Programmes <span id="subjectBadge" class="tab-badge">0</span></button>
+        <button class="tab-btn" onclick="switchTab(2)"><i class="fas fa-edit"></i> Saisie Notes</button>
+        <button class="tab-btn" onclick="switchTab(3)"><i class="fas fa-chart-line"></i> Statistiques</button>
+    </div>
+
+    <!-- Onglet 1: Gestion Classe -->
+    <div id="tab0" class="tab-content active">
+        <div class="form-section">
+            <div class="section-title">
+                <span><i class="fas fa-info-circle"></i> Informations Générales</span>
+                <div class="json-actions">
+                    <button class="btn btn-info btn-sm" onclick="exportToJSON()"><i class="fas fa-file-export"></i> Exporter JSON</button>
+                    <button class="btn btn-warning btn-sm" onclick="document.getElementById('importFile').click()"><i class="fas fa-file-import"></i> Importer JSON</button>
+                    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importFromJSON(this)">
+                </div>
+            </div>
+            <div class="section-body">
+                <div class="form-row">
+                    <div class="form-group"><label>Année Scolaire</label><input type="text" id="schoolYear" class="form-control" placeholder="2024-2025"></div>
+                    <div class="form-group"><label>Période</label><select id="period" class="form-control"><option value="1er Trimestre">1er Trimestre</option><option value="2ème Trimestre">2ème Trimestre</option><option value="3ème Trimestre">3ème Trimestre</option></select></div>
+                    <div class="form-group"><label>Établissement</label><input type="text" id="schoolName" class="form-control" placeholder="CEG MASSEDENA"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Niveau</label><select id="level" class="form-control"><option value="">Sélectionner</option><option value="Collège">Collège</option><option value="Lycée">Lycée</option></select></div>
+                    <div class="form-group"><label>Classe</label><select id="className" class="form-control"><option value="">Sélectionner</option><option value="6ème">6ème</option><option value="5ème">5ème</option><option value="4ème">4ème</option><option value="3ème">3ème</option><option value="Seconde">Seconde</option><option value="Première">Première</option><option value="Terminale">Terminale</option></select></div>
+                    <div class="form-group"><label>Série</label><select id="series" class="form-control"><option value="">Sélectionner</option><option value="A">Série A</option><option value="C">Série C</option><option value="D">Série D</option></select></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Barre de filtrage responsive -->
+        <div class="filter-bar">
+            <div class="filter-group">
+                <label><i class="fas fa-filter"></i> Filtrer par classe</label>
+                <select id="filterClass" class="form-control" onchange="applyFilters()">
+                    <option value="all">Toutes les classes</option>
+                    <option value="6ème">6ème</option>
+                    <option value="5ème">5ème</option>
+                    <option value="4ème">4ème</option>
+                    <option value="3ème">3ème</option>
+                    <option value="Seconde">Seconde</option>
+                    <option value="Première">Première</option>
+                    <option value="Terminale">Terminale</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label><i class="fas fa-search"></i> Rechercher un élève</label>
+                <input type="text" id="searchStudent" class="form-control" placeholder="Nom ou prénom..." onkeyup="applyFilters()">
+            </div>
+            <div class="filter-group">
+                <label>&nbsp;</label>
+                <button class="btn btn-secondary btn-sm w-100" onclick="clearFilters()"><i class="fas fa-times"></i> Effacer filtres</button>
+            </div>
+        </div>
+
+        <div id="filterInfo" class="alert alert-info" style="display: none; padding: 8px 12px;">
+            <i class="fas fa-info-circle"></i> <span id="filterMessage"></span>
+            <span class="clear-filter" onclick="clearFilters()" style="margin-left: 10px; cursor: pointer;">✖ Effacer</span>
+        </div>
+
+        <div class="form-section">
+            <div class="section-title"><i class="fas fa-user-plus"></i> Ajouter un élève</div>
+            <div class="section-body">
+                <div class="form-row">
+                    <div class="form-group"><label class="required">Nom</label><input type="text" id="lastName" class="form-control" placeholder="Nom"></div>
+                    <div class="form-group"><label class="required">Prénom</label><input type="text" id="firstName" class="form-control" placeholder="Prénom"></div>
+                    <div class="form-group"><label>Matricule</label><input type="text" id="studentId" class="form-control" placeholder="MAT-001"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Sexe</label><select id="gender" class="form-control"><option value="M">Masculin</option><option value="F">Féminin</option></select></div>
+                    <div class="form-group"><label>Date naissance</label><input type="date" id="birthDate" class="form-control"></div>
+                    <div class="form-group"><label>Statut</label><select id="status" class="form-control"><option value="Nouveau">Nouveau</option><option value="Redoublant">Redoublant</option></select></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Tuteur</label><input type="text" id="guardianName" class="form-control" placeholder="Nom du tuteur"></div>
+                    <div class="form-group"><label>Téléphone</label><input type="tel" id="guardianPhone" class="form-control" placeholder="+228 XX XX XX XX"></div>
+                </div>
+                <div class="form-row">
+                    <button class="btn btn-success" onclick="addStudent()"><i class="fas fa-save"></i> Enregistrer l'élève</button>
+                    <button class="btn btn-secondary" onclick="clearStudentForm()"><i class="fas fa-eraser"></i> Effacer</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="section-title"><i class="fas fa-list"></i> Liste des élèves</div>
+            <div class="section-body">
+                <div class="table-container">
+                    <table id="studentsTable">
+                        <thead>
+                            <tr><th>#</th><th>Nom & Prénom</th><th>Matricule</th><th>Classe</th><th>Sexe</th><th>Statut</th><th>Tuteur</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody id="studentsList"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Onglet 2: Programmes -->
+    <div id="tab1" class="tab-content">
+        <div class="alert alert-info"><i class="fas fa-info-circle"></i> Définissez les matières, coefficients et enseignants pour la classe</div>
+        
+        <div class="form-section">
+            <div class="section-title"><i class="fas fa-plus-circle"></i> Ajouter une matière</div>
+            <div class="section-body">
+                <div class="form-row">
+                    <div class="form-group"><label>Matière</label><input type="text" id="subjectName" class="form-control" placeholder="Ex: Mathématiques"></div>
+                    <div class="form-group"><label>Coefficient</label><input type="number" id="subjectCoeff" class="form-control" min="0.5" max="10" step="0.5" value="1"></div>
+                    <div class="form-group"><label>Enseignant</label><input type="text" id="subjectTeacher" class="form-control" placeholder="Nom et prénom"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Catégorie</label><select id="subjectCategory" class="form-control"><option value="Scientifique">Scientifique</option><option value="Littéraire">Littéraire</option><option value="Autre">Autre</option></select></div>
+                    <div class="form-group"><label>Heures/semaine</label><input type="number" id="subjectHours" class="form-control" min="1" max="10" value="4"></div>
+                </div>
+                <div class="form-row">
+                    <button class="btn btn-success" onclick="addSubject()"><i class="fas fa-plus"></i> Ajouter la matière</button>
+                    <button class="btn btn-primary" onclick="loadDefaultSubjects()"><i class="fas fa-download"></i> Charger programme standard</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="section-title"><i class="fas fa-book-open"></i> Programmes de la classe</div>
+            <div class="section-body">
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Matière</th><th>Coeff</th><th>Enseignant</th><th>Heures</th><th>Catégorie</th><th>Actions</th></tr></thead>
+                        <tbody id="subjectsList"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Onglet 3: Saisie des Notes -->
+    <div id="tab2" class="tab-content">
+        <div class="alert alert-info"><i class="fas fa-info-circle"></i> Sélectionnez un élève et saisissez ses notes par matière</div>
+        
+        <div class="filter-bar">
+            <div class="filter-group">
+                <label><i class="fas fa-filter"></i> Filtrer par matière</label>
+                <select id="filterSubject" class="form-control" onchange="loadGradesForStudent()">
+                    <option value="all">Toutes les matières</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label><i class="fas fa-chart-line"></i> Afficher les moyennes</label>
+                <select id="showAverages" class="form-control" onchange="loadGradesForStudent()">
+                    <option value="yes">Afficher</option>
+                    <option value="no">Masquer</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group"><label>Choisir un élève</label><select id="gradeStudentSelect" class="form-control" onchange="loadGradesForStudent()"><option value="">-- Sélectionner --</option></select></div>
+            <div class="form-group" id="studentInfoDisplay"></div>
+        </div>
+
+        <div id="gradesContainer" class="notes-container">
+            <div class="alert alert-warning text-center">Aucun élève sélectionné</div>
+        </div>
+
+        <div class="form-row">
+            <button class="btn btn-primary" onclick="saveAllGrades()"><i class="fas fa-save"></i> Sauvegarder toutes les notes</button>
+        </div>
+    </div>
+
+    <!-- Onglet 4: Statistiques -->
+    <div id="tab3" class="tab-content">
+        <div class="filter-bar">
+            <div class="filter-group">
+                <label><i class="fas fa-filter"></i> Filtrer par classe</label>
+                <select id="statsFilterClass" class="form-control" onchange="updateStatistics()">
+                    <option value="all">Toutes les classes</option>
+                    <option value="6ème">6ème</option><option value="5ème">5ème</option>
+                    <option value="4ème">4ème</option><option value="3ème">3ème</option>
+                    <option value="Seconde">Seconde</option><option value="Première">Première</option>
+                    <option value="Terminale">Terminale</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label><i class="fas fa-filter"></i> Filtrer par matière</label>
+                <select id="statsFilterSubject" class="form-control" onchange="updateStatistics()">
+                    <option value="all">Toutes les matières</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-value" id="totalStudents">0</div><div class="stat-label">Total élèves</div></div>
+            <div class="stat-card"><div class="stat-value" id="totalSubjects">0</div><div class="stat-label">Matières</div></div>
+            <div class="stat-card"><div class="stat-value" id="classAverage">0.00</div><div class="stat-label">Moyenne classe</div></div>
+            <div class="stat-card"><div class="stat-value" id="passRate">0%</div><div class="stat-label">Taux réussite</div></div>
+        </div>
+
+        <div class="form-section">
+            <div class="section-title"><i class="fas fa-trophy"></i> Classement des élèves</div>
+            <div class="section-body">
+                <div class="table-container">
+                    <table>
+                        <thead><tr><th>Rang</th><th>Élève</th><th>Classe</th><th>Moyenne</th><th>Mention</th></tr></thead>
+                        <tbody id="rankingList"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><i class="fas fa-database"></i> Données sauvegardées automatiquement | Version Mobile-Friendly</p>
+    </div>
+</div>
+
+<script>
+    // ==================== STOCKAGE DES DONNÉES ====================
+    let students = [];
+    let subjects = [];
+    let grades = {};
+    let currentClassFilter = 'all';
+    let currentSearchFilter = '';
+
+    // INITIALISATION
+    document.addEventListener('DOMContentLoaded', function() {
+        loadDefaultSubjects();
+        loadData();
+        updateAllDisplays();
+        updateStudentSelect();
+        updateFilterSubjects();
+    });
+
+    function saveData() {
+        const data = { students, subjects, grades,
+            schoolYear: document.getElementById('schoolYear').value,
+            period: document.getElementById('period').value,
+            schoolName: document.getElementById('schoolName').value,
+            level: document.getElementById('level').value,
+            className: document.getElementById('className').value,
+            series: document.getElementById('series').value
+        };
+        localStorage.setItem('schoolManagementData', JSON.stringify(data));
+    }
+
+    function loadData() {
+        const saved = localStorage.getItem('schoolManagementData');
+        if (saved) {
+            try {
+                const data = JSON.parse(saved);
+                students = data.students || [];
+                subjects = data.subjects || [];
+                grades = data.grades || {};
+                document.getElementById('schoolYear').value = data.schoolYear || '';
+                document.getElementById('period').value = data.period || '1er Trimestre';
+                document.getElementById('schoolName').value = data.schoolName || '';
+                document.getElementById('level').value = data.level || '';
+                document.getElementById('className').value = data.className || '';
+                document.getElementById('series').value = data.series || '';
+            } catch(e) { console.log('Erreur'); }
+        }
+    }
+
+    function updateFilterSubjects() {
+        const filterSubject = document.getElementById('filterSubject');
+        const statsFilterSubject = document.getElementById('statsFilterSubject');
+        if (filterSubject) {
+            filterSubject.innerHTML = '<option value="all">Toutes les matières</option>';
+            subjects.forEach(sub => {
+                filterSubject.innerHTML += `<option value="${sub.id}">${sub.name} (coeff ${sub.coefficient})</option>`;
+            });
+        }
+        if (statsFilterSubject) {
+            statsFilterSubject.innerHTML = '<option value="all">Toutes les matières</option>';
+            subjects.forEach(sub => {
+                statsFilterSubject.innerHTML += `<option value="${sub.id}">${sub.name}</option>`;
+            });
+        }
+    }
+
+    // ==================== FILTRES ====================
+    function applyFilters() {
+        currentClassFilter = document.getElementById('filterClass').value;
+        currentSearchFilter = document.getElementById('searchStudent').value.toLowerCase();
+        updateStudentListWithFilters();
+        
+        const filterInfo = document.getElementById('filterInfo');
+        const filterMessage = document.getElementById('filterMessage');
+        if (currentClassFilter !== 'all' || currentSearchFilter !== '') {
+            let msg = '';
+            if (currentClassFilter !== 'all') msg += `Classe: ${currentClassFilter}`;
+            if (currentSearchFilter !== '') msg += `${msg ? ' | ' : ''}Recherche: "${currentSearchFilter}"`;
+            filterMessage.innerHTML = `Filtres actifs : ${msg}`;
+            filterInfo.style.display = 'block';
+        } else {
+            filterInfo.style.display = 'none';
+        }
+    }
+
+    function clearFilters() {
+        document.getElementById('filterClass').value = 'all';
+        document.getElementById('searchStudent').value = '';
+        currentClassFilter = 'all';
+        currentSearchFilter = '';
+        updateStudentListWithFilters();
+        document.getElementById('filterInfo').style.display = 'none';
+        showNotification('Filtres effacés', 'success');
+    }
+
+    function updateStudentListWithFilters() {
+        const container = document.getElementById('studentsList');
+        let filteredStudents = [...students];
+        if (currentClassFilter !== 'all') {
+            filteredStudents = filteredStudents.filter(s => s.class === currentClassFilter);
+        }
+        if (currentSearchFilter !== '') {
+            filteredStudents = filteredStudents.filter(s => 
+                s.lastName.toLowerCase().includes(currentSearchFilter) || 
+                s.firstName.toLowerCase().includes(currentSearchFilter) ||
+                (s.studentId && s.studentId.toLowerCase().includes(currentSearchFilter))
+            );
+        }
+        filteredStudents.sort((a, b) => a.lastName.localeCompare(b.lastName));
+        
+        if (filteredStudents.length === 0) {
+            container.innerHTML = '<tr><td colspan="8" style="text-align:center">Aucun élève correspondant</td></tr>';
+        } else {
+            container.innerHTML = '';
+            filteredStudents.forEach((s, idx) => {
+                container.innerHTML += `
+                    <tr>
+                        <td>${idx+1}</td>
+                        <td><strong>${escapeHtml(s.lastName)} ${escapeHtml(s.firstName)}</strong></td>
+                        <td>${s.studentId}</td>
+                        <td><span class="badge badge-primary">${s.class || '-'}</span></td>
+                        <td>${s.gender}</td>
+                        <td>${s.status}</td>
+                        <td>${s.guardianName || '-'}</td>
+                        <td><button class="btn btn-danger btn-sm" onclick="deleteStudent('${s.id}')"><i class="fas fa-trash"></i></button></td>
+                    </tr>
+                `;
+            });
+        }
+        document.getElementById('studentBadge').textContent = students.length;
+    }
+
+    // ==================== STATISTIQUES ====================
+    function getFilteredStudentsForStats() {
+        const classFilter = document.getElementById('statsFilterClass').value;
+        if (classFilter === 'all') return students;
+        return students.filter(s => s.class === classFilter);
+    }
+
+    function getFilteredSubjectsForStats() {
+        const subjectFilter = document.getElementById('statsFilterSubject').value;
+        if (subjectFilter === 'all') return subjects;
+        return subjects.filter(s => s.id === subjectFilter);
+    }
+
+    function calculateFilteredStudentAverage(studentId, filteredSubjects) {
+        let total = 0, coeffTotal = 0;
+        filteredSubjects.forEach(sub => {
+            const avg = calculateSubjectAverage(sub.id, studentId);
+            if (avg > 0) {
+                total += avg * sub.coefficient;
+                coeffTotal += sub.coefficient;
+            }
+        });
+        return coeffTotal > 0 ? total / coeffTotal : 0;
+    }
+
+    function updateStatistics() {
+        const filteredStudents = getFilteredStudentsForStats();
+        const filteredSubjects = getFilteredSubjectsForStats();
+        
+        document.getElementById('totalStudents').textContent = filteredStudents.length;
+        document.getElementById('totalSubjects').textContent = filteredSubjects.length;
+        
+        let total = 0, count = 0, passed = 0;
+        filteredStudents.forEach(s => {
+            const avg = calculateFilteredStudentAverage(s.id, filteredSubjects);
+            if (avg > 0) { total += avg; count++; if (avg >= 10) passed++; }
+        });
+        const classAvg = count > 0 ? total / count : 0;
+        document.getElementById('classAverage').textContent = classAvg.toFixed(2);
+        document.getElementById('passRate').textContent = count > 0 ? ((passed / count) * 100).toFixed(1) + '%' : '0%';
+        
+        const ranking = filteredStudents.map(s => ({ ...s, avg: calculateFilteredStudentAverage(s.id, filteredSubjects) }))
+            .filter(s => s.avg > 0).sort((a, b) => b.avg - a.avg);
+        
+        const rankContainer = document.getElementById('rankingList');
+        if (rankContainer) {
+            if (ranking.length === 0) {
+                rankContainer.innerHTML = '<tr><td colspan="5" style="text-align:center">Aucune note</td></tr>';
+            } else {
+                rankContainer.innerHTML = '';
+                ranking.forEach((s, i) => {
+                    let mention = s.avg >= 16 ? 'Très Bien' : (s.avg >= 14 ? 'Bien' : (s.avg >= 12 ? 'Assez Bien' : (s.avg >= 10 ? 'Passable' : 'Insuffisant')));
+                    rankContainer.innerHTML += `<tr>
+                        <td><strong>${i+1}</strong>${i===0?'er':'ème'}</td>
+                        <td>${s.lastName} ${s.firstName}</td>
+                        <td><span class="badge badge-primary">${s.class || '-'}</span></td>
+                        <td>${s.avg.toFixed(2)}</td>
+                        <td>${mention}</td>
+                    </tr>`;
+                });
+            }
+        }
+    }
+
+    // ==================== EXPORT/IMPORT JSON ====================
+    function exportToJSON() {
+        const exportData = {
+            metadata: { exportDate: new Date().toISOString(), version: "1.0",
+                schoolInfo: {
+                    schoolYear: document.getElementById('schoolYear').value,
+                    period: document.getElementById('period').value,
+                    schoolName: document.getElementById('schoolName').value,
+                    level: document.getElementById('level').value,
+                    className: document.getElementById('className').value,
+                    series: document.getElementById('series').value
+                }
+            },
+            students: students.map(s => ({ ...s })),
+            subjects: subjects.map(s => ({ ...s })),
+            grades: grades
+        };
+        const jsonStr = JSON.stringify(exportData, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `export_scolaire_${new Date().toISOString().slice(0, 10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        showNotification('✅ Export réussi !', 'success');
+    }
+
+    function importFromJSON(input) {
+        if (!input.files || !input.files[0]) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = JSON.parse(e.target.result);
+                if (data.students) students = data.students;
+                if (data.subjects) subjects = data.subjects;
+                if (data.grades) grades = data.grades;
+                if (data.metadata?.schoolInfo) {
+                    document.getElementById('schoolYear').value = data.metadata.schoolInfo.schoolYear || '';
+                    document.getElementById('period').value = data.metadata.schoolInfo.period || '1er Trimestre';
+                    document.getElementById('schoolName').value = data.metadata.schoolInfo.schoolName || '';
+                    document.getElementById('level').value = data.metadata.schoolInfo.level || '';
+                    document.getElementById('className').value = data.metadata.schoolInfo.className || '';
+                    document.getElementById('series').value = data.metadata.schoolInfo.series || '';
+                }
+                updateAllDisplays();
+                updateStudentSelect();
+                updateFilterSubjects();
+                saveData();
+                showNotification(`✅ Import réussi ! ${students.length} élèves`, 'success');
+            } catch(e) { showNotification('❌ Erreur fichier JSON', 'danger'); }
+        };
+        reader.readAsText(input.files[0]);
+        input.value = '';
+    }
+
+    // ==================== GESTION ÉLÈVES ====================
+    function addStudent() {
+        const lastName = document.getElementById('lastName').value.trim();
+        const firstName = document.getElementById('firstName').value.trim();
+        if (!lastName || !firstName) {
+            showNotification('Veuillez saisir le nom et le prénom', 'warning');
+            return;
+        }
+        students.push({
+            id: Date.now().toString(),
+            lastName, firstName,
+            studentId: document.getElementById('studentId').value.trim() || `MAT-${Date.now().toString().slice(-6)}`,
+            gender: document.getElementById('gender').value,
+            birthDate: document.getElementById('birthDate').value,
+            status: document.getElementById('status').value,
+            guardianName: document.getElementById('guardianName').value,
+            guardianPhone: document.getElementById('guardianPhone').value,
+            class: document.getElementById('className').value
+        });
+        grades[students[students.length-1].id] = {};
+        clearStudentForm();
+        updateAllDisplays();
+        updateStudentSelect();
+        saveData();
+        showNotification(`✅ Élève ajouté`, 'success');
+    }
+
+    function clearStudentForm() {
+        document.getElementById('lastName').value = '';
+        document.getElementById('firstName').value = '';
+        document.getElementById('studentId').value = '';
+        document.getElementById('gender').value = 'M';
+        document.getElementById('birthDate').value = '';
+        document.getElementById('status').value = 'Nouveau';
+        document.getElementById('guardianName').value = '';
+        document.getElementById('guardianPhone').value = '';
+    }
+
+    function deleteStudent(id) {
+        if (confirm('Supprimer cet élève ?')) {
+            students = students.filter(s => s.id !== id);
+            delete grades[id];
+            updateAllDisplays();
+            updateStudentSelect();
+            saveData();
+            showNotification('🗑️ Élève supprimé', 'success');
+        }
+    }
+
+    // ==================== GESTION MATIÈRES ====================
+    function addSubject() {
+        const name = document.getElementById('subjectName').value.trim();
+        if (!name) { showNotification('Veuillez saisir le nom', 'warning'); return; }
+        subjects.push({
+            id: Date.now().toString(),
+            name: name,
+            coefficient: parseFloat(document.getElementById('subjectCoeff').value),
+            teacher: document.getElementById('subjectTeacher').value.trim(),
+            category: document.getElementById('subjectCategory').value,
+            hours: parseInt(document.getElementById('subjectHours').value)
+        });
+        document.getElementById('subjectName').value = '';
+        updateSubjectsList();
+        updateFilterSubjects();
+        saveData();
+        showNotification(`✅ Matière ajoutée`, 'success');
+    }
+
+    function loadDefaultSubjects() {
+        subjects = [
+            { id: 's1', name: 'Français', coefficient: 2, teacher: 'KOUMA Koffi', category: 'Littéraire', hours: 5 },
+            { id: 's2', name: 'Mathématiques', coefficient: 2, teacher: 'ADJOA Afi', category: 'Scientifique', hours: 5 },
+            { id: 's3', name: 'Histoire-Géographie', coefficient: 1, teacher: 'SAGBO Kodjo', category: 'Littéraire', hours: 4 },
+            { id: 's4', name: 'SVT', coefficient: 1, teacher: 'DOSSOU Elodie', category: 'Scientifique', hours: 4 },
+            { id: 's5', name: 'Physique-Chimie', coefficient: 1, teacher: 'AKAKPO Yao', category: 'Scientifique', hours: 4 },
+            { id: 's6', name: 'Anglais', coefficient: 1, teacher: 'JOHNSON Sarah', category: 'Littéraire', hours: 3 },
+            { id: 's7', name: 'EPS', coefficient: 1, teacher: 'GBEASSOR Komi', category: 'Autre', hours: 2 }
+        ];
+        updateSubjectsList();
+        updateFilterSubjects();
+        saveData();
+        showNotification('📚 Programme standard chargé', 'success');
+    }
+
+    function updateSubjectsList() {
+        const container = document.getElementById('subjectsList');
+        if (!container) return;
+        if (subjects.length === 0) {
+            container.innerHTML = '<tr><td colspan="6" style="text-align:center">Aucune matière</td></tr>';
+            document.getElementById('subjectBadge').textContent = '0';
+            return;
+        }
+        container.innerHTML = '';
+        subjects.forEach((sub) => {
+            container.innerHTML += `
+                <tr>
+                    <td><strong>${escapeHtml(sub.name)}</strong></td>
+                    <td>${sub.coefficient}</td>
+                    <td>${escapeHtml(sub.teacher) || '-'}</td>
+                    <td>${sub.hours}</td>
+                    <td><span class="badge badge-primary">${sub.category}</span></td>
+                    <td><button class="btn btn-danger btn-sm" onclick="deleteSubject('${sub.id}')"><i class="fas fa-trash"></i></button></td>
+                </tr>
+            `;
+        });
+        document.getElementById('subjectBadge').textContent = subjects.length;
+    }
+
+    function deleteSubject(id) {
+        if (confirm('Supprimer cette matière ?')) {
+            subjects = subjects.filter(s => s.id !== id);
+            updateSubjectsList();
+            updateFilterSubjects();
+            saveData();
+            showNotification('Matière supprimée', 'success');
+        }
+    }
+
+    // ==================== NOTES ====================
+    function updateStudentSelect() {
+        const select = document.getElementById('gradeStudentSelect');
+        if (!select) return;
+        select.innerHTML = '<option value="">-- Sélectionner --</option>';
+        students.forEach(s => {
+            select.innerHTML += `<option value="${s.id}">${s.lastName} ${s.firstName} (${s.class || '-'})</option>`;
+        });
+    }
+
+    function loadGradesForStudent() {
+        const studentId = document.getElementById('gradeStudentSelect').value;
+        const subjectFilter = document.getElementById('filterSubject').value;
+        const showAverages = document.getElementById('showAverages').value;
+        const container = document.getElementById('gradesContainer');
+        const infoDiv = document.getElementById('studentInfoDisplay');
+        
+        if (!studentId || subjects.length === 0) {
+            container.innerHTML = '<div class="alert alert-warning text-center">Aucun élève sélectionné</div>';
+            infoDiv.innerHTML = '';
+            return;
+        }
+        const student = students.find(s => s.id === studentId);
+        infoDiv.innerHTML = `<div class="alert alert-info"><strong>${student.lastName} ${student.firstName}</strong> - ${student.class || '-'}</div>`;
+        if (!grades[studentId]) grades[studentId] = {};
+
+        let filteredSubjects = subjectFilter !== 'all' ? subjects.filter(s => s.id === subjectFilter) : subjects;
+        let html = '';
+        filteredSubjects.forEach(sub => {
+            const sg = grades[studentId][sub.id] || { note1: '', note2: '' };
+            const avg = calculateSubjectAverage(sub.id, studentId);
+            html += `
+                <div class="note-card">
+                    <h4>${escapeHtml(sub.name)} <span class="badge badge-primary">Coeff ${sub.coefficient}</span></h4>
+                    <div><strong>Enseignant:</strong> ${escapeHtml(sub.teacher) || '-'}</div>
+                    <div class="grade-input">
+                        <input type="number" min="0" max="20" step="0.5" value="${sg.note1 || ''}" placeholder="Note 1" onchange="saveGrade('${studentId}','${sub.id}','note1',this.value)">
+                        <input type="number" min="0" max="20" step="0.5" value="${sg.note2 || ''}" placeholder="Note 2" onchange="saveGrade('${studentId}','${sub.id}','note2',this.value)">
+                    </div>
+                    ${showAverages === 'yes' ? `<div><strong>Moyenne:</strong> ${avg > 0 ? avg.toFixed(2) : '-'}/20</div>` : ''}
+                </div>
+            `;
+        });
+        container.innerHTML = html || '<div class="alert alert-warning">Aucune matière</div>';
+    }
+
+    function saveGrade(studentId, subjectId, type, value) {
+        if (!grades[studentId]) grades[studentId] = {};
+        if (!grades[studentId][subjectId]) grades[studentId][subjectId] = {};
+        const v = parseFloat(value);
+        grades[studentId][subjectId][type] = (isNaN(v) || v < 0 || v > 20) ? null : v;
+        saveData();
+    }
+
+    function saveAllGrades() {
+        saveData();
+        showNotification('✅ Notes sauvegardées', 'success');
+    }
+
+    function calculateSubjectAverage(subjectId, studentId) {
+        const sg = grades[studentId]?.[subjectId];
+        if (!sg) return 0;
+        const n1 = sg.note1 || 0, n2 = sg.note2 || 0;
+        if (n1 === 0 && n2 === 0) return 0;
+        if (n1 > 0 && n2 === 0) return n1;
+        if (n1 === 0 && n2 > 0) return n2;
+        return (n1 + n2) / 2;
+    }
+
+    // ==================== UTILITAIRES ====================
+    function switchTab(index) {
+        document.querySelectorAll('.tab-content').forEach((tab, i) => {
+            tab.classList.toggle('active', i === index);
+        });
+        document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+            btn.classList.toggle('active', i === index);
+        });
+        if (index === 2) loadGradesForStudent();
+        if (index === 3) updateStatistics();
+    }
+
+    function updateAllDisplays() {
+        updateStudentListWithFilters();
+        updateSubjectsList();
+        updateStatistics();
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function showNotification(message, type) {
+        const n = document.createElement('div');
+        n.className = `alert alert-${type === 'success' ? 'success' : 'warning'}`;
+        n.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:10000;animation:fadeIn 0.3s;max-width:90%;';
+        n.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i> ${message}`;
+        document.body.appendChild(n);
+        setTimeout(() => n.remove(), 3000);
+    }
+</script>
+</body>
+</html>
