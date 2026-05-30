@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace Enseignants - Soutien Scolaire</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.5;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(145deg, #2d3b6e, #1e2a4a);
+            color: white;
+            padding: 0.75rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1.5rem;
+            flex: 1;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            padding: 0.5rem 0;
+            transition: 0.2s;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-links a:hover {
+            color: white;
+            border-bottom-color: #8b9cf5;
+        }
+
+        .btn-retour {
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 2rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: white;
+            transition: 0.2s;
+        }
+
+        .btn-retour:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Hero */
+        .hero {
+            padding: 4rem 0;
+            text-align: center;
+            background: radial-gradient(circle at 80% 50%, rgba(75, 90, 200, 0.03) 0%, transparent 50%);
+        }
+
+        .hero h1 {
+            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            font-weight: 700;
+            background: linear-gradient(145deg, #1e2a4a, #2d3b6e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            color: #475569;
+        }
+
+        /* Boutons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: #2d3b6e;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 2rem;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            background: #1e2a4a;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -10px rgba(45, 59, 110, 0.4);
+        }
+
+        .btn-small {
+            padding: 0.4rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid #2d3b6e;
+            color: #2d3b6e;
+        }
+
+        .btn-outline:hover {
+            background: #2d3b6e;
+            color: white;
+        }
+
+        .btn-success {
+            background: #059669;
+        }
+
+        .btn-success:hover {
+            background: #047857;
+        }
+
+        /* Sections */
+        section {
+            padding: 4rem 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            color: #1e2a4a;
+            position: relative;
+            font-weight: 600;
+        }
+
+        .section-title:after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #2d3b6e, #8b9cf5);
+            margin: 1rem auto 0;
+            border-radius: 2px;
+        }
+
+        /* Cards */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .tool-card, .testimonial-card {
+            background: white;
+            border-radius: 1.2rem;
+            padding: 1.8rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            transition: 0.2s;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 30px -10px rgba(45, 59, 110, 0.1);
+            border-color: #cbd5e1;
+        }
+
+        .tool-icon {
+            font-size: 2.2rem;
+            color: #2d3b6e;
+            margin-bottom: 1rem;
+        }
+
+        .tool-description {
+            margin: 1rem 0 1.5rem;
+            color: #475569;
+            font-size: 0.95rem;
+            flex-grow: 1;
+        }
+
+        /* Widget */
+        .widget-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .widget-card {
+            background: white;
+            border-radius: 1.2rem;
+            padding: 1.8rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #334155;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.6rem 1rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.8rem;
+            font-size: 0.95rem;
+            transition: 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2d3b6e;
+            box-shadow: 0 0 0 3px rgba(45, 59, 110, 0.1);
+        }
+
+        .preview-area {
+            background: #f1f4f9;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border: 2px dashed #cbd5e1;
+            text-align: center;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .widget-code {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.8rem;
+            font-family: monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            white-space: pre-wrap;
+        }
+
+        /* Stats preview */
+        .stats-preview {
+            background: linear-gradient(145deg, #f0f4ff, #ffffff);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 0.8rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2d3b6e;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 0.3rem;
+        }
+
+        /* Motivation */
+        .motivation-text {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .highlight-box {
+            background: #f0f4ff;
+            border-left: 4px solid #2d3b6e;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .feature-item {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 0.8rem;
+            text-align: center;
+        }
+
+        .feature-item i {
+            color: #2d3b6e;
+            font-size: 1.5rem;
+        }
+
+        .feature-item p {
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        /* Footer */
+        footer {
+            background: #1e2a4a;
+            color: white;
+            padding: 3rem 0 1.5rem;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: #a5b4fc;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.2rem;
+            opacity: 0.8;
+            transition: 0.2s;
+        }
+
+        .social-links a:hover {
+            opacity: 1;
+            transform: translateY(-2px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Mobile */
+        @media (max-width: 640px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .btn {
+                padding: 0.5rem 1rem;
+            }
+            
+            section {
+                padding: 2.5rem 0;
+            }
+            
+            .tool-card, .testimonial-card, .widget-card {
+                padding: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <button class="btn-retour" onclick="history.back()"><i class="fas fa-arrow-left"></i> Retour</button>
+                <nav>
+                    <div class="logo"><i class="fas fa-chalkboard-teacher"></i>Espace Ens.</div>
+                    <ul class="nav-links">
+                        <li><a href="#motivation">Motivation</a></li>
+                        <li><a href="#tools">Outils</a></li>
+                        <li><a href="#widget">WhatsApp</a></li>
+                        <li><a href="#testimonials">Témoignages</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Enseignants pour élèves en difficulté</h1>
+            <p>Rejoignez notre communauté et aidez les élèves à surmonter leurs difficultés avec des outils modernes et une pédagogie adaptée</p>
+            <a href="#tools" class="btn">Découvrir les outils <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </section>
+
+    <section id="motivation" style="background: white;">
+        <div class="container">
+            <h2 class="section-title">Notre Motivation</h2>
+            <div class="motivation-text">
+                <p style="margin-bottom: 1.5rem;">Chez SoutienScolaire, chaque élève mérite une chance de réussir. Nous accompagnons ceux en situation d'échec ou de décrochage avec bienveillance.</p>
+                
+                <div class="highlight-box">
+                    <p><i class="fas fa-quote-left" style="color: #2d3b6e; margin-right: 0.5rem;"></i> 
+                    Votre engagement peut transformer la relation d'un élève avec l'apprentissage et faire la différence entre échec et réussite.
+                    </p>
+                </div>
+
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <i class="fas fa-graduation-cap"></i>
+                        <p>Formation continue</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-laptop"></i>
+                        <p>Outils modernes</p>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-clock"></i>
+                        <p>Horaires flexibles</p>
+                    </div>
+                </div>
+
+                <p>Rejoignez une équipe passionnée qui voit au-delà des notes pour aider chaque élève à reprendre confiance.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="tools" style="background: #f8fafc;">
+        <div class="container">
+            <h2 class="section-title">Outils Numériques</h2>
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <div class="tool-icon"><i class="fas fa-desktop"></i></div>
+                    <h3>Partage d'écran</h3>
+                    <p class="tool-description">COURS EN VISIO pour partager votre écran en temps réel avec vos élèves.</p>
+                    <a href="https://hello.freeconference.com/login" class="btn btn-small" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i> PARTAGE D'ecran</a>
+                </div>
+                
+                <div class="tool-card">
+                    <div class="tool-icon"><i class="fas fa-chart-line"></i></div>
+                    <h3>Geogebra</h3>
+                    <p class="tool-description">Créez des graphiques interactifs pour maths et sciences.</p>
+                    <a href="https://www.geogebra.org/" class="btn btn-small" target="_blank" rel="noopener noreferrer"><i class="fas fa-external-link-alt"></i> Geogebra</a>
+                </div>
+
+                <div class="tool-card">
+                    <div class="tool-icon"><i class="fas fa-chart-bar"></i></div>
+                    <h3>Évaluation des résultats</h3>
+                    <p class="tool-description">Suivez la progression de vos élèves avec des statistiques détaillées et des rapports de performance.</p>
+                    <a href="statistiques.html" class="btn btn-small btn-success"><i class="fas fa-chart-simple"></i> Voir les stats</a>
+                </div>
+            </div>
+
+            <div class="stats-preview">
+                <h3 style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                    <i class="fas fa-chart-pie" style="color: #2d3b6e;"></i>
+                    Aperçu des statistiques
+                </h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">78%</div>
+                        <div class="stat-label">Taux de réussite</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">24</div>
+                        <div class="stat-label">Élèves suivis</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">Heures/semaine</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">+31%</div>
+                        <div class="stat-label">Progression</div>
+                    </div>
+                </div>
+                <div style="text-align: center;">
+                    <a href="statistiques.html" class="btn btn-small btn-outline">Voir les statistiques complètes <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="widget" style="background: white;">
+        <div class="container">
+            <h2 class="section-title">Widget WhatsApp</h2>
+            <div class="widget-grid">
+                <div class="widget-card">
+                    <h3 style="margin-bottom: 1rem;">Personnaliser</h3>
+                    <div class="form-group">
+                        <label for="teacher-name">Nom</label>
+                        <input type="text" id="teacher-name" placeholder="Prof. Dupont" value="Prof. Dupont">
+                    </div>
+                    <div class="form-group">
+                        <label for="teacher-subject">Matière</label>
+                        <input type="text" id="teacher-subject" placeholder="Mathématiques" value="Mathématiques">
+                    </div>
+                    <div class="form-group">
+                        <label for="whatsapp-group">Lien du groupe</label>
+                        <input type="text" id="whatsapp-group" value="https://chat.whatsapp.com/">
+                    </div>
+                    <div class="form-group">
+                        <label for="welcome-message">Message</label>
+                        <textarea id="welcome-message" rows="2">Rejoignez notre groupe d'entraide</textarea>
+                    </div>
+                    <button id="generate-btn" class="btn">Générer</button>
+                </div>
+
+                <div class="widget-card">
+                    <h3 style="margin-bottom: 1rem;">Aperçu</h3>
+                    <div id="widget-example" class="preview-area">
+                        <p style="color: #64748b;">Cliquez sur Générer</p>
+                    </div>
+                    <div class="widget-code">
+                        <code id="widget-code-content">// Code d'intégration</code>
+                    </div>
+                    <button id="copy-btn" class="btn btn-outline btn-small">Copier le code</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="testimonials" style="background: #f8fafc;">
+        <div class="container">
+            <h2 class="section-title">Témoignages</h2>
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <p style="font-style: italic; margin-bottom: 1rem;">"Geogebra et Getscreen.me ont transformé mes cours en ligne. Les élèves sont plus engagés."</p>
+                    <p style="font-weight: 600; color: #2d3b6e;">Marie, Maths</p>
+                </div>
+                <div class="testimonial-card">
+                    <p style="font-style: italic; margin-bottom: 1rem;">"Le partage d'écran en temps réel a amélioré la compréhension des concepts complexes."</p>
+                    <p style="font-weight: 600; color: #2d3b6e;">Thomas, Physique</p>
+                </div>
+                <div class="testimonial-card">
+                    <p style="font-style: italic; margin-bottom: 1rem;">"Les statistiques de suivi m'aident à identifier rapidement les élèves qui ont besoin d'aide supplémentaire."</p>
+                    <p style="font-weight: 600; color: #2d3b6e;">Sophie, Maths</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h3>SoutienScolaire</h3>
+                    <p style="font-size: 0.9rem; opacity: 0.8;">Cours de soutien en ligne de qualité pour aider les élèves à réussir.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Liens</h3>
+                    <ul class="footer-links">
+                        <li><a href="#motivation">Motivation</a></li>
+                        <li><a href="#tools">Outils</a></li>
+                        <li><a href="#widget">WhatsApp</a></li>
+                        <li><a href="#testimonials">Témoignages</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <p style="font-size: 0.9rem;"><i class="fas fa-phone"></i> +228 92 87 16 05</p>
+                    <p style="font-size: 0.9rem;"><i class="fas fa-envelope"></i> contact@soutienscolaire.fr</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2026 SoutienScolaire - Tous droits réservés</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const generateBtn = document.getElementById('generate-btn');
+            const copyBtn = document.getElementById('copy-btn');
+            const widgetExample = document.getElementById('widget-example');
+            const widgetCode = document.getElementById('widget-code-content');
+            
+            if (generateBtn) {
+                generateBtn.addEventListener('click', function() {
+                    const name = document.getElementById('teacher-name')?.value || 'Prof. Dupont';
+                    const subject = document.getElementById('teacher-subject')?.value || 'Mathématiques';
+                    const groupLink = document.getElementById('whatsapp-group')?.value || 'https://chat.whatsapp.com/';
+                    const message = document.getElementById('welcome-message')?.value || 'Rejoignez notre groupe';
+                    
+                    if (widgetExample) {
+                        widgetExample.innerHTML = `
+                            <div style="text-align: center;">
+                                <h4 style="margin-bottom: 0.5rem;">${escapeHtml(name)} - ${escapeHtml(subject)}</h4>
+                                <p style="font-size: 0.9rem; margin-bottom: 1rem;">${escapeHtml(message)}</p>
+                                <a href="${escapeHtml(groupLink)}" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 0.5rem; background: #25D366; color: white; padding: 0.5rem 1rem; border-radius: 2rem; text-decoration: none; font-size: 0.9rem;">
+                                    <i class="fab fa-whatsapp"></i> Rejoindre
+                                </a>
+                            </div>
+                        `;
+                    }
+                    
+                    if (widgetCode) {
+                        widgetCode.textContent = `<div style="text-align: center; padding: 1rem; border: 1px solid #25D366; border-radius: 1rem;">
+    <h4>${escapeHtml(name)} - ${escapeHtml(subject)}</h4>
+    <p>${escapeHtml(message)}</p>
+    <a href="${escapeHtml(groupLink)}" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 0.5rem; background: #25D366; color: white; padding: 0.5rem 1rem; border-radius: 2rem; text-decoration: none;">
+        <i class="fab fa-whatsapp"></i> Rejoindre le groupe
+    </a>
+</div>`;
+                    }
+                });
+            }
+            
+            if (copyBtn) {
+                copyBtn.addEventListener('click', function() {
+                    if (widgetCode && widgetCode.textContent) {
+                        navigator.clipboard.writeText(widgetCode.textContent).then(() => {
+                            const original = copyBtn.innerHTML;
+                            copyBtn.innerHTML = '<i class="fas fa-check"></i> Copié';
+                            setTimeout(() => copyBtn.innerHTML = original, 2000);
+                        }).catch(err => {
+                            console.error('Erreur de copie :', err);
+                            alert('Impossible de copier le code');
+                        });
+                    }
+                });
+            }
+
+            // Fonction pour échapper les caractères HTML
+            function escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        });
+    </script>
+</body>
+</html>
