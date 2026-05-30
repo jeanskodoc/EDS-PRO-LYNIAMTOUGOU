@@ -1,0 +1,2504 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Espace Surveillants - Lycée Niamtougou</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --danger: #e63946;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --gray-light: #e9ecef;
+            --border-radius: 8px;
+            --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #4a6baf 0%, #2c3e50 100%);
+            min-height: 100vh;
+            padding: 15px;
+            color: var(--dark);
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="white" opacity="0.1"/><circle cx="80" cy="40" r="1.5" fill="white" opacity="0.1"/><circle cx="60" cy="80" r="1" fill="white" opacity="0.1"/><circle cx="40" cy="60" r="1.2" fill="white" opacity="0.1"/></svg>');
+        }
+
+        .school-info {
+            position: relative;
+            z-index: 2;
+            margin-bottom: 15px;
+        }
+
+        .school-logo {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #fff, #f0f8ff);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .school-logo::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(58, 123, 213, 0.1), transparent);
+            animation: rotate 8s linear infinite;
+        }
+
+        .school-logo-text {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary);
+            position: relative;
+            z-index: 2;
+        }
+
+        .school-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        .school-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            font-weight: 300;
+            position: relative;
+            z-index: 2;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        .header p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+
+        .auth-section {
+            display: block;
+        }
+
+        .auth-section.hidden {
+            display: none;
+        }
+
+        .login-form, .register-form {
+            padding: 25px;
+            max-width: 450px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+            transition: var(--transition);
+            background: white;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.1);
+        }
+
+        .btn {
+            padding: 10px 16px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(67, 97, 238, 0.3);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+        }
+
+        .btn-success:hover {
+            background-color: #3a86ff;
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+        }
+
+        .btn-warning:hover {
+            background-color: #b5179e;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background-color: #c1121f;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 6px 10px;
+            font-size: 0.8rem;
+            gap: 4px;
+        }
+
+        .error-message {
+            background: rgba(230, 57, 70, 0.1);
+            color: var(--danger);
+            padding: 10px 12px;
+            border-radius: var(--border-radius);
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: 1px solid rgba(230, 57, 70, 0.2);
+            font-size: 0.85rem;
+        }
+
+        .success-message {
+            background: rgba(76, 201, 240, 0.1);
+            color: var(--success);
+            padding: 10px 12px;
+            border-radius: var(--border-radius);
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: 1px solid rgba(76, 201, 240, 0.2);
+            font-size: 0.85rem;
+        }
+
+        .content {
+            padding: 25px;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 20px;
+        }
+
+        .sidebar {
+            background: #f8f9ff;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .sidebar-title {
+            font-size: 1.1rem;
+            color: var(--dark);
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-group {
+            margin-bottom: 18px;
+        }
+
+        .filter-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+        }
+
+        .filter-group select, .filter-group input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius);
+            font-size: 0.85rem;
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 12px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border-top: 3px solid var(--primary);
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--gray);
+        }
+
+        .main-content {
+            flex: 1;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: var(--border-radius);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 6px rgba(58, 123, 213, 0.3);
+        }
+
+        .action-btn.secondary {
+            background: linear-gradient(135deg, var(--gray), #adb5bd);
+        }
+
+        .action-btn.tertiary {
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+
+        .action-btn.whatsapp {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+        }
+
+        .action-btn.danger {
+            background: linear-gradient(135deg, var(--danger), #a71d2a);
+        }
+
+        .records-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            font-size: 0.85rem;
+        }
+
+        .records-table th {
+            background: var(--primary);
+            color: white;
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .records-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .records-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .records-table tr:hover {
+            background: #f8f9ff;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-absent {
+            background: rgba(230, 57, 70, 0.1);
+            color: var(--danger);
+        }
+
+        .status-late {
+            background: rgba(255, 193, 7, 0.1);
+            color: #f57c00;
+        }
+
+        .status-evaluation {
+            background: rgba(23, 162, 184, 0.1);
+            color: #0288d1;
+        }
+
+        .status-sick {
+            background: rgba(102, 16, 242, 0.1);
+            color: #7b1fa2;
+        }
+
+        .status-contact {
+            background: rgba(40, 167, 69, 0.1);
+            color: #2e7d32;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--border-radius);
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--gray);
+            transition: var(--transition);
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            color: var(--danger);
+            transform: rotate(90deg);
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-full-row {
+            grid-column: span 2;
+        }
+
+        .logout-btn {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            background: rgba(230, 57, 70, 0.9);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            z-index: 1000;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+        }
+
+        .logout-btn:hover {
+            background: rgba(220, 53, 69, 0.9);
+            transform: translateY(-1px);
+        }
+
+        .report-section {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 18px;
+            margin-top: 20px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .report-title {
+            font-size: 1.1rem;
+            color: var(--dark);
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .report-content {
+            margin-top: 12px;
+            font-size: 0.85rem;
+        }
+
+        .report-item {
+            margin-bottom: 8px;
+            padding: 8px;
+            background: #f8f9ff;
+            border-radius: 6px;
+        }
+
+        .refresh-button {
+            position: fixed;
+            bottom: 70px;
+            right: 15px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            text-align: center;
+            font-size: 18px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: var(--transition);
+            z-index: 1000;
+        }
+        
+        .refresh-button:hover {
+            background-color: var(--secondary);
+            transform: rotate(360deg);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+        }
+
+        .btn-retour {
+            padding: 8px 12px;
+            background-color: var(--gray-light);
+            border: 1px solid #ccc;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+        .btn-retour:hover {
+            background-color: #e0e0e0;
+            transform: translateY(-1px);
+        }
+
+        /* Styles pour l'impression */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #print-content, #print-content * {
+                visibility: visible;
+            }
+            #print-content {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 15px;
+                background: white;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .action-btn {
+                display: none !important;
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                margin: 0;
+                border-radius: 6px;
+            }
+
+            .header {
+                padding: 15px 10px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .content {
+                padding: 18px 15px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .form-full-row {
+                grid-column: span 1;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .refresh-button {
+                bottom: 15px;
+                right: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.3rem;
+            }
+
+            .school-name {
+                font-size: 1.2rem;
+            }
+
+            .records-table th, 
+            .records-table td {
+                padding: 6px 8px;
+                font-size: 0.8rem;
+            }
+
+            .login-form, .register-form {
+                padding: 15px;
+            }
+
+            .sidebar {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Bouton Actualiser -->
+    <button onclick="window.location.reload()" class="refresh-button" aria-label="Actualiser la page">
+        <i class="fas fa-sync-alt"></i>
+    </button>
+
+    <div class="container">
+        <button class="btn-retour" onclick="history.back()">
+            <i class="fas fa-arrow-left"></i> Retour
+        </button>
+        
+        <div class="header">
+            <div class="school-info">
+                <div class="school-logo">
+                    <div class="school-logo-text">LN</div>
+                </div>
+                <div class="school-name">Lycée Niamtougou</div>
+                <div class="school-subtitle">Espace Surveillants</div>
+            </div>
+            <h1 id="main-title"><i class="fas fa-clipboard-list"></i> Gestion des Absences et Retards</h1>
+            <p id="main-subtitle">Suivi des élèves et contact avec les parents</p>
+        </div>
+
+        <!-- Section de connexion -->
+        <div id="login-section" class="auth-section">
+            <div class="login-form">
+                <div id="error-message" class="error-message" style="display: none;">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="error-text"></span>
+                </div>
+                <div id="success-message" class="success-message" style="display: none;">
+                    <i class="fas fa-check-circle"></i>
+                    <span id="success-text"></span>
+                </div>
+                
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="username"><i class="fas fa-user"></i> Identifiant :</label>
+                        <input type="text" id="username" name="username" required placeholder="Votre identifiant">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password"><i class="fas fa-lock"></i> Mot de passe :</label>
+                        <input type="password" id="password" name="password" required placeholder="Votre mot de passe">
+                    </div>
+                    
+                    <button type="submit" class="btn">
+                        <i class="fas fa-sign-in-alt"></i> Se connecter
+                    </button>
+                </form>
+                
+                <button type="button" class="btn btn-outline" onclick="showRegisterForm()">
+                    <i class="fas fa-user-plus"></i> Créer un compte surveillant
+                </button>
+            </div>
+        </div>
+
+        <!-- Section d'inscription -->
+        <div id="register-section" class="auth-section hidden">
+            <div class="register-form">
+                <div id="register-error" class="error-message" style="display: none;">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="register-error-text"></span>
+                </div>
+                <div id="register-success" class="success-message" style="display: none;">
+                    <i class="fas fa-check-circle"></i>
+                    <span id="register-success-text"></span>
+                </div>
+                
+                <h2><i class="fas fa-user-plus"></i> Créer un compte surveillant</h2>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="supervisor-name"><i class="fas fa-user"></i> Nom complet :</label>
+                        <input type="text" id="supervisor-name" name="supervisor-name" required placeholder="Votre nom complet">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="supervisor-email"><i class="fas fa-envelope"></i> Email :</label>
+                        <input type="email" id="supervisor-email" name="supervisor-email" required placeholder="Votre adresse email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="supervisor-phone"><i class="fas fa-phone"></i> Téléphone :</label>
+                        <input type="tel" id="supervisor-phone" name="supervisor-phone" required placeholder="Votre numéro de téléphone">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="register-username"><i class="fas fa-user"></i> Identifiant :</label>
+                        <input type="text" id="register-username" name="register-username" required placeholder="Choisissez un identifiant">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="register-password"><i class="fas fa-lock"></i> Mot de passe :</label>
+                        <input type="password" id="register-password" name="register-password" required placeholder="Créez un mot de passe">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirm-password"><i class="fas fa-lock"></i> Confirmer le mot de passe :</label>
+                        <input type="password" id="confirm-password" name="confirm-password" required placeholder="Confirmez votre mot de passe">
+                    </div>
+                    
+                    <button type="submit" class="btn">
+                        <i class="fas fa-check"></i> S'inscrire
+                    </button>
+                </form>
+                
+                <button type="button" class="btn btn-outline" onclick="showLoginSection()">
+                    <i class="fas fa-arrow-left"></i> Retour à la connexion
+                </button>
+            </div>
+        </div>
+
+        <!-- Section principale après connexion -->
+        <div id="main-content" class="auth-section hidden">
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Déconnexion
+            </button>
+            
+            <div class="content">
+                <div class="dashboard">
+                    <!-- Sidebar avec filtres -->
+                    <div class="sidebar">
+                        <h3 class="sidebar-title"><i class="fas fa-filter"></i> Filtres</h3>
+                        
+                        <div class="filter-group">
+                            <label for="filter-class">Classe :</label>
+                            <select id="filter-class">
+                                <option value="">Toutes les classes</option>
+                                <option value="6eme">6ème</option>
+                                <option value="5eme">5ème</option>
+                                <option value="4eme">4ème</option>
+                                <option value="3eme">3ème</option>
+                                <option value="seconde-l">Seconde L</option>
+                                <option value="seconde-c4">Seconde C4</option>
+                                <option value="premiere-a4">Première A4</option>
+                                <option value="premiere-a5">Première A5</option>
+                                <option value="premiere-c4">Première C4</option>
+                                <option value="premiere-d">Première D</option>
+                                <option value="terminale-a4">Terminale A4</option>
+                                <option value="terminale-a5">Terminale A5</option>
+                                <option value="terminale-c4">Terminale C4</option>
+                                <option value="terminale-d">Terminale D</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="filter-student">Élève :</label>
+                            <select id="filter-student">
+                                <option value="">Tous les élèves</option>
+                                <!-- Options seront ajoutées dynamiquement -->
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="filter-type">Type :</label>
+                            <select id="filter-type">
+                                <option value="">Tous les types</option>
+                                <option value="absence">Absence</option>
+                                <option value="retard">Retard</option>
+                                <option value="evaluation">Évaluation manquée</option>
+                                <option value="maladie">Maladie</option>
+                                <option value="contact">Contact parent</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="filter-date">Date :</label>
+                            <input type="date" id="filter-date">
+                        </div>
+                        
+                        <button class="action-btn" onclick="applyFilters()">
+                            <i class="fas fa-sync-alt"></i> Appliquer les filtres
+                        </button>
+                        
+                        <div class="stats-cards">
+                            <div class="stat-card">
+                                <div class="stat-value" id="stat-absences">0</div>
+                                <div class="stat-label">Absences</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="stat-retards">0</div>
+                                <div class="stat-label">Retards</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="stat-evaluations">0</div>
+                                <div class="stat-label">Évals manquées</div>
+                            </div>
+                        </div>
+
+                        <div class="action-buttons" style="margin-top: 15px;">
+                            <button class="action-btn whatsapp" onclick="sendViaWhatsApp()">
+                                <i class="fab fa-whatsapp"></i> WhatsApp
+                            </button>
+                            <button class="action-btn tertiary" onclick="generateMonthlyReport()">
+                                <i class="fas fa-chart-bar"></i> Bilan mensuel
+                            </button>
+                            <button class="action-btn secondary" onclick="saveData()">
+                                <i class="fas fa-save"></i> Sauvegarder
+                            </button>
+                            <button class="action-btn" onclick="importData()">
+                                <i class="fas fa-file-import"></i> Importer
+                            </button>
+                            <button class="action-btn danger" onclick="confirmDeleteAllData()">
+                                <i class="fas fa-trash"></i> Supprimer
+                            </button>
+                            <button class="action-btn" onclick="printData()">
+                                <i class="fas fa-print"></i> Imprimer
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Contenu principal -->
+                    <div class="main-content">
+                        <div class="action-buttons">
+                            <button class="action-btn" onclick="openAddModal('absence')">
+                                <i class="fas fa-plus"></i> Absence
+                            </button>
+                            <button class="action-btn" onclick="openAddModal('retard')">
+                                <i class="fas fa-clock"></i> Retard
+                            </button>
+                            <button class="action-btn" onclick="openAddModal('evaluation')">
+                                <i class="fas fa-file-alt"></i> Évaluation
+                            </button>
+                            <button class="action-btn secondary" onclick="openAddModal('maladie')">
+                                <i class="fas fa-heartbeat"></i> Maladie
+                            </button>
+                            <button class="action-btn secondary" onclick="openAddModal('contact')">
+                                <i class="fas fa-phone"></i> Contact
+                            </button>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="records-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Élève</th>
+                                        <th>Classe</th>
+                                        <th>Type</th>
+                                        <th>Motif</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="records-list">
+                                    <!-- Les enregistrements seront ajoutés ici dynamiquement -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Section pour le rapport mensuel -->
+                        <div id="monthly-report" class="report-section" style="display: none;">
+                            <h3 class="report-title"><i class="fas fa-chart-bar"></i> Bilan Mensuel</h3>
+                            <div class="action-buttons">
+                                <button class="action-btn tertiary" onclick="printReport()">
+                                    <i class="fas fa-print"></i> Imprimer
+                                </button>
+                                <button class="action-btn secondary" onclick="closeReport()">
+                                    <i class="fas fa-times"></i> Fermer
+                                </button>
+                            </div>
+                            <div id="report-content" class="report-content">
+                                <!-- Le contenu du rapport sera généré ici -->
+                            </div>
+                        </div>
+
+                        <!-- Contenu pour l'impression -->
+                        <div id="print-content" style="display: none;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour ajouter/modifier un enregistrement -->
+    <div id="record-modal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <h3 class="modal-title" id="modal-title">
+                <i class="fas fa-plus"></i> Ajouter un enregistrement
+            </h3>
+            
+            <form id="record-form">
+                <input type="hidden" id="record-id">
+                <input type="hidden" id="record-type">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="modal-date"><i class="fas fa-calendar"></i> Date :</label>
+                        <input type="date" id="modal-date" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="modal-class"><i class="fas fa-users"></i> Classe :</label>
+                        <select id="modal-class" required>
+                            <option value="">Sélectionner une classe</option>
+                            <option value="6eme">6ème</option>
+                            <option value="5eme">5ème</option>
+                            <option value="4eme">4ème</option>
+                            <option value="3eme">3ème</option>
+                            <option value="seconde-l">Seconde L</option>
+                            <option value="seconde-cd">Seconde CD</option>
+                            <option value="premiere-a4">Première A4</option>
+                            <option value="premiere-a5">Première A5</option>
+                            <option value="premiere-c4">Première C4</option>
+                            <option value="premiere-d">Première D</option>
+                            <option value="terminale-a4">Terminale A4</option>
+                            <option value="terminale-a5">Terminale A5</option>
+                            <option value="terminale-c4">Terminale C4</option>
+                            <option value="terminale-d">Terminale D</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="modal-student"><i class="fas fa-user-graduate"></i> Élève :</label>
+                        <select id="modal-student" required>
+                            <option value="">Sélectionner un élève</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" id="modal-time-container" style="display: none;">
+                        <label for="modal-time"><i class="fas fa-clock"></i> Heure de retard :</label>
+                        <input type="time" id="modal-time">
+                    </div>
+                </div>
+                
+                <div class="form-group form-full-row">
+                    <label for="modal-reason" id="modal-reason-label"><i class="fas fa-comment"></i> Motif :</label>
+                    <input type="text" id="modal-reason" placeholder="Décrivez la raison..." required>
+                </div>
+                
+                <div class="form-group form-full-row" id="modal-contact-container" style="display: none;">
+                    <label for="modal-contact-details"><i class="fas fa-phone"></i> Détails du contact :</label>
+                    <textarea id="modal-contact-details" rows="3" placeholder="Notes sur le contact avec le parent..."></textarea>
+                </div>
+                
+                <div class="form-group form-full-row" id="modal-justified-container" style="display: none;">
+                    <label>
+                        <input type="checkbox" id="modal-justified"> Justifié
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn">
+                    <i class="fas fa-save"></i> Enregistrer
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let db;
+        let currentUser = null;
+        let records = [];
+        let isDBInitialized = false;
+        
+        // Base de données des élèves avec leurs parents
+        const studentsByClass = {
+            "6eme": [
+                { name: "Jean Dupont", parentPhone: "+22890123456", parentName: "M. Dupont" },
+                { name: "Marie Kouassi", parentPhone: "+22890234567", parentName: "Mme Kouassi" },
+                { name: "Koffi Mensah", parentPhone: "+22890345678", parentName: "M. Mensah" }
+            ],
+            "5eme": [
+                { name: "Alice Johnson", parentPhone: "+22890456789", parentName: "M. Johnson" },
+                { name: "Bob Smith", parentPhone: "+22890567890", parentName: "Mme Smith" },
+                { name: "Charlie Brown", parentPhone: "+22890678901", parentName: "M. Brown" }
+            ],
+            "4eme": [
+                { name: "David Wilson", parentPhone: "+22890789012", parentName: "M. Wilson" },
+                { name: "Eva Green", parentPhone: "+22890890123", parentName: "Mme Green" },
+                { name: "Frank Ocean", parentPhone: "+22890901234", parentName: "M. Ocean" }
+            ],
+            "3eme": [
+                { name: "Grace Kelly", parentPhone: "+22891012345", parentName: "M. Kelly" },
+                { name: "Henry Ford", parentPhone: "+22891123456", parentName: "M. Ford" },
+                { name: "Irene Adler", parentPhone: "+22891234567", parentName: "Mme Adler" }
+            ],
+            "seconde-l": [
+                { name: "Jack Sparrow", parentPhone: "+22891345678", parentName: "M. Sparrow" },
+                { name: "Karen Smith", parentPhone: "+22891456789", parentName: "Mme Smith" },
+                { name: "Liam Neeson", parentPhone: "+22891567890", parentName: "M. Neeson" }
+            ],
+            "seconde-cd": [
+                { name: "Mona Lisa", parentPhone: "+22891678901", parentName: "M. Lisa" },
+                { name: "Nicolas Cage", parentPhone: "+22891789012", parentName: "M. Cage" },
+                { name: "Olivia Pope", parentPhone: "+22891890123", parentName: "Mme Pope" }
+            ],
+            "premiere-a4": [
+                { name: "Paul Walker", parentPhone: "+22891901234", parentName: "M. Walker" },
+                { name: "Queen Latifah", parentPhone: "+22892012345", parentName: "Mme Latifah" },
+                { name: "Robert Downey", parentPhone: "+22892123456", parentName: "M. Downey" }
+            ],
+            "premiere-a5": [
+                { name: "Steve Jobs", parentPhone: "+22892234567", parentName: "M. Jobs" },
+                { name: "Taylor Swift", parentPhone: "+22892345678", parentName: "Mme Swift" },
+                { name: "Uma Thurman", parentPhone: "+22892456789", parentName: "Mme Thurman" }
+            ],
+            "premiere-c4": [
+                { name: "Vin Diesel", parentPhone: "+22892567890", parentName: "M. Diesel" },
+                { name: "Will Smith", parentPhone: "+22892678901", parentName: "M. Smith" },
+                { name: "Xavier Dupont", parentPhone: "+22892789012", parentName: "M. Dupont" }
+            ],
+            "premiere-d": [
+                { name: "Yves Saint", parentPhone: "+22892890123", parentName: "M. Saint" },
+                { name: "Zoe Saldana", parentPhone: "+22892901234", parentName: "Mme Saldana" },
+                { name: "Adam Levine", parentPhone: "+22893012345", parentName: "M. Levine" }
+            ],
+            "terminale-a4": [
+                { name: "Bruce Wayne", parentPhone: "+22893123456", parentName: "M. Wayne" },
+                { name: "Clark Kent", parentPhone: "+22893234567", parentName: "M. Kent" },
+                { name: "Diana Prince", parentPhone: "+22893345678", parentName: "Mme Prince" }
+            ],
+            "terminale-a5": [
+                { name: "Edward Cullen", parentPhone: "+22893456789", parentName: "M. Cullen" },
+                { name: "Frodo Baggins", parentPhone: "+22893567890", parentName: "M. Baggins" },
+                { name: "Gandalf Grey", parentPhone: "+22893678901", parentName: "M. Grey" }
+            ],
+            "terminale-c4": [
+                { name: "Harry Potter", parentPhone: "+22893789012", parentName: "M. Potter" },
+                { name: "Iron Man", parentPhone: "+22893890123", parentName: "M. Stark" },
+                { name: "James Bond", parentPhone: "+22893901234", parentName: "M. Bond" }
+            ],
+            "terminale-d": [
+                { name: "Katniss Everdeen", parentPhone: "+22894012345", parentName: "Mme Everdeen" },
+                { name: "Luke Skywalker", parentPhone: "+22894123456", parentName: "M. Skywalker" },
+                { name: "Mario Bros", parentPhone: "+22894234567", parentName: "M. Bros" }
+            ]
+        };
+
+        // Initialiser la base de données IndexedDB
+        function initDB() {
+            return new Promise((resolve, reject) => {
+                console.log("Initialisation de la base de données...");
+                
+                const request = indexedDB.open('SurveillantDB', 2);
+                
+                request.onerror = (event) => {
+                    console.error("Erreur d'ouverture de la base de données", event);
+                    reject("Erreur d'ouverture de la base de données");
+                };
+                
+                request.onsuccess = (event) => {
+                    db = event.target.result;
+                    console.log("Base de données initialisée avec succès");
+                    isDBInitialized = true;
+                    resolve(db);
+                };
+                
+                request.onupgradeneeded = (event) => {
+                    console.log("Mise à jour de la base de données nécessaire...");
+                    const db = event.target.result;
+                    
+                    // Vérifier si le store existe déjà
+                    if (!db.objectStoreNames.contains('supervisors')) {
+                        // Créer le store pour les surveillants
+                        const supervisorStore = db.createObjectStore('supervisors', { keyPath: 'id', autoIncrement: true });
+                        supervisorStore.createIndex('username', 'username', { unique: true });
+                        supervisorStore.createIndex('email', 'email', { unique: true });
+                        console.log("Store 'supervisors' créé");
+                    }
+                    
+                    if (!db.objectStoreNames.contains('records')) {
+                        // Créer le store pour les enregistrements
+                        const recordStore = db.createObjectStore('records', { keyPath: 'id', autoIncrement: true });
+                        recordStore.createIndex('date', 'date');
+                        recordStore.createIndex('student', 'student');
+                        recordStore.createIndex('class', 'class');
+                        recordStore.createIndex('type', 'type');
+                        console.log("Store 'records' créé");
+                    }
+                    
+                    console.log("Structure de la base de données créée");
+                };
+            });
+        }
+
+        // Fonction pour vérifier et créer l'admin par défaut
+        async function createDefaultAdmin() {
+            return new Promise((resolve, reject) => {
+                try {
+                    const transaction = db.transaction(['supervisors'], 'readonly');
+                    const store = transaction.objectStore('supervisors');
+                    const request = store.getAll();
+                    
+                    request.onsuccess = (event) => {
+                        const supervisors = event.target.result;
+                        
+                        // Vérifier si l'admin existe déjà
+                        const adminExists = supervisors.some(s => s.username === 'admin');
+                        
+                        if (!adminExists) {
+                            // Créer une nouvelle transaction pour ajouter l'admin
+                            const writeTransaction = db.transaction(['supervisors'], 'readwrite');
+                            const writeStore = writeTransaction.objectStore('supervisors');
+                            
+                            const defaultAdmin = {
+                                name: "M. KOLA",
+                                email: "jeanskodoc22@gmail.com",
+                                phone: "+22892871605",
+                                username: "admin",
+                                password: "admin123"
+                            };
+                            
+                            const addRequest = writeStore.add(defaultAdmin);
+                            
+                            addRequest.onsuccess = () => {
+                                console.log("Administrateur par défaut créé");
+                                resolve(true);
+                            };
+                            
+                            addRequest.onerror = (error) => {
+                                console.error("Erreur lors de la création de l'admin", error);
+                                reject(error);
+                            };
+                        } else {
+                            console.log("Administrateur existe déjà");
+                            resolve(true);
+                        }
+                    };
+                    
+                    request.onerror = (error) => {
+                        console.error("Erreur lors de la vérification de l'admin", error);
+                        reject(error);
+                    };
+                } catch (error) {
+                    console.error("Erreur dans createDefaultAdmin", error);
+                    reject(error);
+                }
+            });
+        }
+
+        // Fonction pour vérifier les identifiants
+        function checkCredentials(username, password) {
+            return new Promise((resolve, reject) => {
+                console.log("Vérification des identifiants pour:", username);
+                
+                if (!db || !isDBInitialized) {
+                    console.error("Base de données non initialisée");
+                    reject("Base de données non initialisée");
+                    return;
+                }
+                
+                try {
+                    const transaction = db.transaction(['supervisors'], 'readonly');
+                    const store = transaction.objectStore('supervisors');
+                    const index = store.index('username');
+                    
+                    const request = index.get(username);
+                    
+                    request.onsuccess = (event) => {
+                        const supervisor = event.target.result;
+                        console.log("Résultat de la requête:", supervisor);
+                        
+                        if (supervisor && supervisor.password === password) {
+                            console.log("Connexion réussie pour:", supervisor.name);
+                            resolve(supervisor);
+                        } else {
+                            console.log("Identifiants incorrects");
+                            resolve(null);
+                        }
+                    };
+                    
+                    request.onerror = (event) => {
+                        console.error("Erreur de vérification des identifiants", event);
+                        reject("Erreur de vérification des identifiants");
+                    };
+                } catch (error) {
+                    console.error("Exception dans checkCredentials:", error);
+                    reject(error);
+                }
+            });
+        }
+
+        // Fonction pour ajouter un nouveau surveillant
+        function addSupervisor(supervisor) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['supervisors'], 'readwrite');
+                const store = transaction.objectStore('supervisors');
+                
+                const request = store.add(supervisor);
+                
+                request.onsuccess = () => {
+                    resolve(request.result);
+                };
+                
+                request.onerror = (event) => {
+                    console.error("Erreur d'ajout du surveillant", event);
+                    reject("Erreur d'ajout du surveillant");
+                };
+            });
+        }
+
+        // Fonction pour charger tous les enregistrements
+        function loadAllRecords() {
+            return new Promise((resolve, reject) => {
+                if (!db) {
+                    console.warn("Base de données non disponible");
+                    records = [];
+                    resolve(records);
+                    return;
+                }
+                
+                const transaction = db.transaction(['records'], 'readonly');
+                const store = transaction.objectStore('records');
+                
+                const request = store.getAll();
+                
+                request.onsuccess = (event) => {
+                    records = event.target.result || [];
+                    console.log(`${records.length} enregistrements chargés`);
+                    resolve(records);
+                };
+                
+                request.onerror = (event) => {
+                    console.error("Erreur de chargement des enregistrements", event);
+                    records = [];
+                    resolve(records);
+                };
+            });
+        }
+
+        // Fonction pour ajouter ou mettre à jour un enregistrement
+        function saveRecord(record) {
+            return new Promise((resolve, reject) => {
+                if (!db) {
+                    console.error("Base de données non disponible");
+                    reject("Base de données non disponible");
+                    return;
+                }
+                
+                const transaction = db.transaction(['records'], 'readwrite');
+                const store = transaction.objectStore('records');
+                
+                let request;
+                if (record.id) {
+                    // Mise à jour d'un enregistrement existant
+                    request = store.put(record);
+                } else {
+                    // Création d'un nouvel enregistrement (sans spécifier l'id pour l'auto-incrémentation)
+                    const recordWithoutId = Object.assign({}, record);
+                    delete recordWithoutId.id;
+                    request = store.add(recordWithoutId);
+                }
+                
+                request.onsuccess = (event) => {
+                    // Retourner l'ID généré ou mis à jour
+                    resolve(event.target.result || record.id);
+                };
+                
+                request.onerror = (event) => {
+                    console.error("Erreur de sauvegarde de l'enregistrement", event);
+                    reject("Erreur de sauvegarde de l'enregistrement");
+                };
+            });
+        }
+
+        // Fonction pour supprimer un enregistrement
+        function deleteRecordFromDB(id) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['records'], 'readwrite');
+                const store = transaction.objectStore('records');
+                
+                const request = store.delete(id);
+                
+                request.onsuccess = () => {
+                    resolve(true);
+                };
+                
+                request.onerror = (event) => {
+                    console.error("Erreur de suppression de l'enregistrement", event);
+                    reject("Erreur de suppression de l'enregistrement");
+                };
+            });
+        }
+
+        // Fonction pour supprimer toutes les données
+        function deleteAllData() {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['records'], 'readwrite');
+                const store = transaction.objectStore('records');
+                
+                const request = store.clear();
+                
+                request.onsuccess = () => {
+                    records = [];
+                    displayRecords();
+                    updateStats();
+                    resolve(true);
+                };
+                
+                request.onerror = (event) => {
+                    console.error("Erreur de suppression des données", event);
+                    reject("Erreur de suppression des données");
+                };
+            });
+        }
+
+        // Fonction pour confirmer la suppression de toutes les données
+        function confirmDeleteAllData() {
+            if (confirm("Êtes-vous sûr de vouloir supprimer TOUTES les données ? Cette action est irréversible.")) {
+                deleteAllData().then(() => {
+                    alert("Toutes les données ont été supprimées avec succès.");
+                }).catch(error => {
+                    alert("Une erreur est survenue lors de la suppression des données : " + error);
+                });
+            }
+        }
+
+        // Fonction pour afficher la section principale après connexion
+        async function showMainContent(supervisor) {
+            currentUser = supervisor;
+            
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('register-section').classList.add('hidden');
+            document.getElementById('main-content').classList.remove('hidden');
+            
+            // Mettre à jour le titre
+            document.getElementById('main-title').textContent = `📋 Surveillant - ${supervisor.name}`;
+            document.getElementById('main-subtitle').textContent = `Gestion des absences et retards`;
+            
+            // Charger les données initiales
+            await loadAllRecords();
+            loadStudentsDropdown();
+            displayRecords();
+            updateStats();
+        }
+
+        // Fonction pour charger les élèves dans les dropdowns
+        function loadStudentsDropdown() {
+            const filterStudent = document.getElementById('filter-student');
+            const modalStudent = document.getElementById('modal-student');
+            
+            // Vider les dropdowns
+            filterStudent.innerHTML = '<option value="">Tous les élèves</option>';
+            modalStudent.innerHTML = '<option value="">Sélectionner un élève</option>';
+            
+            // Ajouter les élèves par classe
+            for (const [classId, students] of Object.entries(studentsByClass)) {
+                students.forEach(student => {
+                    const option1 = document.createElement('option');
+                    option1.value = student.name;
+                    option1.textContent = student.name;
+                    filterStudent.appendChild(option1);
+                    
+                    const option2 = document.createElement('option');
+                    option2.value = student.name;
+                    option2.textContent = student.name;
+                    modalStudent.appendChild(option2);
+                });
+            }
+        }
+
+        // Fonction pour obtenir les informations d'un élève
+        function getStudentInfo(studentName) {
+            for (const [classId, students] of Object.entries(studentsByClass)) {
+                const student = students.find(s => s.name === studentName);
+                if (student) {
+                    return {
+                        ...student,
+                        class: classId
+                    };
+                }
+            }
+            return null;
+        }
+
+        // Fonction pour afficher les enregistrements
+        function displayRecords(filteredRecords = null) {
+            const recordsToDisplay = filteredRecords || records;
+            const recordsList = document.getElementById('records-list');
+            recordsList.innerHTML = '';
+            
+            if (recordsToDisplay.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `<td colspan="6" style="text-align: center; padding: 20px;">Aucun enregistrement trouvé</td>`;
+                recordsList.appendChild(row);
+                return;
+            }
+            
+            recordsToDisplay.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            recordsToDisplay.forEach(record => {
+                const row = document.createElement('tr');
+                
+                // Formater la date
+                const formattedDate = formatDate(record.date);
+                
+                // Déterminer le badge selon le type
+                let badgeClass = '';
+                let badgeText = '';
+                let badgeIcon = '';
+                
+                switch(record.type) {
+                    case 'absence':
+                        badgeClass = 'status-absent';
+                        badgeText = 'Absence';
+                        badgeIcon = 'fas fa-user-times';
+                        break;
+                    case 'retard':
+                        badgeClass = 'status-late';
+                        badgeText = 'Retard';
+                        badgeIcon = 'fas fa-clock';
+                        if (record.time) badgeText += ` (${record.time})`;
+                        break;
+                    case 'evaluation':
+                        badgeClass = 'status-evaluation';
+                        badgeText = 'Évaluation';
+                        badgeIcon = 'fas fa-file-alt';
+                        break;
+                    case 'maladie':
+                        badgeClass = 'status-sick';
+                        badgeText = 'Maladie';
+                        badgeIcon = 'fas fa-heartbeat';
+                        break;
+                    case 'contact':
+                        badgeClass = 'status-contact';
+                        badgeText = 'Contact';
+                        badgeIcon = 'fas fa-phone';
+                        break;
+                }
+                
+                row.innerHTML = `
+                    <td>${formattedDate}</td>
+                    <td>${record.student}</td>
+                    <td>${record.class}</td>
+                    <td><span class="status-badge ${badgeClass}"><i class="${badgeIcon}"></i> ${badgeText}</span></td>
+                    <td>${record.reason}</td>
+                    <td>
+                        <button onclick="editRecord(${record.id})" class="action-btn btn-sm" title="Modifier">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteRecord(${record.id})" class="action-btn btn-sm danger" title="Supprimer">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        ${record.type === 'contact' ? '' : `<button onclick="sendWhatsAppToParent('${record.student}', '${record.type}', '${formattedDate}', '${record.reason}', ${record.justified || false}, '${record.time || ''}')" class="action-btn btn-sm whatsapp" title="Envoyer WhatsApp aux parents">
+                            <i class="fab fa-whatsapp"></i>
+                        </button>`}
+                    </td>
+                `;
+                
+                recordsList.appendChild(row);
+            });
+        }
+
+        // NOUVELLE FONCTION : Envoyer un message WhatsApp spécifique au parent
+        function sendWhatsAppToParent(studentName, recordType, date, reason, justified, time = '') {
+            const studentInfo = getStudentInfo(studentName);
+            
+            if (!studentInfo || !studentInfo.parentPhone) {
+                alert(`Aucune information de contact trouvée pour ${studentName}`);
+                return;
+            }
+            
+            // Préparer le message selon le type d'incident
+            let message = `*📚 Lycée Niamtougou - Notification Parentale*\n\n`;
+            message += `👨‍🎓 *Élève:* ${studentName}\n`;
+            message += `📅 *Date:* ${date}\n`;
+            message += `🏫 *Classe:* ${studentInfo.class}\n\n`;
+            
+            switch(recordType) {
+                case 'absence':
+                    message += `🚫 *Type:* Absence\n`;
+                    message += `📝 *Motif:* ${reason}\n`;
+                    message += `✅ *Justifié:* ${justified ? 'Oui' : 'Non'}\n\n`;
+                    message += `ℹ️ Veuillez fournir une justification écrite si nécessaire.\n`;
+                    break;
+                    
+                case 'retard':
+                    message += `⏰ *Type:* Retard\n`;
+                    if (time) message += `🕐 *Heure d'arrivée:* ${time}\n`;
+                    message += `📝 *Motif:* ${reason}\n`;
+                    message += `✅ *Justifié:* ${justified ? 'Oui' : 'Non'}\n\n`;
+                    message += `ℹ️ Les retards répétés peuvent entraîner des sanctions.\n`;
+                    break;
+                    
+                case 'maladie':
+                    message += `🤒 *Type:* Maladie déclarée\n`;
+                    message += `📝 *Symptômes:* ${reason}\n`;
+                    message += `✅ *Justifié:* ${justified ? 'Oui' : 'Non'}\n\n`;
+                    message += `ℹ️ Merci de nous informer pour le suivi médical.\n`;
+                    break;
+                    
+                case 'evaluation':
+                    message += `📝 *Type:* Évaluation manquée\n`;
+                    message += `📚 *Matière:* ${reason}\n`;
+                    message += `✅ *Justifié:* ${justified ? 'Oui' : 'Non'}\n\n`;
+                    message += `ℹ️ Une convocation pour rattrapage sera envoyée.\n`;
+                    break;
+            }
+            
+            message += `\n📞 *Surveillant:* ${currentUser ? currentUser.name : 'Équipe de surveillance'}\n`;
+            message += `🏫 *Établissement:* Lycée Niamtougou\n`;
+            message += `📅 *Envoyé le:* ${new Date().toLocaleDateString('fr-FR')}`;
+            
+            // Nettoyer le numéro de téléphone (enlever les + et espaces)
+            const cleanPhone = studentInfo.parentPhone.replace(/\D/g, '');
+            
+            // Encoder le message pour l'URL
+            const encodedMessage = encodeURIComponent(message);
+            
+            // Créer le lien WhatsApp
+            const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodedMessage}`;
+            
+            // Demander confirmation avant d'envoyer
+            if (confirm(`Envoyer une notification WhatsApp au parent de ${studentName} (${studentInfo.parentName}) ?`)) {
+                // Ouvrir dans un nouvel onglet
+                window.open(whatsappUrl, '_blank');
+                
+                // Enregistrer automatiquement un contact
+                const contactRecord = {
+                    type: 'contact',
+                    date: new Date().toISOString().split('T')[0],
+                    student: studentName,
+                    class: studentInfo.class,
+                    reason: `Notification WhatsApp envoyée pour ${getTypeLabel(recordType)}`,
+                    contactDetails: `Message envoyé au parent: ${studentInfo.parentName} (${studentInfo.parentPhone})`
+                };
+                
+                saveRecord(contactRecord).then(() => {
+                    loadAllRecords().then(() => {
+                        displayRecords();
+                        updateStats();
+                    });
+                });
+            }
+        }
+
+        // Fonction pour mettre à jour les statistiques
+        function updateStats() {
+            const absences = records.filter(r => r.type === 'absence').length;
+            const retards = records.filter(r => r.type === 'retard').length;
+            const evaluations = records.filter(r => r.type === 'evaluation').length;
+            
+            document.getElementById('stat-absences').textContent = absences;
+            document.getElementById('stat-retards').textContent = retards;
+            document.getElementById('stat-evaluations').textContent = evaluations;
+        }
+
+        // Fonction pour formater la date
+        function formatDate(dateString) {
+            const options = { day: 'numeric', month: 'numeric', year: 'numeric' };
+            return new Date(dateString).toLocaleDateString('fr-FR', options);
+        }
+
+        // Fonction pour appliquer les filtres
+        function applyFilters() {
+            const classFilter = document.getElementById('filter-class').value;
+            const studentFilter = document.getElementById('filter-student').value;
+            const typeFilter = document.getElementById('filter-type').value;
+            const dateFilter = document.getElementById('filter-date').value;
+            
+            let filteredRecords = [...records];
+            
+            if (classFilter) {
+                filteredRecords = filteredRecords.filter(r => r.class === classFilter);
+            }
+            
+            if (studentFilter) {
+                filteredRecords = filteredRecords.filter(r => r.student === studentFilter);
+            }
+            
+            if (typeFilter) {
+                filteredRecords = filteredRecords.filter(r => r.type === typeFilter);
+            }
+            
+            if (dateFilter) {
+                filteredRecords = filteredRecords.filter(r => r.date === dateFilter);
+            }
+            
+            displayRecords(filteredRecords);
+        }
+
+        // Fonction pour ouvrir le modal d'ajout
+        function openAddModal(type) {
+            const modal = document.getElementById('record-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const recordType = document.getElementById('record-type');
+            const timeContainer = document.getElementById('modal-time-container');
+            const contactContainer = document.getElementById('modal-contact-container');
+            const justifiedContainer = document.getElementById('modal-justified-container');
+            const reasonLabel = document.getElementById('modal-reason-label');
+            
+            // Réinitialiser le formulaire
+            document.getElementById('record-form').reset();
+            document.getElementById('record-id').value = '';
+            recordType.value = type;
+            
+            // Configurer le modal selon le type
+            switch(type) {
+                case 'absence':
+                    modalTitle.innerHTML = '<i class="fas fa-user-times"></i> Ajouter une absence';
+                    reasonLabel.textContent = 'Motif de l\'absence :';
+                    timeContainer.style.display = 'none';
+                    contactContainer.style.display = 'none';
+                    justifiedContainer.style.display = 'block';
+                    break;
+                case 'retard':
+                    modalTitle.innerHTML = '<i class="fas fa-clock"></i> Ajouter un retard';
+                    reasonLabel.textContent = 'Motif du retard :';
+                    timeContainer.style.display = 'block';
+                    contactContainer.style.display = 'none';
+                    justifiedContainer.style.display = 'block';
+                    break;
+                case 'evaluation':
+                    modalTitle.innerHTML = '<i class="fas fa-file-alt"></i> Ajouter une évaluation manquée';
+                    reasonLabel.textContent = 'Matière/Type d\'évaluation :';
+                    timeContainer.style.display = 'none';
+                    contactContainer.style.display = 'none';
+                    justifiedContainer.style.display = 'block';
+                    break;
+                case 'maladie':
+                    modalTitle.innerHTML = '<i class="fas fa-heartbeat"></i> Déclarer une maladie';
+                    reasonLabel.textContent = 'Description des symptômes :';
+                    timeContainer.style.display = 'none';
+                    contactContainer.style.display = 'none';
+                    justifiedContainer.style.display = 'block';
+                    break;
+                case 'contact':
+                    modalTitle.innerHTML = '<i class="fas fa-phone"></i> Enregistrer un contact avec un parent';
+                    reasonLabel.textContent = 'Raison du contact :';
+                    timeContainer.style.display = 'none';
+                    contactContainer.style.display = 'block';
+                    justifiedContainer.style.display = 'none';
+                    break;
+            }
+            
+            // Définir la date d'aujourd'hui par défaut
+            document.getElementById('modal-date').valueAsDate = new Date();
+            
+            // Afficher le modal
+            modal.style.display = 'flex';
+        }
+
+        // Fonction pour fermer le modal
+        function closeModal() {
+            document.getElementById('record-modal').style.display = 'none';
+        }
+
+        // Fonction pour éditer un enregistrement
+        function editRecord(id) {
+            const record = records.find(r => r.id === id);
+            if (!record) return;
+            
+            const modal = document.getElementById('record-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const recordType = document.getElementById('record-type');
+            const timeContainer = document.getElementById('modal-time-container');
+            const contactContainer = document.getElementById('modal-contact-container');
+            const justifiedContainer = document.getElementById('modal-justified-container');
+            const reasonLabel = document.getElementById('modal-reason-label');
+            
+            // Remplir le formulaire
+            document.getElementById('record-id').value = record.id;
+            recordType.value = record.type;
+            document.getElementById('modal-date').value = record.date;
+            document.getElementById('modal-class').value = record.class;
+            document.getElementById('modal-student').value = record.student;
+            document.getElementById('modal-reason').value = record.reason;
+            
+            // Configurer selon le type
+            switch(record.type) {
+                case 'absence':
+                    modalTitle.innerHTML = '<i class="fas fa-user-times"></i> Modifier une absence';
+                    reasonLabel.textContent = 'Motif de l\'absence :';
+                    timeContainer.style.display = 'none';
+                    contactContainer.style.display = 'none';
+                    justifiedContainer.style.display = 'block';
+                    document.getElementById('modal-justified').checked = record.justified || false;
+                    break;
+                case 'retard':
+                    modalTitle.innerHTML = '<i class="fas fa-clock"></i> Modifier un retard';
+                    reasonLabel.textContent = 'Motif du retard :';
+                    timeContainer.style.display = 'block';
+                    contactContainer.style.display = 'none';
+                    justifiedContainer.style.display = 'block';
+                    document.getElementById('modal-time').value = record.time || '';
+                    document.getElementById('modal-justified').checked = record.justified || false;
+                    break;
+                case 'evaluation':
+                    modalTitle.innerHTML = '<i class="fas fa-file-alt"></i> Modifier une évaluation manquée';
+                    reasonLabel.textContent = 'Matière/Type d\'évaluation :';
+                    timeContainer.style.display = 'none';
+                    contactContainer.style.display = 'none';
+                    justifiedContainer.style.display = 'block';
+                    document.getElementById('modal-justified').checked = record.justified || false;
+                    break;
+                case 'maladie':
+                    modalTitle.innerHTML = '<i class="fas fa-heartbeat"></i> Modifier une déclaration de maladie';
+                    reasonLabel.textContent = 'Description des symptômes :';
+                    timeContainer.style.display = 'none';
+                    contactContainer.style.display = 'none';
+                    justifiedContainer.style.display = 'block';
+                    document.getElementById('modal-justified').checked = record.justified || false;
+                    break;
+                case 'contact':
+                    modalTitle.innerHTML = '<i class="fas fa-phone"></i> Modifier un contact avec un parent';
+                    reasonLabel.textContent = 'Raison du contact :';
+                    timeContainer.style.display = 'none';
+                    contactContainer.style.display = 'block';
+                    justifiedContainer.style.display = 'none';
+                    document.getElementById('modal-contact-details').value = record.contactDetails || '';
+                    break;
+            }
+            
+            // Afficher le modal
+            modal.style.display = 'flex';
+        }
+
+        // Fonction pour supprimer un enregistrement
+        function deleteRecord(id) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cet enregistrement ?')) {
+                deleteRecordFromDB(id).then(() => {
+                    records = records.filter(r => r.id !== id);
+                    displayRecords();
+                    updateStats();
+                }).catch(error => {
+                    alert("Erreur lors de la suppression : " + error);
+                });
+            }
+        }
+
+        // Fonctions pour basculer entre les sections
+        function showLoginSection() {
+            document.getElementById('login-section').classList.remove('hidden');
+            document.getElementById('register-section').classList.add('hidden');
+            document.getElementById('main-content').classList.add('hidden');
+        }
+
+        function showRegisterForm() {
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('register-section').classList.remove('hidden');
+            document.getElementById('main-content').classList.add('hidden');
+        }
+
+        function logout() {
+            currentUser = null;
+            showLoginSection();
+            document.getElementById('loginForm').reset();
+        }
+
+        // Fonction pour sauvegarder les données (export)
+        function saveData() {
+            // Créer un blob avec les données
+            const data = {
+                records: records,
+                lastExport: new Date().toISOString(),
+                exportedBy: currentUser ? currentUser.name : 'System'
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            // Créer un lien de téléchargement
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `surveillant_data_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            alert('Données exportées avec succès !');
+        }
+
+        // Fonction pour importer des données
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = function(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const importedData = JSON.parse(e.target.result);
+                        
+                        if (!importedData.records || !Array.isArray(importedData.records)) {
+                            throw new Error("Format de fichier invalide");
+                        }
+                        
+                        if (confirm(`Voulez-vous importer ${importedData.records.length} enregistrements ?`)) {
+                            // Sauvegarder chaque enregistrement importé
+                            const importPromises = importedData.records.map(record => saveRecord(record));
+                            
+                            Promise.all(importPromises)
+                                .then(() => {
+                                    alert(`Importation réussie : ${importedData.records.length} enregistrements importés`);
+                                    loadAllRecords().then(() => {
+                                        displayRecords();
+                                        updateStats();
+                                    });
+                                })
+                                .catch(error => {
+                                    console.error("Erreur lors de l'importation", error);
+                                    alert("Une erreur est survenue lors de l'importation des données");
+                                });
+                        }
+                    } catch (error) {
+                        console.error("Erreur de lecture du fichier", error);
+                        alert("Le fichier sélectionné n'est pas valide ou est corrompu");
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+
+        // Fonction pour imprimer les données
+        function printData() {
+            const printContent = document.getElementById('print-content');
+            printContent.innerHTML = '';
+            
+            // Créer le contenu à imprimer
+            const title = document.createElement('h2');
+            title.textContent = 'Relevé des absences et retards - Lycée Niamtougou';
+            printContent.appendChild(title);
+            
+            const date = document.createElement('p');
+            date.textContent = 'Date : ' + new Date().toLocaleDateString('fr-FR');
+            printContent.appendChild(date);
+            
+            const table = document.createElement('table');
+            table.style.width = '100%';
+            table.style.borderCollapse = 'collapse';
+            table.style.marginTop = '15px';
+            
+            // En-tête du tableau
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            ['Date', 'Élève', 'Classe', 'Type', 'Motif'].forEach(text => {
+                const th = document.createElement('th');
+                th.textContent = text;
+                th.style.border = '1px solid #ddd';
+                th.style.padding = '6px';
+                th.style.backgroundColor = '#3a7bd5';
+                th.style.color = 'white';
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+            
+            // Corps du tableau
+            const tbody = document.createElement('tbody');
+            records.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(record => {
+                const row = document.createElement('tr');
+                
+                [formatDate(record.date), record.student, record.class, 
+                 getTypeLabel(record.type), record.reason].forEach(text => {
+                    const td = document.createElement('td');
+                    td.textContent = text;
+                    td.style.border = '1px solid #ddd';
+                    td.style.padding = '6px';
+                    row.appendChild(td);
+                });
+                
+                tbody.appendChild(row);
+            });
+            table.appendChild(tbody);
+            printContent.appendChild(table);
+            
+            // Statistiques
+            const stats = document.createElement('div');
+            stats.style.marginTop = '15px';
+            stats.innerHTML = `
+                <h3>Statistiques</h3>
+                <p>Total des absences : ${records.filter(r => r.type === 'absence').length}</p>
+                <p>Total des retards : ${records.filter(r => r.type === 'retard').length}</p>
+                <p>Évaluations manquées : ${records.filter(r => r.type === 'evaluation').length}</p>
+            `;
+            printContent.appendChild(stats);
+            
+            // Lancer l'impression
+            window.print();
+        }
+
+        // Fonction pour envoyer les données par WhatsApp (rapport général)
+        function sendViaWhatsApp() {
+            // Préparer le message avec les données
+            let message = "📊 *Rapport des absences et retards - Lycée Niamtougou*\n\n";
+            
+            // Ajouter les statistiques
+            message += `📌 *Absences:* ${records.filter(r => r.type === 'absence').length}\n`;
+            message += `⏱ *Retards:* ${records.filter(r => r.type === 'retard').length}\n`;
+            message += `📝 *Évaluations manquées:* ${records.filter(r => r.type === 'evaluation').length}\n\n`;
+            
+            // Ajouter les 5 derniers enregistrements
+            message += "📋 *Derniers enregistrements:*\n";
+            const recentRecords = [...records].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+            recentRecords.forEach(record => {
+                message += `- ${formatDate(record.date)}: ${record.student} (${record.class}) - ${getTypeLabel(record.type)}\n`;
+            });
+            
+            message += `\n📅 *Date du rapport:* ${new Date().toLocaleDateString('fr-FR')}\n`;
+            message += `👨‍🏫 *Surveillant:* ${currentUser ? currentUser.name : 'Système'}`;
+            
+            // Encoder le message pour l'URL
+            const encodedMessage = encodeURIComponent(message);
+            
+            // Numéro de téléphone par défaut
+            const phoneNumber = "22892871605";
+            
+            // Créer le lien WhatsApp
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+            
+            // Demander confirmation
+            if (confirm("Envoyer un rapport WhatsApp des dernières activités ?")) {
+                // Ouvrir dans un nouvel onglet
+                window.open(whatsappUrl, '_blank');
+            }
+        }
+
+        // Fonction pour générer le rapport mensuel
+        function generateMonthlyReport() {
+            const monthlyReport = document.getElementById('monthly-report');
+            const reportContent = document.getElementById('report-content');
+            
+            // Calculer le mois et l'année actuels
+            const now = new Date();
+            const month = now.toLocaleString('fr-FR', { month: 'long' });
+            const year = now.getFullYear();
+            
+            // Filtrer les enregistrements du mois courant
+            const currentMonthRecords = records.filter(record => {
+                const recordDate = new Date(record.date);
+                return recordDate.getMonth() === now.getMonth() && 
+                       recordDate.getFullYear() === now.getFullYear();
+            });
+            
+            // Générer le contenu du rapport
+            reportContent.innerHTML = `
+                <h4>Bilan pour ${month} ${year}</h4>
+                <div class="report-item">
+                    <strong>Nombre total d'absences :</strong> ${currentMonthRecords.filter(r => r.type === 'absence').length}
+                </div>
+                <div class="report-item">
+                    <strong>Nombre total de retards :</strong> ${currentMonthRecords.filter(r => r.type === 'retard').length}
+                </div>
+                <div class="report-item">
+                    <strong>Évaluations manquées :</strong> ${currentMonthRecords.filter(r => r.type === 'evaluation').length}
+                </div>
+                <div class="report-item">
+                    <strong>Cas de maladie déclarés :</strong> ${currentMonthRecords.filter(r => r.type === 'maladie').length}
+                </div>
+                <div class="report-item">
+                    <strong>Contacts avec les parents :</strong> ${currentMonthRecords.filter(r => r.type === 'contact').length}
+                </div>
+                
+                <h4 style="margin-top: 15px;">Détails par classe</h4>
+                ${generateClassReports(currentMonthRecords)}
+            `;
+            
+            // Afficher la section de rapport
+            monthlyReport.style.display = 'block';
+        }
+
+        // Fonction pour générer les rapports par classe
+        function generateClassReports(monthlyRecords) {
+            const classes = [...new Set(monthlyRecords.map(r => r.class))];
+            let html = '';
+            
+            classes.forEach(classe => {
+                const classRecords = monthlyRecords.filter(r => r.class === classe);
+                
+                html += `
+                    <div class="report-item">
+                        <strong>Classe ${classe} :</strong>
+                        <ul style="margin-top: 5px; margin-left: 15px;">
+                            <li>Absences : ${classRecords.filter(r => r.type === 'absence').length}</li>
+                            <li>Retards : ${classRecords.filter(r => r.type === 'retard').length}</li>
+                            <li>Évaluations manquées : ${classRecords.filter(r => r.type === 'evaluation').length}</li>
+                        </ul>
+                    </div>
+                `;
+            });
+            
+            return html;
+        }
+
+        // Fonction pour imprimer le rapport
+        function printReport() {
+            const printContent = document.getElementById('print-content');
+            printContent.innerHTML = document.getElementById('report-content').innerHTML;
+            
+            // Ajouter un titre
+            const title = document.createElement('h2');
+            title.textContent = 'Bilan Mensuel - Lycée Niamtougou';
+            printContent.insertBefore(title, printContent.firstChild);
+            
+            // Ajouter la date
+            const date = document.createElement('p');
+            date.textContent = 'Date : ' + new Date().toLocaleDateString('fr-FR');
+            printContent.insertBefore(date, printContent.firstChild.nextSibling);
+            
+            window.print();
+        }
+
+        // Fonction pour fermer le rapport
+        function closeReport() {
+            document.getElementById('monthly-report').style.display = 'none';
+        }
+
+        // Fonction utilitaire pour obtenir le libellé du type
+        function getTypeLabel(type) {
+            const labels = {
+                'absence': 'Absence',
+                'retard': 'Retard',
+                'evaluation': 'Évaluation manquée',
+                'maladie': 'Maladie',
+                'contact': 'Contact parent'
+            };
+            return labels[type] || type;
+        }
+
+        // Gestion de la soumission du formulaire
+        document.getElementById('record-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const id = document.getElementById('record-id').value;
+            const type = document.getElementById('record-type').value;
+            const date = document.getElementById('modal-date').value;
+            const student = document.getElementById('modal-student').value;
+            const studentClass = document.getElementById('modal-class').value;
+            const reason = document.getElementById('modal-reason').value;
+            const time = type === 'retard' ? document.getElementById('modal-time').value : undefined;
+            const contactDetails = type === 'contact' ? document.getElementById('modal-contact-details').value : undefined;
+            const justified = type !== 'contact' ? document.getElementById('modal-justified').checked : undefined;
+            
+            // Validation des champs obligatoires
+            if (!date || !student || !studentClass || !reason) {
+                alert("Veuillez remplir tous les champs obligatoires");
+                return;
+            }
+            
+            const recordData = {
+                id: id ? parseInt(id) : undefined,
+                type,
+                date,
+                student,
+                class: studentClass,
+                reason,
+                time,
+                contactDetails,
+                justified
+            };
+            
+            try {
+                // Désactiver le bouton pendant l'enregistrement
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enregistrement...';
+                
+                // Sauvegarder l'enregistrement
+                const recordId = await saveRecord(recordData);
+                
+                // Mettre à jour l'ID si c'est un nouvel enregistrement
+                if (!id) {
+                    recordData.id = recordId;
+                }
+                
+                // Mettre à jour la liste en mémoire
+                if (id) {
+                    // Mise à jour
+                    const index = records.findIndex(r => r.id === parseInt(id));
+                    if (index !== -1) {
+                        records[index] = recordData;
+                    }
+                } else {
+                    // Ajout
+                    records.push(recordData);
+                }
+                
+                // Proposer d'envoyer un WhatsApp au parent pour les incidents importants
+                if (type !== 'contact' && !id) {
+                    const studentInfo = getStudentInfo(student);
+                    if (studentInfo && studentInfo.parentPhone) {
+                        if (confirm(`Voulez-vous envoyer une notification WhatsApp au parent de ${student} ?`)) {
+                            const formattedDate = formatDate(date);
+                            sendWhatsAppToParent(student, type, formattedDate, reason, justified, time);
+                        }
+                    }
+                }
+                
+                // Fermer le modal et actualiser l'affichage
+                closeModal();
+                displayRecords();
+                updateStats();
+                
+            } catch (error) {
+                console.error("Erreur lors de la sauvegarde :", error);
+                alert("Une erreur est survenue lors de l'enregistrement. Veuillez réessayer.");
+            } finally {
+                // Réactiver le bouton
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-save"></i> Enregistrer';
+                }
+            }
+        });
+
+        // Gestion de la soumission du formulaire de connexion
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            
+            // Validation de base
+            if (!username || !password) {
+                showErrorMessage("Veuillez remplir tous les champs");
+                return;
+            }
+            
+            try {
+                // Afficher l'indicateur de chargement
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connexion...';
+                
+                console.log("Tentative de connexion avec:", username);
+                
+                // Vérifier que la base de données est initialisée
+                if (!isDBInitialized) {
+                    console.log("Base de données non initialisée, tentative d'initialisation...");
+                    await initDB();
+                    await createDefaultAdmin();
+                }
+                
+                // Vérifier les identifiants
+                const supervisor = await checkCredentials(username, password);
+                
+                if (supervisor) {
+                    console.log("Connexion réussie, affichage du contenu principal...");
+                    await showMainContent(supervisor);
+                } else {
+                    console.log("Identifiants incorrects");
+                    showErrorMessage("Identifiant ou mot de passe incorrect");
+                }
+            } catch (error) {
+                console.error("Erreur de connexion", error);
+                showErrorMessage("Une erreur est survenue lors de la connexion. Veuillez réessayer.");
+            } finally {
+                // Réactiver le bouton
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }
+            }
+        });
+
+        // Fonction utilitaire pour afficher les messages d'erreur
+        function showErrorMessage(message) {
+            const errorElement = document.getElementById('error-message');
+            document.getElementById('error-text').textContent = message;
+            errorElement.style.display = 'flex';
+            
+            setTimeout(() => {
+                errorElement.style.display = 'none';
+            }, 3000);
+        }
+
+        // Gestion de la soumission du formulaire d'inscription
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('supervisor-name').value;
+            const email = document.getElementById('supervisor-email').value;
+            const phone = document.getElementById('supervisor-phone').value;
+            const username = document.getElementById('register-username').value;
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            // Validation
+            const errorElement = document.getElementById('register-error');
+            const successElement = document.getElementById('register-success');
+            
+            errorElement.style.display = 'none';
+            successElement.style.display = 'none';
+            
+            if (password !== confirmPassword) {
+                document.getElementById('register-error-text').textContent = "Les mots de passe ne correspondent pas";
+                errorElement.style.display = 'flex';
+                return;
+            }
+            
+            try {
+                // Vérifier si le compte existe déjà
+                const transaction = db.transaction(['supervisors'], 'readonly');
+                const store = transaction.objectStore('supervisors');
+                const usernameIndex = store.index('username');
+                const emailIndex = store.index('email');
+                
+                const usernameRequest = usernameIndex.get(username);
+                const emailRequest = emailIndex.get(email);
+                
+                const [existingByUsername, existingByEmail] = await Promise.all([
+                    new Promise(resolve => {
+                        usernameRequest.onsuccess = (e) => resolve(e.target.result);
+                    }),
+                    new Promise(resolve => {
+                        emailRequest.onsuccess = (e) => resolve(e.target.result);
+                    })
+                ]);
+                
+                if (existingByUsername) {
+                    document.getElementById('register-error-text').textContent = "Un compte existe déjà avec cet identifiant";
+                    errorElement.style.display = 'flex';
+                    return;
+                }
+                
+                if (existingByEmail) {
+                    document.getElementById('register-error-text').textContent = "Un compte existe déjà avec cet email";
+                    errorElement.style.display = 'flex';
+                    return;
+                }
+                
+                // Créer le nouveau compte
+                const newSupervisor = {
+                    name,
+                    email,
+                    phone,
+                    username,
+                    password
+                };
+                
+                await addSupervisor(newSupervisor);
+                
+                // Afficher un message de succès
+                document.getElementById('register-success-text').textContent = "Compte créé avec succès! Vous pouvez maintenant vous connecter.";
+                successElement.style.display = 'flex';
+                
+                // Réinitialiser le formulaire
+                this.reset();
+                
+                // Revenir à la page de connexion après 3 secondes
+                setTimeout(() => {
+                    showLoginSection();
+                    successElement.style.display = 'none';
+                }, 3000);
+            } catch (error) {
+                console.error("Erreur d'inscription", error);
+                document.getElementById('register-error-text').textContent = "Une erreur est survenue lors de la création du compte";
+                errorElement.style.display = 'flex';
+            }
+        });
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log("Document chargé, initialisation...");
+            
+            try {
+                // Initialiser la base de données
+                await initDB();
+                await createDefaultAdmin();
+                
+                console.log("Base de données et admin initialisés avec succès");
+                
+                // Mettre la date du jour dans le filtre par défaut
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('filter-date').value = today;
+                
+                // Charger les données initiales
+                await loadAllRecords();
+                
+                console.log("Application prête à utiliser");
+                
+                // Afficher un message de bienvenue
+                const loginForm = document.getElementById('loginForm');
+                if (loginForm) {
+                    const welcomeMessage = document.createElement('div');
+                    welcomeMessage.className = 'success-message';
+                    welcomeMessage.style.display = 'flex';
+                    welcomeMessage.innerHTML = `
+                        <i class="fas fa-info-circle"></i>
+                        <span>Utilisez "admin" / "admin123" pour vous connecter</span>
+                    `;
+                    loginForm.insertBefore(welcomeMessage, loginForm.firstChild);
+                    
+                    // Masquer le message après 5 secondes
+                    setTimeout(() => {
+                        welcomeMessage.style.display = 'none';
+                    }, 5000);
+                }
+                
+                // Si nous voulons pré-remplir avec des données de démo (seulement si la base est vide)
+                if (records.length === 0) {
+                    console.log("Aucun enregistrement trouvé, création de données de démo...");
+                    
+                    // Ajouter quelques enregistrements de démo
+                    const demoRecords = [
+                        {
+                            type: "absence",
+                            date: new Date().toISOString().split('T')[0],
+                            student: "Jean Dupont",
+                            class: "6eme",
+                            reason: "Absence non justifiée",
+                            justified: false
+                        },
+                        {
+                            type: "retard",
+                            date: new Date().toISOString().split('T')[0],
+                            student: "Marie Kouassi",
+                            class: "6eme",
+                            reason: "Retard bus scolaire",
+                            time: "08:15",
+                            justified: true
+                        }
+                    ];
+                    
+                    // Sauvegarder les enregistrements de démo
+                    for (const record of demoRecords) {
+                        await saveRecord(record);
+                    }
+                    
+                    // Recharger les enregistrements
+                    await loadAllRecords();
+                    console.log("Données de démo créées");
+                }
+            } catch (error) {
+                console.error("Erreur d'initialisation", error);
+                
+                // Afficher un message d'erreur convivial
+                const errorElement = document.getElementById('error-message');
+                if (errorElement) {
+                    document.getElementById('error-text').textContent = "Erreur d'initialisation. Veuillez actualiser la page.";
+                    errorElement.style.display = 'flex';
+                }
+                
+                // Ajouter un bouton de secours pour les identifiants
+                const loginForm = document.getElementById('loginForm');
+                if (loginForm) {
+                    const backupMessage = document.createElement('div');
+                    backupMessage.className = 'success-message';
+                    backupMessage.style.display = 'flex';
+                    backupMessage.innerHTML = `
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span>Mode de secours activé. Utilisez "admin" / "admin123"</span>
+                    `;
+                    loginForm.insertBefore(backupMessage, loginForm.firstChild);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

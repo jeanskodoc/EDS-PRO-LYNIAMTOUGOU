@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiche Administrative Enseignant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --primary-dark: #2980b9;
+            --secondary-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --info-color: #9b59b6;
+            --dark-color: #2c3e50;
+            --light-color: #f5f5f5;
+            --gray-color: #7f8c8d;
+            --border-radius: 10px;
+            --box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            --box-shadow-lg: 0 5px 15px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-color);
+            padding: 20px;
+            color: var(--dark-color);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow-lg);
+            overflow: hidden;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 20px 25px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 1.4rem;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        /* Boutons compacts */
+        .btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn i {
+            font-size: 0.65rem;
+        }
+
+        .btn-primary { background: var(--primary-color); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-secondary { background: var(--secondary-color); color: white; }
+        .btn-danger { background: var(--danger-color); color: white; }
+        .btn-info { background: var(--info-color); color: white; }
+        
+        .btn-sm { padding: 3px 7px; font-size: 0.65rem; }
+        
+        /* Onglets */
+        .tabs {
+            display: flex;
+            gap: 2px;
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 0 20px;
+        }
+
+        .tab {
+            padding: 10px 16px;
+            background: none;
+            border: none;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--gray-color);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .tab:hover { color: var(--primary-color); }
+        .tab.active { color: var(--primary-color); }
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Sections dans les onglets */
+        .form-section {
+            background: #f9f9f9;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-section h3 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--gray-color);
+        }
+
+        .form-group label i {
+            margin-right: 3px;
+            font-size: 0.65rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.75rem;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-group textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        /* Diplômes */
+        .diploma-item {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border: 1px solid #e0e0e0;
+            position: relative;
+        }
+
+        .teaching-stats {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .teaching-stats h4 {
+            font-size: 0.75rem;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        /* Bouton retour compact */
+        .btn-retour {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(5px);
+            border: none;
+            padding: 5px 10px;
+            border-radius: 15px;
+            color: white;
+            font-size: 0.7rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-retour:hover { background: rgba(255,255,255,0.3); }
+
+        /* Notification compacte */
+        .notification {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            padding: 8px 12px;
+            background: var(--secondary-color);
+            color: white;
+            border-radius: 5px;
+            font-size: 0.7rem;
+            z-index: 2000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Modal compacte */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            max-width: 400px;
+            width: 90%;
+            padding: 15px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .tabs { padding: 0 10px; }
+            .tab { padding: 8px 10px; font-size: 0.7rem; }
+            .tab-content { padding: 12px; }
+            .form-row { grid-template-columns: 1fr; }
+            .form-actions { flex-direction: column; }
+            .btn { width: 100%; justify-content: center; }
+        }
+
+        @media print {
+            body * { visibility: hidden; }
+            .container, .container * { visibility: visible; }
+            .container { position: absolute; top: 0; left: 0; width: 100%; }
+            .btn-retour, .tabs, .form-actions, button { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <button class="btn-retour" onclick="history.back()"><i class="fas fa-arrow-left"></i> Retour</button>
+            <h1><i class="fas fa-id-card"></i> Fiche Administrative Enseignant</h1>
+            <p>Renseignements à destination de la hiérarchie</p>
+        </header>
+
+        <!-- Onglets -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('personal')"><i class="fas fa-user"></i> Infos perso</button>
+            <button class="tab" onclick="switchTab('professional')"><i class="fas fa-briefcase"></i> Professionnel</button>
+            <button class="tab" onclick="switchTab('teaching')"><i class="fas fa-chart-bar"></i> Enseignement</button>
+            <button class="tab" onclick="switchTab('diplomas')"><i class="fas fa-graduation-cap"></i> Diplômes</button>
+            <button class="tab" onclick="switchTab('observations')"><i class="fas fa-comments"></i> Observations</button>
+        </div>
+
+        <form id="teacherForm">
+            <!-- Onglet 1: Informations personnelles -->
+            <div id="personalTab" class="tab-content active">
+                <div class="form-section">
+                    <h3><i class="fas fa-user-circle"></i> Identité</h3>
+                    <div class="form-row">
+                        <div class="form-group"><label><i class="fas fa-signature"></i> Nom</label><input type="text" id="lastName" required></div>
+                        <div class="form-group"><label><i class="fas fa-user"></i> Prénoms</label><input type="text" id="firstName" required></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label><i class="fas fa-birthday-cake"></i> Date naissance</label><input type="date" id="birthDate" required onchange="calculateRetirementDate()"></div>
+                        <div class="form-group"><label><i class="fas fa-map-marker-alt"></i> Lieu naissance</label><input type="text" id="birthPlace" required></div>
+                    </div>
+                    <div class="form-group"><label><i class="fas fa-id-badge"></i> Matricule</label><input type="text" id="matricule" required></div>
+                </div>
+            </div>
+
+            <!-- Onglet 2: Informations professionnelles -->
+            <div id="professionalTab" class="tab-content">
+                <div class="form-section">
+                    <h3><i class="fas fa-book"></i> Matières enseignées</h3>
+                    <div class="form-group"><label><i class="fas fa-star"></i> Dominante</label><input type="text" id="mainSubject" required></div>
+                    <div class="form-group"><label><i class="fas fa-star-half-alt"></i> Secondaire</label><input type="text" id="secondarySubject"></div>
+                </div>
+
+                <div class="form-section">
+                    <h3><i class="fas fa-calendar-alt"></i> Dates de service</h3>
+                    <div class="form-row">
+                        <div class="form-group"><label>Service région</label><input type="date" id="regionServiceDate" required onchange="calculateServiceYears('regionServiceDate', 'yearsInRegion')"></div>
+                        <div class="form-group"><label>Service inspection</label><input type="date" id="inspectionServiceDate" required onchange="calculateServiceYears('inspectionServiceDate', 'yearsInspection')"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Années dans région</label><input type="number" id="yearsInRegion" readonly></div>
+                        <div class="form-group"><label>Années inspection</label><input type="number" id="yearsInspection" readonly></div>
+                    </div>
+                    <div class="form-group"><label><i class="fas fa-umbrella-beach"></i> Retraite prévue</label><input type="date" id="retirementDate" readonly></div>
+                    <div class="form-group"><label><i class="fas fa-handshake"></i> Date engagement</label><input type="date" id="engagementDate" required></div>
+                </div>
+            </div>
+
+            <!-- Onglet 3: Statistiques d'enseignement -->
+            <div id="teachingTab" class="tab-content">
+                <div class="form-section">
+                    <h3><i class="fas fa-calendar-week"></i> Période</h3>
+                    <div class="form-group">
+                        <select id="teachingPeriod">
+                            <option value="trimestre">Trimestre</option>
+                            <option value="semestre">Semestre</option>
+                            <option value="annee">Année scolaire</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3><i class="fas fa-star"></i> Matière dominante</h3>
+                    <div class="form-row">
+                        <div class="form-group"><label>Thèmes</label><input type="number" id="mainSubjectThemes" min="0"></div>
+                        <div class="form-group"><label>Leçons</label><input type="number" id="mainSubjectLessons" min="0"></div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3><i class="fas fa-star-half-alt"></i> Matière secondaire</h3>
+                    <div class="form-row">
+                        <div class="form-group"><label>Thèmes</label><input type="number" id="secondarySubjectThemes" min="0"></div>
+                        <div class="form-group"><label>Leçons</label><input type="number" id="secondarySubjectLessons" min="0"></div>
+                    </div>
+                </div>
+
+                <div id="additionalSubjectsContainer"></div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="addTeachingSubject()"><i class="fas fa-plus"></i> Ajouter matière</button>
+                </div>
+            </div>
+
+            <!-- Onglet 4: Diplômes -->
+            <div id="diplomasTab" class="tab-content">
+                <div class="form-section">
+                    <h3><i class="fas fa-graduation-cap"></i> Diplômes académiques</h3>
+                    <div id="academicDiplomas">
+                        <div class="diploma-item">
+                            <div class="form-row">
+                                <div class="form-group"><label>Diplôme</label><input type="text" id="academicDiploma1" required></div>
+                                <div class="form-group"><label>Date</label><input type="date" id="academicDiplomaDate1" required></div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="addAcademicDiploma()"><i class="fas fa-plus"></i> Ajouter</button>
+                </div>
+
+                <div class="form-section">
+                    <h3><i class="fas fa-award"></i> Diplômes professionnels</h3>
+                    <div id="professionalDiplomas">
+                        <div class="diploma-item">
+                            <div class="form-row">
+                                <div class="form-group"><label>Diplôme</label><input type="text" id="professionalDiploma1"></div>
+                                <div class="form-group"><label>Date</label><input type="date" id="professionalDiplomaDate1"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="addProfessionalDiploma()"><i class="fas fa-plus"></i> Ajouter</button>
+                </div>
+            </div>
+
+            <!-- Onglet 5: Observations -->
+            <div id="observationsTab" class="tab-content">
+                <div class="form-section">
+                    <h3><i class="fas fa-sticky-note"></i> Informations complémentaires</h3>
+                    <div class="form-group">
+                        <textarea id="observations" rows="4" placeholder="Saisissez ici toute information complémentaire pertinente..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div style="padding: 0 20px 20px 20px;">
+                <div class="form-actions">
+                    <button type="button" class="btn btn-info" onclick="printForm()"><i class="fas fa-print"></i> Imprimer</button>
+                    <button type="reset" class="btn btn-danger"><i class="fas fa-trash"></i> Annuler</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Enregistrer</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div id="notification" class="notification"><i class="fas fa-check-circle"></i><span id="notificationMessage"></span></div>
+
+    <script>
+        let academicCount = 1, professionalCount = 1, subjectCount = 2;
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(`${tabName}Tab`).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function showNotification(msg, success = true) {
+            const n = document.getElementById('notification');
+            document.getElementById('notificationMessage').textContent = msg;
+            n.style.background = success ? 'var(--secondary-color)' : 'var(--danger-color)';
+            n.classList.add('show');
+            setTimeout(() => n.classList.remove('show'), 2000);
+        }
+
+        function calculateServiceYears(dateId, yearsId) {
+            const dateField = document.getElementById(dateId);
+            const yearsField = document.getElementById(yearsId);
+            if (dateField.value) {
+                const start = new Date(dateField.value);
+                const today = new Date();
+                let years = today.getFullYear() - start.getFullYear();
+                if (today.getMonth() < start.getMonth() || (today.getMonth() === start.getMonth() && today.getDate() < start.getDate())) years--;
+                yearsField.value = years;
+            }
+        }
+
+        function calculateRetirementDate() {
+            const birth = document.getElementById('birthDate').value;
+            if (birth) {
+                const date = new Date(birth);
+                date.setFullYear(date.getFullYear() + 60);
+                document.getElementById('retirementDate').value = date.toISOString().split('T')[0];
+            }
+        }
+
+        function addAcademicDiploma() {
+            academicCount++;
+            const container = document.getElementById('academicDiplomas');
+            const div = document.createElement('div');
+            div.className = 'diploma-item';
+            div.innerHTML = `
+                <div class="form-row">
+                    <div class="form-group"><label>Diplôme</label><input type="text" id="academicDiploma${academicCount}" required></div>
+                    <div class="form-group"><label>Date</label><input type="date" id="academicDiplomaDate${academicCount}" required></div>
+                </div>
+                <button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove()"><i class="fas fa-trash"></i> Supprimer</button>
+            `;
+            container.appendChild(div);
+            showNotification('Diplôme académique ajouté');
+        }
+
+        function addProfessionalDiploma() {
+            professionalCount++;
+            const container = document.getElementById('professionalDiplomas');
+            const div = document.createElement('div');
+            div.className = 'diploma-item';
+            div.innerHTML = `
+                <div class="form-row">
+                    <div class="form-group"><label>Diplôme</label><input type="text" id="professionalDiploma${professionalCount}"></div>
+                    <div class="form-group"><label>Date</label><input type="date" id="professionalDiplomaDate${professionalCount}"></div>
+                </div>
+                <button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove()"><i class="fas fa-trash"></i> Supprimer</button>
+            `;
+            container.appendChild(div);
+            showNotification('Diplôme professionnel ajouté');
+        }
+
+        function addTeachingSubject() {
+            subjectCount++;
+            const container = document.getElementById('additionalSubjectsContainer');
+            const div = document.createElement('div');
+            div.className = 'form-section';
+            div.innerHTML = `
+                <h3><i class="fas fa-plus-square"></i> Matière supplémentaire</h3>
+                <div class="form-group"><label>Nom de la matière</label><input type="text" id="subjectName${subjectCount}"></div>
+                <div class="form-row">
+                    <div class="form-group"><label>Thèmes</label><input type="number" id="subjectThemes${subjectCount}" min="0"></div>
+                    <div class="form-group"><label>Leçons</label><input type="number" id="subjectLessons${subjectCount}" min="0"></div>
+                </div>
+                <button type="button" class="btn btn-danger btn-sm" onclick="this.parentElement.remove()"><i class="fas fa-trash"></i> Supprimer</button>
+            `;
+            container.appendChild(div);
+            showNotification('Matière ajoutée');
+        }
+
+        function printForm() { window.print(); }
+
+        document.getElementById('teacherForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const required = ['lastName', 'firstName', 'birthDate', 'birthPlace', 'matricule', 'mainSubject', 'regionServiceDate', 'inspectionServiceDate', 'engagementDate'];
+            let valid = true;
+            required.forEach(id => {
+                const f = document.getElementById(id);
+                if (!f.value.trim()) { f.style.borderColor = 'var(--danger-color)'; valid = false; }
+                else { f.style.borderColor = ''; }
+            });
+            
+            if (!valid) { showNotification('Champs obligatoires manquants', false); return; }
+            
+            const formData = {
+                personalInfo: {
+                    lastName: document.getElementById('lastName').value,
+                    firstName: document.getElementById('firstName').value,
+                    birthDate: document.getElementById('birthDate').value,
+                    birthPlace: document.getElementById('birthPlace').value,
+                    matricule: document.getElementById('matricule').value
+                },
+                professionalInfo: {
+                    mainSubject: document.getElementById('mainSubject').value,
+                    secondarySubject: document.getElementById('secondarySubject').value,
+                    regionServiceDate: document.getElementById('regionServiceDate').value,
+                    inspectionServiceDate: document.getElementById('inspectionServiceDate').value,
+                    yearsInRegion: document.getElementById('yearsInRegion').value,
+                    yearsInInspection: document.getElementById('yearsInspection').value,
+                    retirementDate: document.getElementById('retirementDate').value,
+                    engagementDate: document.getElementById('engagementDate').value
+                },
+                teachingStats: {
+                    period: document.getElementById('teachingPeriod').value,
+                    mainSubject: { themes: document.getElementById('mainSubjectThemes').value, lessons: document.getElementById('mainSubjectLessons').value },
+                    secondarySubject: { themes: document.getElementById('secondarySubjectThemes').value, lessons: document.getElementById('secondarySubjectLessons').value },
+                    additionalSubjects: []
+                },
+                academicDiplomas: [],
+                professionalDiplomas: [],
+                observations: document.getElementById('observations').value
+            };
+            
+            for (let i = 3; i <= subjectCount; i++) {
+                const name = document.getElementById(`subjectName${i}`);
+                if (name && name.value) {
+                    formData.teachingStats.additionalSubjects.push({
+                        name: name.value,
+                        themes: document.getElementById(`subjectThemes${i}`)?.value || 0,
+                        lessons: document.getElementById(`subjectLessons${i}`)?.value || 0
+                    });
+                }
+            }
+            
+            for (let i = 1; i <= academicCount; i++) {
+                const d = document.getElementById(`academicDiploma${i}`);
+                const dt = document.getElementById(`academicDiplomaDate${i}`);
+                if (d && dt && d.value && dt.value) formData.academicDiplomas.push({ diploma: d.value, date: dt.value });
+            }
+            
+            for (let i = 1; i <= professionalCount; i++) {
+                const d = document.getElementById(`professionalDiploma${i}`);
+                const dt = document.getElementById(`professionalDiplomaDate${i}`);
+                if (d && dt && d.value && dt.value) formData.professionalDiplomas.push({ diploma: d.value, date: dt.value });
+            }
+            
+            localStorage.setItem('teacherFormData', JSON.stringify(formData));
+            showNotification('Formulaire enregistré avec succès !');
+            console.log('Données:', formData);
+        });
+
+        // Chargement des données sauvegardées
+        window.addEventListener('load', () => {
+            const saved = localStorage.getItem('teacherFormData');
+            if (saved) {
+                const d = JSON.parse(saved);
+                document.getElementById('lastName').value = d.personalInfo.lastName || '';
+                document.getElementById('firstName').value = d.personalInfo.firstName || '';
+                document.getElementById('birthDate').value = d.personalInfo.birthDate || '';
+                document.getElementById('birthPlace').value = d.personalInfo.birthPlace || '';
+                document.getElementById('matricule').value = d.personalInfo.matricule || '';
+                document.getElementById('mainSubject').value = d.professionalInfo.mainSubject || '';
+                document.getElementById('secondarySubject').value = d.professionalInfo.secondarySubject || '';
+                document.getElementById('regionServiceDate').value = d.professionalInfo.regionServiceDate || '';
+                document.getElementById('inspectionServiceDate').value = d.professionalInfo.inspectionServiceDate || '';
+                document.getElementById('engagementDate').value = d.professionalInfo.engagementDate || '';
+                document.getElementById('teachingPeriod').value = d.teachingStats.period || 'trimestre';
+                document.getElementById('mainSubjectThemes').value = d.teachingStats.mainSubject.themes || '';
+                document.getElementById('mainSubjectLessons').value = d.teachingStats.mainSubject.lessons || '';
+                document.getElementById('secondarySubjectThemes').value = d.teachingStats.secondarySubject.themes || '';
+                document.getElementById('secondarySubjectLessons').value = d.teachingStats.secondarySubject.lessons || '';
+                document.getElementById('observations').value = d.observations || '';
+                
+                if (d.personalInfo.birthDate) calculateRetirementDate();
+                if (d.professionalInfo.regionServiceDate) calculateServiceYears('regionServiceDate', 'yearsInRegion');
+                if (d.professionalInfo.inspectionServiceDate) calculateServiceYears('inspectionServiceDate', 'yearsInspection');
+                
+                showNotification('Données chargées');
+            }
+        });
+    </script>
+</body>
+</html>
