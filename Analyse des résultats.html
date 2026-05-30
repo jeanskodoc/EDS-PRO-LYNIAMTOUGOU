@@ -1,0 +1,2853 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>EduNotes Pro | Gestion Scolaire Intelligente</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --primary-light: #34495e;
+            --secondary: #3498db;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --info: #3498db;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --gray: #7f8c8d;
+            --shadow: 0 2px 8px rgba(0,0,0,0.05);
+            --radius: 10px;
+        }
+
+        body {
+            background: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 10px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 10px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .logo i {
+            font-size: 1.6rem;
+        }
+
+        .logo h1 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .logo span {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        /* Boutons compacts */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 12px;
+            background: white;
+            color: var(--dark);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .btn i {
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+            border: none;
+        }
+
+        .btn-success:hover {
+            background: #219653;
+        }
+
+        .btn-danger {
+            background: var(--accent);
+            color: white;
+            border: none;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+            border: none;
+        }
+
+        .btn-warning:hover {
+            background: #d68910;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--secondary);
+            color: var(--secondary);
+        }
+
+        .btn-outline:hover {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 4px 10px;
+            font-size: 0.8rem;
+        }
+
+        .btn-xs {
+            padding: 3px 8px;
+            font-size: 0.75rem;
+            gap: 3px;
+        }
+
+        /* Navigation */
+        nav {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            margin-top: 5px;
+        }
+
+        nav::-webkit-scrollbar {
+            display: none;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 5px;
+            list-style: none;
+            min-width: max-content;
+            padding: 2px 0;
+        }
+
+        nav a {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 12px;
+            color: white;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border-radius: 30px;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+
+        nav a:hover, nav a.active {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Main */
+        main {
+            padding: 15px 0;
+        }
+
+        /* Cards */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 16px;
+            box-shadow: var(--shadow);
+            transition: 0.2s;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .card-header h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .card-header i {
+            font-size: 1.3rem;
+            color: var(--secondary);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--secondary);
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.85rem;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 8px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .badge-success { background: rgba(39, 174, 96, 0.1); color: var(--success); }
+        .badge-warning { background: rgba(243, 156, 18, 0.1); color: var(--warning); }
+        .badge-danger { background: rgba(231, 76, 60, 0.1); color: var(--accent); }
+        .badge-info { background: rgba(52, 152, 219, 0.1); color: var(--secondary); }
+        .badge-girl { background: rgba(232, 67, 147, 0.1); color: #e84393; }
+        .badge-boy { background: rgba(9, 132, 227, 0.1); color: #0984e3; }
+
+        /* Tables */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 10px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            min-width: 600px;
+        }
+
+        th {
+            background: #f8f9fa;
+            color: var(--primary);
+            font-weight: 600;
+            padding: 10px 8px;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* Forms */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            color: var(--primary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--secondary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52,152,219,0.1);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 5px;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--gray);
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+            transition: 0.2s;
+        }
+
+        .tab:hover {
+            color: var(--primary);
+        }
+
+        .tab.active {
+            color: var(--secondary);
+            border-bottom-color: var(--secondary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Progress */
+        .progress-bar {
+            height: 6px;
+            background: #ecf0f1;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--secondary);
+            border-radius: 3px;
+        }
+
+        /* Charts */
+        .chart-container {
+            position: relative;
+            height: 200px;
+            margin: 15px 0;
+        }
+
+        /* Alerts */
+        .alert {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 12px;
+            border-radius: var(--radius);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .alert-success {
+            background: rgba(39,174,96,0.1);
+            color: var(--success);
+            border-left: 3px solid var(--success);
+        }
+
+        .alert-info {
+            background: rgba(52,152,219,0.1);
+            color: var(--secondary);
+            border-left: 3px solid var(--secondary);
+        }
+
+        .alert-warning {
+            background: rgba(243,156,18,0.1);
+            color: var(--warning);
+            border-left: 3px solid var(--warning);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--radius);
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* CSV Export specific */
+        .csv-export-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .csv-option-card {
+            background: #f8f9fa;
+            border-radius: var(--radius);
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid #eee;
+        }
+
+        .csv-option-card:hover {
+            background: white;
+            border-color: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .csv-option-card i {
+            font-size: 1.8rem;
+            color: var(--secondary);
+            margin-bottom: 8px;
+        }
+
+        .csv-option-card h4 {
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .csv-option-card p {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary);
+            color: white;
+            padding: 25px 0 15px;
+            margin-top: 30px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .footer-section h3 {
+            font-size: 1rem;
+            margin-bottom: 12px;
+            color: #a5b4fc;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 6px;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            padding-left: 4px;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* PDF/CSV Status */
+        .pdf-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pdf-status.show {
+            display: flex;
+        }
+
+        .pdf-status.error {
+            background: var(--accent);
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 640px) {
+            .header-content {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .logo {
+                justify-content: center;
+                text-align: center;
+            }
+            
+            .header-actions {
+                justify-content: center;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .stat-value {
+                font-size: 1.8rem;
+            }
+            
+            .card {
+                padding: 12px;
+            }
+            
+            .btn {
+                padding: 5px 10px;
+                font-size: 0.8rem;
+            }
+            
+            .modal-content {
+                padding: 15px;
+            }
+
+            .csv-export-options {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                width: 100%;
+                padding: 0 8px;
+            }
+            
+            .btn i {
+                font-size: 0.8rem;
+            }
+            
+            .btn-sm {
+                padding: 3px 8px;
+            }
+            
+            .tabs {
+                gap: 2px;
+            }
+            
+            .tab {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <div>
+                        <h1>EduNotes Pro</h1>
+                        <span>Gestion scolaire</span>
+                    </div>
+                </div>
+                
+                <div class="header-actions">
+                    <button class="btn btn-sm" onclick="openModal('importModal')">
+                        <i class="fas fa-file-import"></i> Importer
+                    </button>
+                    <button class="btn btn-sm" onclick="openModal('exportModal')">
+                        <i class="fas fa-file-csv"></i> Export CSV
+                    </button>
+                    <button class="btn btn-sm btn-warning" onclick="openModal('resetStudentsModal')">
+                        <i class="fas fa-user-slash"></i> Reset élèves
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="openModal('resetAllModal')">
+                        <i class="fas fa-trash-alt"></i> Reset total
+                    </button>
+                    <button class="btn btn-sm btn-success" onclick="generateCompletePDF()">
+                        <i class="fas fa-file-pdf"></i> PDF
+                    </button>
+                </div>
+            </div>
+            
+            <nav>
+                <ul>
+                    <li><a href="#" class="active" data-tab="dashboard"><i class="fas fa-tachometer-alt"></i> Tableau</a></li>
+                    <li><a href="#" data-tab="students"><i class="fas fa-users"></i> Élèves</a></li>
+                    <li><a href="#" data-tab="grades"><i class="fas fa-edit"></i> Notes</a></li>
+                    <li><a href="#" data-tab="competences"><i class="fas fa-star"></i> Comp.</a></li>
+                    <li><a href="#" data-tab="classView"><i class="fas fa-school"></i> Classes</a></li>
+                    <li><a href="#" data-tab="analytics"><i class="fas fa-chart-line"></i> Analyse</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="alert alert-success">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    <strong>Bienvenue</strong> - <span id="lastUpdate"></span>
+                </div>
+            </div>
+            
+            <div class="dashboard-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Élèves</h2>
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-value" id="total-students">0</div>
+                    <div class="stat-label">Inscrits</div>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <span class="badge badge-girl"><i class="fas fa-female"></i> <span id="girls-count">0</span></span>
+                        <span class="badge badge-boy"><i class="fas fa-male"></i> <span id="boys-count">0</span></span>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Notes</h2>
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <div class="stat-value" id="avg-grade">0.0</div>
+                    <div class="stat-label">Moyenne générale</div>
+                    <div class="progress-bar" style="margin-top: 10px;">
+                        <div class="progress-fill" id="avg-progress" style="width: 0%;"></div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Compétences</h2>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-value" id="avg-competence">0%</div>
+                    <div class="stat-label">Niveau moyen</div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Activité</h2>
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <div class="stat-value" id="recent-activity">0</div>
+                    <div class="stat-label">Notes cette semaine</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2>Répartition par classe</h2>
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <div class="chart-container">
+                    <canvas id="classDistributionChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="dashboard-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Top Performers</h2>
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div id="topPerformersList"></div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h2>À surveiller</h2>
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div id="watchList"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Students Tab -->
+        <div id="students" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Gestion des élèves</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-success btn-sm" onclick="openModal('addStudentModal')">
+                            <i class="fas fa-user-plus"></i> Ajouter
+                        </button>
+                        <button class="btn btn-sm" onclick="exportToCSV('students')">
+                            <i class="fas fa-file-csv"></i> CSV
+                        </button>
+                        <button class="btn btn-sm" onclick="generateStudentsPDF()">
+                            <i class="fas fa-file-pdf"></i> PDF
+                        </button>
+                        <button class="btn btn-sm btn-warning" onclick="openModal('resetStudentsModal')">
+                            <i class="fas fa-user-slash"></i> Tout effacer
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Classe</label>
+                        <select id="filterClass" class="form-control">
+                            <option value="all">Toutes</option>
+                            <option value="6eme">6ème</option>
+                            <option value="5eme">5ème</option>
+                            <option value="4eme">4ème</option>
+                            <option value="3eme">3ème</option>
+                            <option value="2nde">2nde</option>
+                            <option value="1ere">1ère</option>
+                            <option value="terminale">Terminale</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Genre</label>
+                        <select id="filterGender" class="form-control">
+                            <option value="all">Tous</option>
+                            <option value="fille">Filles</option>
+                            <option value="garcon">Garçons</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Recherche</label>
+                        <input type="text" id="searchStudent" class="form-control" placeholder="Nom...">
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Élève</th>
+                                <th>Classe</th>
+                                <th>Genre</th>
+                                <th>Moyenne</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Grades Tab -->
+        <div id="grades" class="tab-content">
+            <div class="tabs">
+                <div class="tab active" data-grade-tab="add">Saisie</div>
+                <div class="tab" data-grade-tab="view">Liste</div>
+                <div class="tab" data-grade-tab="stats">Stats</div>
+                <div class="tab" data-grade-tab="bulk">Import</div>
+                <div class="tab" data-grade-tab="analysis">Analyse</div>
+            </div>
+            
+            <div id="addGradeTab" class="tab-content active">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Nouvelle note</h2>
+                    </div>
+                    
+                    <form id="gradeForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Élève</label>
+                                <select id="studentSelect" class="form-control" required>
+                                    <option value="">Sélectionner</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Matière</label>
+                                <select id="subjectSelect" class="form-control" required>
+                                    <option value="">Matière</option>
+                                    <option value="mathematiques">Mathématiques</option>
+                                    <option value="francais">Français</option>
+                                    <option value="anglais">Anglais</option>
+                                    <option value="histoire">Histoire-Géo</option>
+                                    <option value="physique">Physique-Chimie</option>
+                                    <option value="svt">SVT</option>
+                                    <option value="philosophie">Philosophie</option>
+                                    <option value="espagnol">Espagnol</option>
+                                    <option value="allemand">Allemand</option>
+                                    <option value="arts">Arts plastiques</option>
+                                    <option value="musique">Musique</option>
+                                    <option value="eps">EPS</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Note</label>
+                                <input type="number" id="gradeValue" class="form-control" min="0" max="20" step="0.5" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Date</label>
+                                <input type="date" id="gradeDate" class="form-control" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Leçon</label>
+                            <input type="text" id="lessonSelect" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Type d'évaluation</label>
+                            <select id="gradeType" class="form-control">
+                                <option value="devoir">Devoir surveillé</option>
+                                <option value="interro">Interrogation</option>
+                                <option value="oral">Oral</option>
+                                <option value="projet">Projet</option>
+                                <option value="examen">Examen</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Commentaire</label>
+                            <textarea id="gradeComment" class="form-control" rows="2" placeholder="Commentaire optionnel..."></textarea>
+                        </div>
+                        
+                        <div class="header-actions" style="justify-content: flex-end;">
+                            <button type="submit" class="btn btn-success btn-sm">
+                                <i class="fas fa-save"></i> Enregistrer
+                            </button>
+                            <button type="button" class="btn btn-sm" onclick="calculateAverage()">
+                                <i class="fas fa-calculator"></i> Calculer moy.
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div id="viewGradeTab" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Liste des notes</h2>
+                        <div class="header-actions">
+                            <button class="btn btn-sm" onclick="exportToCSV('grades')">
+                                <i class="fas fa-file-csv"></i> CSV
+                            </button>
+                            <button class="btn btn-sm" onclick="filterGrades()">
+                                <i class="fas fa-filter"></i> Filtrer
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Classe</label>
+                            <select id="viewClass" class="form-control">
+                                <option value="all">Toutes</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Matière</label>
+                            <select id="viewSubject" class="form-control">
+                                <option value="all">Toutes</option>
+                                <option value="mathematiques">Mathématiques</option>
+                                <option value="francais">Français</option>
+                                <option value="anglais">Anglais</option>
+                                <option value="histoire">Histoire-Géo</option>
+                                <option value="physique">Physique-Chimie</option>
+                                <option value="svt">SVT</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Période</label>
+                            <select id="viewPeriod" class="form-control">
+                                <option value="all">Toute l'année</option>
+                                <option value="trimestre1">1er trimestre</option>
+                                <option value="trimestre2">2ème trimestre</option>
+                                <option value="trimestre3">3ème trimestre</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Élève</th>
+                                    <th>Classe</th>
+                                    <th>Matière</th>
+                                    <th>Leçon</th>
+                                    <th>Note</th>
+                                    <th>Type</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="gradesTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="statsGradeTab" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Statistiques des notes</h2>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Classe</label>
+                            <select id="statsClass" class="form-control">
+                                <option value="all">Toutes</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Matière</label>
+                            <select id="statsSubject" class="form-control">
+                                <option value="all">Toutes</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-grid">
+                        <div class="card">
+                            <div class="stat-value" id="statsAvg">0.0</div>
+                            <div class="stat-label">Moyenne</div>
+                        </div>
+                        <div class="card">
+                            <div class="stat-value" id="statsMedian">0.0</div>
+                            <div class="stat-label">Médiane</div>
+                        </div>
+                        <div class="card">
+                            <div class="stat-value" id="statsSuccess">0%</div>
+                            <div class="stat-label">Réussite</div>
+                        </div>
+                        <div class="card">
+                            <div class="stat-value" id="statsCount">0</div>
+                            <div class="stat-label">Notes</div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="gradeStatsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="bulkGradeTab" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Import en masse</h2>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Importez plusieurs notes à la fois
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Format CSV</label>
+                        <textarea id="bulkGrades" class="form-control" rows="8" placeholder="élève,matière,note,date,leçon
+Emma Martin,Mathématiques,15,2025-02-15,Pythagore
+Lucas Bernard,Français,12,2025-02-16,Analyse"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Ou fichier CSV</label>
+                        <input type="file" id="bulkFile" class="form-control" accept=".csv">
+                    </div>
+                    
+                    <div class="header-actions" style="justify-content: flex-end;">
+                        <button class="btn btn-success btn-sm" onclick="importBulkGrades()">
+                            <i class="fas fa-upload"></i> Importer
+                        </button>
+                        <button class="btn btn-sm" onclick="downloadTemplate()">
+                            <i class="fas fa-download"></i> Modèle
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="analysisGradeTab" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Analyse des notes</h2>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Élève</label>
+                        <select id="analysisStudent" class="form-control">
+                            <option value="">Sélectionner</option>
+                        </select>
+                    </div>
+                    
+                    <div id="studentAnalysis">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> Sélectionnez un élève pour voir l'analyse
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="studentProgressChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Competences Tab -->
+        <div id="competences" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Suivi des compétences</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-sm" onclick="exportToCSV('competences')">
+                            <i class="fas fa-file-csv"></i> CSV
+                        </button>
+                        <button class="btn btn-sm btn-success" onclick="openModal('addCompetenceModal')">
+                            <i class="fas fa-plus"></i> Évaluer
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Élève</label>
+                        <select id="competenceStudentSelect" class="form-control">
+                            <option value="">Sélectionner</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Matière</label>
+                        <select id="competenceSubjectFilter" class="form-control">
+                            <option value="all">Toutes</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="studentCompetenceDetails">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Sélectionnez un élève pour voir ses compétences
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Class View Tab -->
+        <div id="classView" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Vue des classes</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-sm" onclick="exportToCSV('classes')">
+                            <i class="fas fa-file-csv"></i> CSV
+                        </button>
+                        <button class="btn btn-sm" onclick="generateClassReport()">
+                            <i class="fas fa-file-pdf"></i> Rapport
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Classe</label>
+                    <select id="overviewClass" class="form-control">
+                        <option value="all">Toutes</option>
+                    </select>
+                </div>
+                
+                <div id="classOverviewContent" class="dashboard-grid"></div>
+            </div>
+        </div>
+        
+        <!-- Analytics Tab -->
+        <div id="analytics" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Analyses avancées</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-sm" onclick="exportToCSV('analytics')">
+                            <i class="fas fa-file-csv"></i> CSV
+                        </button>
+                        <button class="btn btn-sm" onclick="generateAnalyticsPDF()">
+                            <i class="fas fa-file-pdf"></i> PDF
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Classe</label>
+                        <select id="analyticsClass" class="form-control">
+                            <option value="all">Toutes</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Matière</label>
+                        <select id="analyticsSubject" class="form-control">
+                            <option value="all">Toutes</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Genre</label>
+                        <select id="analyticsGender" class="form-control">
+                            <option value="all">Tous</option>
+                            <option value="fille">Filles</option>
+                            <option value="garcon">Garçons</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div class="stat-value" id="medianGrade">0.0</div>
+                        <div class="stat-label">Médiane</div>
+                    </div>
+                    <div class="card">
+                        <div class="stat-value" id="successRate">0%</div>
+                        <div class="stat-label">Réussite</div>
+                    </div>
+                    <div class="card">
+                        <div class="stat-value" id="topGrade">0</div>
+                        <div class="stat-label">Meilleure note</div>
+                    </div>
+                    <div class="card">
+                        <div class="stat-value" id="lowestGrade">0</div>
+                        <div class="stat-label">Plus basse note</div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="genderPerformanceChart"></canvas>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="performanceEvolutionChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h3>EduNotes Pro</h3>
+                    <p>Gestion scolaire intelligente</p>
+                    <p><i class="fas fa-phone"></i> +228 92 87 16 05</p>
+                    <p><i class="fas fa-envelope"></i> contact@edunotes.fr</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Liens</h3>
+                    <ul class="footer-links">
+                        <li><a href="#" onclick="switchTab('dashboard')">Tableau de bord</a></li>
+                        <li><a href="#" onclick="switchTab('students')">Élèves</a></li>
+                        <li><a href="#" onclick="switchTab('grades')">Notes</a></li>
+                        <li><a href="#" onclick="switchTab('competences')">Compétences</a></li>
+                        <li><a href="#" onclick="switchTab('analytics')">Analyses</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Support</a></li>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">Mises à jour</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2025 EduNotes Pro - Version 2.0 - Tous droits réservés</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- PDF/CSV Status -->
+    <div id="pdfStatus" class="pdf-status">
+        <i class="fas fa-spinner fa-spin"></i> Génération...
+    </div>
+
+    <!-- Modals -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirmer la suppression</h3>
+                <button class="modal-close" onclick="closeModal('deleteModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="deleteModalMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-sm" onclick="closeModal('deleteModal')">Annuler</button>
+                <button class="btn btn-sm btn-danger" id="confirmDeleteBtn">Supprimer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour réinitialiser uniquement les élèves -->
+    <div id="resetStudentsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Réinitialiser les élèves</h3>
+                <button class="modal-close" onclick="closeModal('resetStudentsModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Voulez-vous vraiment effacer <strong>tous les élèves</strong> ?</p>
+                <p>Cette action va :</p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Supprimer tous les élèves</li>
+                    <li>Supprimer toutes les notes associées</li>
+                    <li>Supprimer toutes les compétences associées</li>
+                </ul>
+                <p style="color: var(--accent); margin-top: 15px;"><strong>Cette action est irréversible.</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-sm" onclick="closeModal('resetStudentsModal')">Annuler</button>
+                <button class="btn btn-sm btn-warning" onclick="resetStudentsOnly()">Confirmer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour réinitialiser toutes les données -->
+    <div id="resetAllModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Réinitialisation totale</h3>
+                <button class="modal-close" onclick="closeModal('resetAllModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Voulez-vous vraiment tout réinitialiser ?</p>
+                <p style="color: var(--accent); margin-top: 15px;"><strong>Cette action effacera TOUTES les données et chargera les exemples.</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-sm" onclick="closeModal('resetAllModal')">Annuler</button>
+                <button class="btn btn-sm btn-danger" onclick="resetAllData()">Confirmer</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="addStudentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Nouvel élève</h3>
+                <button class="modal-close" onclick="closeModal('addStudentModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addStudentForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Prénom</label>
+                            <input type="text" id="newStudentFirstName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Nom</label>
+                            <input type="text" id="newStudentLastName" class="form-control" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Classe</label>
+                        <select id="newStudentClass" class="form-control" required>
+                            <option value="">Sélectionner</option>
+                            <option value="6eme">6ème</option>
+                            <option value="5eme">5ème</option>
+                            <option value="4eme">4ème</option>
+                            <option value="3eme">3ème</option>
+                            <option value="2nde">2nde</option>
+                            <option value="1ere">1ère</option>
+                            <option value="terminale">Terminale</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Genre</label>
+                        <select id="newStudentGender" class="form-control" required>
+                            <option value="">Sélectionner</option>
+                            <option value="fille">Fille</option>
+                            <option value="garcon">Garçon</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Date d'inscription</label>
+                        <input type="date" id="newStudentDate" class="form-control" value="2025-09-01">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-sm" onclick="closeModal('addStudentModal')">Annuler</button>
+                <button class="btn btn-sm btn-success" onclick="saveNewStudent()">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="addCompetenceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Évaluation par compétences</h3>
+                <button class="modal-close" onclick="closeModal('addCompetenceModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addCompetenceForm">
+                    <div class="form-group">
+                        <label>Élève</label>
+                        <select id="compStudent" class="form-control" required>
+                            <option value="">Sélectionner</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Matière</label>
+                        <select id="compSubject" class="form-control" required>
+                            <option value="">Sélectionner</option>
+                            <option value="mathematiques">Mathématiques</option>
+                            <option value="francais">Français</option>
+                            <option value="anglais">Anglais</option>
+                            <option value="histoire">Histoire-Géo</option>
+                            <option value="physique">Physique-Chimie</option>
+                            <option value="svt">SVT</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Leçon</label>
+                        <input type="text" id="compLesson" class="form-control" required>
+                    </div>
+                    
+                    <div id="competenceFields">
+                        <div class="form-group competence-item">
+                            <label>Compétence 1</label>
+                            <div style="display: flex; gap: 10px;">
+                                <input type="text" class="form-control competence-name" placeholder="Nom de la compétence" value="Compréhension" style="flex: 2;">
+                                <select class="form-control competence-level" style="flex: 1;">
+                                    <option value="excellent">Excellent</option>
+                                    <option value="good">Acquis</option>
+                                    <option value="average">En cours</option>
+                                    <option value="needs-improvement">À renforcer</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="header-actions" style="margin: 10px 0;">
+                        <button type="button" class="btn btn-sm" onclick="addCompetenceField()">
+                            <i class="fas fa-plus"></i> Ajouter une compétence
+                        </button>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Commentaire</label>
+                        <textarea id="compComment" class="form-control" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-sm" onclick="closeModal('addCompetenceModal')">Annuler</button>
+                <button class="btn btn-sm btn-success" onclick="saveCompetence()">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="exportModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Export CSV</h3>
+                <button class="modal-close" onclick="closeModal('exportModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Choisissez les données à exporter :</p>
+                
+                <div class="csv-export-options">
+                    <div class="csv-option-card" onclick="exportToCSV('students'); closeModal('exportModal')">
+                        <i class="fas fa-users"></i>
+                        <h4>Élèves</h4>
+                        <p>Liste complète</p>
+                    </div>
+                    
+                    <div class="csv-option-card" onclick="exportToCSV('grades'); closeModal('exportModal')">
+                        <i class="fas fa-edit"></i>
+                        <h4>Notes</h4>
+                        <p>Toutes les notes</p>
+                    </div>
+                    
+                    <div class="csv-option-card" onclick="exportToCSV('competences'); closeModal('exportModal')">
+                        <i class="fas fa-star"></i>
+                        <h4>Compétences</h4>
+                        <p>Évaluations</p>
+                    </div>
+                    
+                    <div class="csv-option-card" onclick="exportToCSV('classes'); closeModal('exportModal')">
+                        <i class="fas fa-school"></i>
+                        <h4>Classes</h4>
+                        <p>Résumé par classe</p>
+                    </div>
+                    
+                    <div class="csv-option-card" onclick="exportToCSV('analytics'); closeModal('exportModal')">
+                        <i class="fas fa-chart-line"></i>
+                        <h4>Analyses</h4>
+                        <p>Statistiques</p>
+                    </div>
+                    
+                    <div class="csv-option-card" onclick="exportToCSV('all'); closeModal('exportModal')">
+                        <i class="fas fa-database"></i>
+                        <h4>Tout</h4>
+                        <p>Données complètes</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-sm" onclick="closeModal('exportModal')">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="importModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Import de données</h3>
+                <button class="modal-close" onclick="closeModal('importModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Type de données</label>
+                    <select id="importType" class="form-control">
+                        <option value="students">Élèves</option>
+                        <option value="grades">Notes</option>
+                        <option value="competences">Compétences</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Fichier CSV</label>
+                    <input type="file" id="importFile" class="form-control" accept=".csv">
+                </div>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> Format: colonnes séparées par des virgules
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-sm" onclick="closeModal('importModal')">Annuler</button>
+                <button class="btn btn-sm btn-success" onclick="importData()">Importer</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Données de démonstration
+        const sampleData = {
+            students: [
+                { id: 1, firstName: "Emma", lastName: "Martin", class: "6eme", gender: "fille", seniority: "ancien", average: 15.2, registrationDate: "2024-09-01" },
+                { id: 2, firstName: "Lucas", lastName: "Bernard", class: "6eme", gender: "garcon", seniority: "nouveau", average: 12.5, registrationDate: "2025-09-01" },
+                { id: 3, firstName: "Chloé", lastName: "Dubois", class: "5eme", gender: "fille", seniority: "ancien", average: 16.8, registrationDate: "2024-09-01" },
+                { id: 4, firstName: "Thomas", lastName: "Petit", class: "5eme", gender: "garcon", seniority: "nouveau", average: 9.5, registrationDate: "2025-09-01" },
+                { id: 5, firstName: "Manon", lastName: "Durand", class: "4eme", gender: "fille", seniority: "ancien", average: 14.3, registrationDate: "2024-09-01" },
+                { id: 6, firstName: "Hugo", lastName: "Robert", class: "4eme", gender: "garcon", seniority: "ancien", average: 11.7, registrationDate: "2024-09-01" },
+                { id: 7, firstName: "Léa", lastName: "Richard", class: "3eme", gender: "fille", seniority: "nouveau", average: 13.8, registrationDate: "2025-09-01" },
+                { id: 8, firstName: "Nathan", lastName: "Moreau", class: "3eme", gender: "garcon", seniority: "ancien", average: 10.2, registrationDate: "2024-09-01" }
+            ],
+            grades: [
+                { id: 1, studentId: 1, subject: "mathematiques", lesson: "Pythagore", value: 16, type: "devoir", date: "2025-02-15", comment: "Très bon travail" },
+                { id: 2, studentId: 1, subject: "francais", lesson: "Analyse", value: 14, type: "interro", date: "2025-02-20", comment: "Bonne compréhension" },
+                { id: 3, studentId: 2, subject: "mathematiques", lesson: "Calcul", value: 12, type: "devoir", date: "2025-02-16", comment: "Progrès à faire" },
+                { id: 4, studentId: 3, subject: "anglais", lesson: "Present perfect", value: 18, type: "oral", date: "2025-02-18", comment: "Excellent" },
+                { id: 5, studentId: 4, subject: "histoire", lesson: "Révolution", value: 8, type: "examen", date: "2025-02-22", comment: "À revoir" },
+                { id: 6, studentId: 5, subject: "physique", lesson: "Circuits", value: 15, type: "projet", date: "2025-02-19", comment: "Bon projet" },
+                { id: 7, studentId: 6, subject: "svt", lesson: "Cellules", value: 11, type: "interro", date: "2025-02-21", comment: "Moyen" },
+                { id: 8, studentId: 7, subject: "mathematiques", lesson: "Équations", value: 14, type: "devoir", date: "2025-02-17", comment: "Bien" },
+                { id: 9, studentId: 8, subject: "francais", lesson: "Grammaire", value: 10, type: "interro", date: "2025-02-23", comment: "Passable" }
+            ],
+            competences: [
+                { id: 1, studentId: 1, subject: "mathematiques", lesson: "Pythagore", date: "2025-02-15", 
+                  competences: [
+                    { name: "Appliquer le théorème", level: "excellent" },
+                    { name: "Résoudre des problèmes", level: "good" }
+                  ], comment: "Très bonne compréhension" },
+                { id: 2, studentId: 3, subject: "anglais", lesson: "Present perfect", date: "2025-02-18",
+                  competences: [
+                    { name: "Comprendre à l'oral", level: "excellent" },
+                    { name: "S'exprimer à l'oral", level: "excellent" },
+                    { name: "Écrire correctement", level: "good" }
+                  ], comment: "Excellente maîtrise" }
+            ]
+        };
+
+        // Variables globales
+        let charts = {};
+        let itemToDelete = null;
+        let deleteType = null;
+
+        // Initialisation
+        function initializeData() {
+            if (!localStorage.getItem('students')) {
+                localStorage.setItem('students', JSON.stringify(sampleData.students));
+            }
+            if (!localStorage.getItem('grades')) {
+                localStorage.setItem('grades', JSON.stringify(sampleData.grades));
+            }
+            if (!localStorage.getItem('competences')) {
+                localStorage.setItem('competences', JSON.stringify(sampleData.competences));
+            }
+            updateLastUpdate();
+        }
+
+        function getStudents() {
+            return JSON.parse(localStorage.getItem('students')) || [];
+        }
+
+        function getGrades() {
+            return JSON.parse(localStorage.getItem('grades')) || [];
+        }
+
+        function getCompetences() {
+            return JSON.parse(localStorage.getItem('competences')) || [];
+        }
+
+        function updateLastUpdate() {
+            const el = document.getElementById('lastUpdate');
+            if (el) {
+                el.textContent = `MAJ: ${new Date().toLocaleTimeString('fr-FR')}`;
+            }
+        }
+
+        // Navigation
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                switchTab(this.getAttribute('data-tab'));
+            });
+        });
+
+        function switchTab(tabId) {
+            document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+            const activeLink = document.querySelector(`nav a[data-tab="${tabId}"]`);
+            if (activeLink) activeLink.classList.add('active');
+            
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            
+            const tab = document.getElementById(tabId);
+            if (tab) {
+                tab.classList.add('active');
+            }
+            
+            updateTabContent(tabId);
+        }
+
+        function updateTabContent(tabId) {
+            if (tabId === 'dashboard') updateDashboard();
+            else if (tabId === 'students') renderStudents();
+            else if (tabId === 'grades') {
+                updateStudentSelects();
+                renderGrades();
+                updateGradeStats();
+            }
+            else if (tabId === 'competences') {
+                updateCompetenceSelects();
+                renderCompetences();
+            }
+            else if (tabId === 'classView') renderClassView();
+            else if (tabId === 'analytics') updateAnalytics();
+        }
+
+        // Dashboard
+        function updateDashboard() {
+            const students = getStudents();
+            const grades = getGrades();
+            
+            document.getElementById('total-students').textContent = students.length;
+            document.getElementById('girls-count').textContent = students.filter(s => s.gender === 'fille').length;
+            document.getElementById('boys-count').textContent = students.filter(s => s.gender === 'garcon').length;
+            
+            let avg = 0;
+            if (grades.length > 0) {
+                avg = grades.reduce((s, g) => s + g.value, 0) / grades.length;
+                const weekAgo = new Date();
+                weekAgo.setDate(weekAgo.getDate() - 7);
+                const recent = grades.filter(g => new Date(g.date) > weekAgo).length;
+                document.getElementById('recent-activity').textContent = recent;
+            }
+            document.getElementById('avg-grade').textContent = avg.toFixed(1);
+            document.getElementById('avg-progress').style.width = `${(avg/20)*100}%`;
+            
+            createClassChart();
+            updateTopPerformers();
+        }
+
+        function createClassChart() {
+            const ctx = document.getElementById('classDistributionChart');
+            if (!ctx) return;
+            
+            const students = getStudents();
+            const classes = [...new Set(students.map(s => s.class))].sort();
+            const data = classes.map(c => students.filter(s => s.class === c).length);
+            
+            if (charts.classChart) charts.classChart.destroy();
+            
+            charts.classChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: classes,
+                    datasets: [{
+                        label: 'Élèves',
+                        data: data,
+                        backgroundColor: 'rgba(52,152,219,0.7)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        function updateTopPerformers() {
+            const students = getStudents().filter(s => s.average > 0).sort((a,b) => b.average - a.average).slice(0,3);
+            const list = document.getElementById('topPerformersList');
+            if (list) {
+                list.innerHTML = students.map(s => 
+                    `<div style="display:flex; justify-content:space-between; margin:5px 0">
+                        <span>${s.firstName} ${s.lastName}</span>
+                        <span class="badge badge-success">${s.average.toFixed(1)}</span>
+                    </div>`
+                ).join('') || '<p class="stat-label">Aucune donnée</p>';
+            }
+            
+            const watchList = document.getElementById('watchList');
+            const struggling = students.filter(s => s.average > 0 && s.average < 10).sort((a,b) => a.average - b.average).slice(0,3);
+            if (watchList) {
+                watchList.innerHTML = struggling.map(s => 
+                    `<div style="display:flex; justify-content:space-between; margin:5px 0">
+                        <span>${s.firstName} ${s.lastName}</span>
+                        <span class="badge badge-warning">${s.average.toFixed(1)}</span>
+                    </div>`
+                ).join('') || '<p class="stat-label">Aucun élève</p>';
+            }
+        }
+
+        // Students
+        function renderStudents() {
+            const students = getStudents();
+            const filterClass = document.getElementById('filterClass')?.value || 'all';
+            const filterGender = document.getElementById('filterGender')?.value || 'all';
+            const search = document.getElementById('searchStudent')?.value.toLowerCase() || '';
+            
+            const filtered = students.filter(s => {
+                if (filterClass !== 'all' && s.class !== filterClass) return false;
+                if (filterGender !== 'all' && s.gender !== filterGender) return false;
+                if (search && !`${s.firstName} ${s.lastName}`.toLowerCase().includes(search)) return false;
+                return true;
+            });
+            
+            const tbody = document.getElementById('studentsTableBody');
+            if (tbody) {
+                tbody.innerHTML = filtered.map(s => `
+                    <tr>
+                        <td>${s.firstName} ${s.lastName}</td>
+                        <td>${s.class}</td>
+                        <td><span class="badge ${s.gender === 'fille' ? 'badge-girl' : 'badge-boy'}">
+                            ${s.gender === 'fille' ? 'Fille' : 'Garçon'}
+                        </span></td>
+                        <td><span class="badge ${s.average >= 10 ? 'badge-success' : 'badge-warning'}">${s.average.toFixed(1)}</span></td>
+                        <td>
+                            <div class="header-actions" style="gap:2px">
+                                <button class="btn btn-xs" onclick="viewStudent(${s.id})"><i class="fas fa-eye"></i></button>
+                                <button class="btn btn-xs btn-danger" onclick="confirmDelete('student', ${s.id})"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        // Grades
+        function updateStudentSelects() {
+            const students = getStudents();
+            const selects = ['studentSelect', 'viewClass', 'overviewClass', 'statsClass', 'analysisStudent', 'compStudent'];
+            
+            selects.forEach(id => {
+                const sel = document.getElementById(id);
+                if (sel) {
+                    if (id === 'studentSelect' || id === 'analysisStudent' || id === 'compStudent') {
+                        sel.innerHTML = '<option value="">Sélectionner</option>' + 
+                            students.map(s => `<option value="${s.id}">${s.firstName} ${s.lastName} (${s.class})</option>`).join('');
+                    } else {
+                        const classes = [...new Set(students.map(s => s.class))].sort();
+                        sel.innerHTML = '<option value="all">Toutes</option>' + 
+                            classes.map(c => `<option value="${c}">${c}</option>`).join('');
+                    }
+                }
+            });
+        }
+
+        function renderGrades() {
+            const grades = getGrades();
+            const students = getStudents();
+            const filterClass = document.getElementById('viewClass')?.value || 'all';
+            const filterSubject = document.getElementById('viewSubject')?.value || 'all';
+            const filterPeriod = document.getElementById('viewPeriod')?.value || 'all';
+            
+            const filtered = grades.filter(g => {
+                const s = students.find(s => s.id === g.studentId);
+                if (!s) return false;
+                if (filterClass !== 'all' && s.class !== filterClass) return false;
+                if (filterSubject !== 'all' && g.subject !== filterSubject) return false;
+                if (filterPeriod !== 'all' && !isInPeriod(g.date, filterPeriod)) return false;
+                return true;
+            });
+            
+            const tbody = document.getElementById('gradesTableBody');
+            if (tbody) {
+                tbody.innerHTML = filtered.map(g => {
+                    const s = students.find(s => s.id === g.studentId);
+                    return `
+                        <tr>
+                            <td>${s ? s.firstName + ' ' + s.lastName : '?'}</td>
+                            <td>${s ? s.class : '?'}</td>
+                            <td>${getSubjectName(g.subject)}</td>
+                            <td>${g.lesson}</td>
+                            <td><span class="badge ${g.value >= 10 ? 'badge-success' : 'badge-warning'}">${g.value}</span></td>
+                            <td>${g.type || 'devoir'}</td>
+                            <td>${new Date(g.date).toLocaleDateString('fr-FR')}</td>
+                            <td>
+                                <div class="header-actions" style="gap:2px">
+                                    <button class="btn btn-xs" onclick="viewGrade(${g.id})"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-xs btn-danger" onclick="confirmDelete('grade', ${g.id})"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+        }
+
+        function updateGradeStats() {
+            const grades = getGrades();
+            const students = getStudents();
+            const filterClass = document.getElementById('statsClass')?.value || 'all';
+            const filterSubject = document.getElementById('statsSubject')?.value || 'all';
+            
+            let filtered = grades;
+            if (filterClass !== 'all') {
+                filtered = filtered.filter(g => {
+                    const s = students.find(s => s.id === g.studentId);
+                    return s && s.class === filterClass;
+                });
+            }
+            if (filterSubject !== 'all') {
+                filtered = filtered.filter(g => g.subject === filterSubject);
+            }
+            
+            if (filtered.length > 0) {
+                const values = filtered.map(g => g.value);
+                const avg = values.reduce((a,b) => a + b, 0) / values.length;
+                const sorted = [...values].sort((a,b) => a - b);
+                const median = sorted[Math.floor(sorted.length/2)];
+                const success = (values.filter(v => v >= 10).length / values.length * 100).toFixed(1);
+                
+                document.getElementById('statsAvg').textContent = avg.toFixed(1);
+                document.getElementById('statsMedian').textContent = median.toFixed(1);
+                document.getElementById('statsSuccess').textContent = success + '%';
+                document.getElementById('statsCount').textContent = filtered.length;
+                
+                createGradeStatsChart(filtered);
+            }
+        }
+
+        function createGradeStatsChart(grades) {
+            const ctx = document.getElementById('gradeStatsChart');
+            if (!ctx) return;
+            
+            const values = grades.map(g => g.value);
+            const bins = Array(21).fill(0);
+            values.forEach(v => {
+                const bin = Math.floor(v);
+                if (bin >= 0 && bin <= 20) bins[bin]++;
+            });
+            
+            if (charts.gradeStatsChart) charts.gradeStatsChart.destroy();
+            
+            charts.gradeStatsChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Array.from({length: 21}, (_, i) => i),
+                    datasets: [{
+                        label: 'Nombre de notes',
+                        data: bins,
+                        backgroundColor: 'rgba(52,152,219,0.7)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        // Competences
+        function updateCompetenceSelects() {
+            const students = getStudents();
+            const selects = ['competenceStudentSelect', 'compStudent'];
+            
+            selects.forEach(id => {
+                const sel = document.getElementById(id);
+                if (sel) {
+                    sel.innerHTML = '<option value="">Sélectionner</option>' + 
+                        students.map(s => `<option value="${s.id}">${s.firstName} ${s.lastName} (${s.class})</option>`).join('');
+                }
+            });
+            
+            const subjectFilter = document.getElementById('competenceSubjectFilter');
+            if (subjectFilter) {
+                const subjects = ['mathematiques', 'francais', 'anglais', 'histoire', 'physique', 'svt'];
+                subjectFilter.innerHTML = '<option value="all">Toutes</option>' + 
+                    subjects.map(s => `<option value="${s}">${getSubjectName(s)}</option>`).join('');
+            }
+        }
+
+        function renderCompetences() {
+            const competences = getCompetences();
+            const students = getStudents();
+            const container = document.getElementById('studentCompetenceDetails');
+            const selectedStudent = document.getElementById('competenceStudentSelect')?.value;
+            const selectedSubject = document.getElementById('competenceSubjectFilter')?.value || 'all';
+            
+            if (!container) return;
+            
+            if (selectedStudent) {
+                const student = students.find(s => s.id == selectedStudent);
+                if (!student) return;
+                
+                const studentCompetences = competences.filter(c => c.studentId == selectedStudent);
+                
+                if (studentCompetences.length === 0) {
+                    container.innerHTML = `
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> Aucune compétence pour ${student.firstName} ${student.lastName}
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let html = '';
+                studentCompetences.forEach(comp => {
+                    if (selectedSubject !== 'all' && comp.subject !== selectedSubject) return;
+                    
+                    html += `
+                        <div class="card" style="margin-bottom: 10px;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <strong>${getSubjectName(comp.subject)} - ${comp.lesson}</strong>
+                                <span class="badge">${new Date(comp.date).toLocaleDateString('fr-FR')}</span>
+                            </div>
+                            <div style="margin-top: 10px;">
+                                ${comp.competences.map(c => `
+                                    <div style="display: flex; justify-content: space-between; margin: 5px 0;">
+                                        <span>${c.name}</span>
+                                        <span class="badge ${getLevelBadge(c.level)}">${getLevelText(c.level)}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            ${comp.comment ? `<div style="margin-top: 10px; font-style: italic;">${comp.comment}</div>` : ''}
+                        </div>
+                    `;
+                });
+                
+                container.innerHTML = html || '<div class="alert alert-info">Aucune compétence pour ce filtre</div>';
+            } else {
+                container.innerHTML = `
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Sélectionnez un élève
+                    </div>
+                `;
+            }
+        }
+
+        // Class View
+        function renderClassView() {
+            const students = getStudents();
+            const grades = getGrades();
+            const classes = [...new Set(students.map(s => s.class))].sort();
+            const container = document.getElementById('classOverviewContent');
+            const selectedClass = document.getElementById('overviewClass')?.value || 'all';
+            
+            if (container) {
+                container.innerHTML = classes.filter(c => selectedClass === 'all' || c === selectedClass).map(c => {
+                    const classStudents = students.filter(s => s.class === c);
+                    const classGrades = grades.filter(g => {
+                        const s = students.find(s => s.id === g.studentId);
+                        return s && s.class === c;
+                    });
+                    
+                    const avg = classStudents.reduce((s, st) => s + st.average, 0) / classStudents.length || 0;
+                    const success = classStudents.filter(s => s.average >= 10).length / classStudents.length * 100 || 0;
+                    const girls = classStudents.filter(s => s.gender === 'fille').length;
+                    const boys = classStudents.filter(s => s.gender === 'garcon').length;
+                    
+                    return `
+                        <div class="card">
+                            <h3 style="font-size:1rem; margin-bottom:8px;">Classe ${c}</h3>
+                            <div class="stat-value" style="font-size:1.5rem;">${classStudents.length}</div>
+                            <div class="stat-label">élèves</div>
+                            <div style="margin: 10px 0;">
+                                <span class="badge badge-girl">${girls} filles</span>
+                                <span class="badge badge-boy">${boys} garçons</span>
+                            </div>
+                            <div class="progress-bar" style="margin: 10px 0;">
+                                <div class="progress-fill" style="width: ${success}%;"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Moyenne: ${avg.toFixed(1)}</span>
+                                <span>Réussite: ${success.toFixed(1)}%</span>
+                            </div>
+                            <div style="margin-top: 10px;">
+                                <button class="btn btn-xs" onclick="viewClassDetails('${c}')">Détails</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // Analytics
+        function updateAnalytics() {
+            const grades = getGrades();
+            const students = getStudents();
+            
+            if (grades.length > 0) {
+                const values = grades.map(g => g.value);
+                const sorted = [...values].sort((a,b) => a - b);
+                const median = sorted[Math.floor(sorted.length/2)];
+                const success = (values.filter(v => v >= 10).length / values.length * 100).toFixed(1);
+                const top = Math.max(...values);
+                const low = Math.min(...values);
+                
+                document.getElementById('medianGrade').textContent = median.toFixed(1);
+                document.getElementById('successRate').textContent = success + '%';
+                document.getElementById('topGrade').textContent = top.toFixed(1);
+                document.getElementById('lowestGrade').textContent = low.toFixed(1);
+                
+                createGenderChart();
+                createEvolutionChart();
+            }
+        }
+
+        function createGenderChart() {
+            const ctx = document.getElementById('genderPerformanceChart');
+            if (!ctx) return;
+            
+            const students = getStudents();
+            const grades = getGrades();
+            
+            const girlGrades = grades.filter(g => {
+                const s = students.find(s => s.id === g.studentId && s.gender === 'fille');
+                return !!s;
+            }).map(g => g.value);
+            
+            const boyGrades = grades.filter(g => {
+                const s = students.find(s => s.id === g.studentId && s.gender === 'garcon');
+                return !!s;
+            }).map(g => g.value);
+            
+            if (charts.genderChart) charts.genderChart.destroy();
+            
+            charts.genderChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Filles', 'Garçons'],
+                    datasets: [{
+                        label: 'Moyenne',
+                        data: [
+                            girlGrades.reduce((a,b) => a + b, 0) / (girlGrades.length || 1),
+                            boyGrades.reduce((a,b) => a + b, 0) / (boyGrades.length || 1)
+                        ],
+                        backgroundColor: ['rgba(232,67,147,0.7)', 'rgba(9,132,227,0.7)']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        function createEvolutionChart() {
+            const ctx = document.getElementById('performanceEvolutionChart');
+            if (!ctx) return;
+            
+            const grades = getGrades();
+            const monthly = {};
+            
+            grades.forEach(g => {
+                const date = new Date(g.date);
+                const month = date.toLocaleString('fr-FR', { month: 'short' });
+                if (!monthly[month]) monthly[month] = [];
+                monthly[month].push(g.value);
+            });
+            
+            const months = Object.keys(monthly).sort();
+            const averages = months.map(m => 
+                (monthly[m].reduce((a,b) => a + b, 0) / monthly[m].length).toFixed(1)
+            );
+            
+            if (charts.evolutionChart) charts.evolutionChart.destroy();
+            
+            charts.evolutionChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Moyenne mensuelle',
+                        data: averages,
+                        borderColor: 'rgb(52,152,219)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        // Modals
+        function openModal(id) {
+            document.getElementById(id).style.display = 'flex';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        // Delete
+        function confirmDelete(type, id, name = '') {
+            itemToDelete = id;
+            deleteType = type;
+            document.getElementById('deleteModalMessage').textContent = `Supprimer ${type === 'student' ? 'cet élève' : 'cette note'} ?`;
+            openModal('deleteModal');
+        }
+
+        document.getElementById('confirmDeleteBtn').onclick = function() {
+            if (itemToDelete && deleteType) {
+                if (deleteType === 'student') deleteStudent(itemToDelete);
+                else if (deleteType === 'grade') deleteGrade(itemToDelete);
+                closeModal('deleteModal');
+                itemToDelete = null;
+            }
+        };
+
+        function deleteStudent(id) {
+            let students = getStudents().filter(s => s.id !== id);
+            let grades = getGrades().filter(g => g.studentId !== id);
+            let competences = getCompetences().filter(c => c.studentId !== id);
+            localStorage.setItem('students', JSON.stringify(students));
+            localStorage.setItem('grades', JSON.stringify(grades));
+            localStorage.setItem('competences', JSON.stringify(competences));
+            updateAll();
+            showStatus('Élève supprimé');
+        }
+
+        function deleteGrade(id) {
+            let grades = getGrades().filter(g => g.id !== id);
+            localStorage.setItem('grades', JSON.stringify(grades));
+            updateAll();
+            showStatus('Note supprimée');
+        }
+
+        // Reset - Uniquement les élèves et leurs données associées
+        function resetStudentsOnly() {
+            // Garder les données d'exemple pour les notes et compétences qui ne sont pas liées à des élèves
+            // Mais on supprime tous les élèves
+            localStorage.setItem('students', JSON.stringify([]));
+            
+            // On supprime aussi les notes et compétences car elles sont liées aux élèves
+            localStorage.setItem('grades', JSON.stringify([]));
+            localStorage.setItem('competences', JSON.stringify([]));
+            
+            closeModal('resetStudentsModal');
+            updateAll();
+            showStatus('Base élèves réinitialisée');
+        }
+
+        // Reset total avec chargement des données d'exemple
+        function resetAllData() {
+            localStorage.setItem('students', JSON.stringify(sampleData.students));
+            localStorage.setItem('grades', JSON.stringify(sampleData.grades));
+            localStorage.setItem('competences', JSON.stringify(sampleData.competences));
+            
+            closeModal('resetAllModal');
+            updateAll();
+            showStatus('Données réinitialisées avec exemples');
+        }
+
+        // Student
+        function saveNewStudent() {
+            const students = getStudents();
+            const newId = students.length ? Math.max(...students.map(s => s.id)) + 1 : 1;
+            
+            const student = {
+                id: newId,
+                firstName: document.getElementById('newStudentFirstName').value,
+                lastName: document.getElementById('newStudentLastName').value,
+                class: document.getElementById('newStudentClass').value,
+                gender: document.getElementById('newStudentGender').value,
+                seniority: 'nouveau',
+                registrationDate: document.getElementById('newStudentDate').value,
+                average: 0
+            };
+            
+            students.push(student);
+            localStorage.setItem('students', JSON.stringify(students));
+            closeModal('addStudentModal');
+            document.getElementById('addStudentForm').reset();
+            document.getElementById('newStudentDate').value = '2025-09-01';
+            updateAll();
+            showStatus('Élève ajouté');
+        }
+
+        // Competence
+        function addCompetenceField() {
+            const container = document.getElementById('competenceFields');
+            const count = container.children.length + 1;
+            const div = document.createElement('div');
+            div.className = 'form-group competence-item';
+            div.innerHTML = `
+                <label>Compétence ${count}</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" class="form-control competence-name" placeholder="Nom de la compétence" style="flex: 2;">
+                    <select class="form-control competence-level" style="flex: 1;">
+                        <option value="excellent">Excellent</option>
+                        <option value="good">Acquis</option>
+                        <option value="average">En cours</option>
+                        <option value="needs-improvement">À renforcer</option>
+                    </select>
+                </div>
+            `;
+            container.appendChild(div);
+        }
+
+        function saveCompetence() {
+            const competences = getCompetences();
+            const newId = competences.length ? Math.max(...competences.map(c => c.id)) + 1 : 1;
+            
+            const studentId = parseInt(document.getElementById('compStudent').value);
+            const subject = document.getElementById('compSubject').value;
+            const lesson = document.getElementById('compLesson').value;
+            const comment = document.getElementById('compComment').value;
+            
+            if (!studentId || !subject || !lesson) {
+                alert('Veuillez remplir tous les champs obligatoires');
+                return;
+            }
+            
+            const competenceItems = document.querySelectorAll('.competence-item');
+            const competencesList = [];
+            
+            competenceItems.forEach(item => {
+                const name = item.querySelector('.competence-name')?.value;
+                const level = item.querySelector('.competence-level')?.value;
+                if (name && level) {
+                    competencesList.push({ name, level });
+                }
+            });
+            
+            if (competencesList.length === 0) {
+                alert('Ajoutez au moins une compétence');
+                return;
+            }
+            
+            const competence = {
+                id: newId,
+                studentId,
+                subject,
+                lesson,
+                date: new Date().toISOString().split('T')[0],
+                competences: competencesList,
+                comment
+            };
+            
+            competences.push(competence);
+            localStorage.setItem('competences', JSON.stringify(competences));
+            
+            closeModal('addCompetenceModal');
+            document.getElementById('addCompetenceForm').reset();
+            document.getElementById('competenceFields').innerHTML = `
+                <div class="form-group competence-item">
+                    <label>Compétence 1</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" class="form-control competence-name" placeholder="Nom de la compétence" value="Compréhension" style="flex: 2;">
+                        <select class="form-control competence-level" style="flex: 1;">
+                            <option value="excellent">Excellent</option>
+                            <option value="good">Acquis</option>
+                            <option value="average">En cours</option>
+                            <option value="needs-improvement">À renforcer</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+            
+            updateAll();
+            showStatus('Compétences enregistrées');
+        }
+
+        // View
+        function viewStudent(id) {
+            const s = getStudents().find(s => s.id === id);
+            const grades = getGrades().filter(g => g.studentId === id);
+            if (s) {
+                let msg = `${s.firstName} ${s.lastName}\nClasse: ${s.class}\nMoyenne: ${s.average.toFixed(1)}\n\nNotes:`;
+                if (grades.length === 0) msg += '\nAucune note';
+                else {
+                    grades.forEach(g => {
+                        msg += `\n- ${getSubjectName(g.subject)}: ${g.value} (${g.date})`;
+                    });
+                }
+                alert(msg);
+            }
+        }
+
+        function viewGrade(id) {
+            const g = getGrades().find(g => g.id === id);
+            const s = getStudents().find(s => s.id === g?.studentId);
+            if (g && s) {
+                alert(`Note de ${s.firstName} ${s.lastName}\nMatière: ${getSubjectName(g.subject)}\nLeçon: ${g.lesson}\nNote: ${g.value}/20\nDate: ${new Date(g.date).toLocaleDateString('fr-FR')}\nCommentaire: ${g.comment || 'Aucun'}`);
+            }
+        }
+
+        function viewClassDetails(className) {
+            const students = getStudents().filter(s => s.class === className);
+            const grades = getGrades().filter(g => {
+                const s = students.find(s => s.id === g.studentId);
+                return !!s;
+            });
+            
+            let msg = `Classe ${className}\nÉlèves: ${students.length}\n`;
+            msg += `Filles: ${students.filter(s => s.gender === 'fille').length}\n`;
+            msg += `Garçons: ${students.filter(s => s.gender === 'garcon').length}\n`;
+            msg += `Moyenne: ${(students.reduce((a,s) => a + s.average, 0) / students.length || 0).toFixed(1)}\n`;
+            msg += `Notes: ${grades.length}\n\nMatières:`;
+            
+            const subjects = {};
+            grades.forEach(g => {
+                if (!subjects[g.subject]) subjects[g.subject] = [];
+                subjects[g.subject].push(g.value);
+            });
+            
+            if (Object.keys(subjects).length === 0) {
+                msg += '\nAucune note';
+            } else {
+                Object.keys(subjects).forEach(sub => {
+                    const vals = subjects[sub];
+                    msg += `\n- ${getSubjectName(sub)}: ${(vals.reduce((a,b) => a + b, 0) / vals.length).toFixed(1)} (${vals.length} notes)`;
+                });
+            }
+            
+            alert(msg);
+        }
+
+        // CSV Export
+        function exportToCSV(type) {
+            showStatus('Export CSV...');
+            
+            let csv = '';
+            let filename = '';
+            
+            switch(type) {
+                case 'students':
+                    csv = exportStudentsCSV();
+                    filename = `eleves_${new Date().toISOString().split('T')[0]}.csv`;
+                    break;
+                case 'grades':
+                    csv = exportGradesCSV();
+                    filename = `notes_${new Date().toISOString().split('T')[0]}.csv`;
+                    break;
+                case 'competences':
+                    csv = exportCompetencesCSV();
+                    filename = `competences_${new Date().toISOString().split('T')[0]}.csv`;
+                    break;
+                case 'classes':
+                    csv = exportClassesCSV();
+                    filename = `classes_${new Date().toISOString().split('T')[0]}.csv`;
+                    break;
+                case 'analytics':
+                    csv = exportAnalyticsCSV();
+                    filename = `analyses_${new Date().toISOString().split('T')[0]}.csv`;
+                    break;
+                case 'all':
+                    csv = exportAllCSV();
+                    filename = `edunotes_complet_${new Date().toISOString().split('T')[0]}.csv`;
+                    break;
+                default:
+                    showStatus('Erreur', true);
+                    return;
+            }
+            
+            const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+            
+            showStatus('Export réussi !');
+        }
+
+        function exportStudentsCSV() {
+            const students = getStudents();
+            let csv = "ID,Prénom,Nom,Classe,Genre,Inscription,Moyenne\n";
+            students.forEach(s => {
+                csv += `${s.id},${s.firstName},${s.lastName},${s.class},${s.gender},${s.registrationDate || '2025-09-01'},${s.average.toFixed(2)}\n`;
+            });
+            return csv;
+        }
+
+        function exportGradesCSV() {
+            const grades = getGrades();
+            const students = getStudents();
+            let csv = "ID,Élève,Classe,Matière,Leçon,Note,Type,Date,Commentaire\n";
+            grades.forEach(g => {
+                const s = students.find(s => s.id === g.studentId);
+                const studentName = s ? `${s.firstName} ${s.lastName}` : 'Inconnu';
+                const className = s ? s.class : 'Inconnu';
+                csv += `${g.id},"${studentName}",${className},${g.subject},${g.lesson},${g.value},${g.type || 'devoir'},${g.date},"${g.comment || ''}"\n`;
+            });
+            return csv;
+        }
+
+        function exportCompetencesCSV() {
+            const competences = getCompetences();
+            const students = getStudents();
+            let csv = "ID,Élève,Classe,Matière,Leçon,Compétence,Niveau,Date,Commentaire\n";
+            
+            competences.forEach(c => {
+                const s = students.find(s => s.id === c.studentId);
+                const studentName = s ? `${s.firstName} ${s.lastName}` : 'Inconnu';
+                const className = s ? s.class : 'Inconnu';
+                
+                if (c.competences && c.competences.length > 0) {
+                    c.competences.forEach(comp => {
+                        csv += `${c.id},"${studentName}",${className},${c.subject},${c.lesson},${comp.name},${comp.level},${c.date},"${c.comment || ''}"\n`;
+                    });
+                } else {
+                    csv += `${c.id},"${studentName}",${className},${c.subject},${c.lesson},,,${c.date},"${c.comment || ''}"\n`;
+                }
+            });
+            
+            return csv;
+        }
+
+        function exportClassesCSV() {
+            const students = getStudents();
+            const grades = getGrades();
+            const classes = [...new Set(students.map(s => s.class))].sort();
+            
+            let csv = "Classe,Élèves,Filles,Garçons,Nouveaux,Anciens,Moyenne,Réussite\n";
+            
+            classes.forEach(c => {
+                const classStudents = students.filter(s => s.class === c);
+                const girls = classStudents.filter(s => s.gender === 'fille').length;
+                const boys = classStudents.filter(s => s.gender === 'garcon').length;
+                const nouveaux = classStudents.filter(s => s.seniority === 'nouveau').length;
+                const anciens = classStudents.filter(s => s.seniority === 'ancien').length;
+                const avg = (classStudents.reduce((a,s) => a + s.average, 0) / classStudents.length || 0).toFixed(2);
+                const success = (classStudents.filter(s => s.average >= 10).length / classStudents.length * 100 || 0).toFixed(1);
+                
+                csv += `${c},${classStudents.length},${girls},${boys},${nouveaux},${anciens},${avg},${success}%\n`;
+            });
+            
+            return csv;
+        }
+
+        function exportAnalyticsCSV() {
+            const students = getStudents();
+            const grades = getGrades();
+            
+            let csv = "=== STATISTIQUES GÉNÉRALES ===\n";
+            csv += "Indicateur,Valeur\n";
+            csv += `Total élèves,${students.length}\n`;
+            csv += `Filles,${students.filter(s => s.gender === 'fille').length}\n`;
+            csv += `Garçons,${students.filter(s => s.gender === 'garcon').length}\n`;
+            csv += `Total notes,${grades.length}\n`;
+            
+            if (grades.length > 0) {
+                const values = grades.map(g => g.value);
+                const avg = (values.reduce((a,b) => a + b, 0) / values.length).toFixed(2);
+                const sorted = [...values].sort((a,b) => a - b);
+                const median = sorted[Math.floor(sorted.length/2)].toFixed(2);
+                const success = (values.filter(v => v >= 10).length / values.length * 100).toFixed(1);
+                const top = Math.max(...values).toFixed(2);
+                const low = Math.min(...values).toFixed(2);
+                
+                csv += `Moyenne générale,${avg}/20\n`;
+                csv += `Médiane,${median}/20\n`;
+                csv += `Taux réussite,${success}%\n`;
+                csv += `Meilleure note,${top}\n`;
+                csv += `Plus basse note,${low}\n`;
+            }
+            
+            csv += "\n=== PERFORMANCES PAR MATIÈRE ===\n";
+            csv += "Matière,Nb notes,Moyenne,Réussite\n";
+            
+            const subjects = {};
+            grades.forEach(g => {
+                if (!subjects[g.subject]) subjects[g.subject] = [];
+                subjects[g.subject].push(g.value);
+            });
+            
+            Object.keys(subjects).forEach(sub => {
+                const vals = subjects[sub];
+                const avg = (vals.reduce((a,b) => a + b, 0) / vals.length).toFixed(2);
+                const success = (vals.filter(v => v >= 10).length / vals.length * 100).toFixed(1);
+                csv += `${sub},${vals.length},${avg}/20,${success}%\n`;
+            });
+            
+            return csv;
+        }
+
+        function exportAllCSV() {
+            let csv = "=== EDUNOTES PRO - EXPORT COMPLET ===\n";
+            csv += `Date: ${new Date().toLocaleString('fr-FR')}\n\n`;
+            csv += "=== ÉLÈVES ===\n" + exportStudentsCSV().split('\n').slice(1).join('\n') + "\n\n";
+            csv += "=== NOTES ===\n" + exportGradesCSV().split('\n').slice(1).join('\n') + "\n\n";
+            csv += "=== COMPÉTENCES ===\n" + exportCompetencesCSV().split('\n').slice(1).join('\n') + "\n\n";
+            csv += "=== CLASSES ===\n" + exportClassesCSV().split('\n').slice(1).join('\n') + "\n\n";
+            csv += "=== ANALYSES ===\n" + exportAnalyticsCSV();
+            return csv;
+        }
+
+        // Import
+        function importData() {
+            const type = document.getElementById('importType').value;
+            const file = document.getElementById('importFile').files[0];
+            
+            if (!file) {
+                alert('Sélectionnez un fichier');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                const lines = content.split('\n').filter(l => l.trim() && !l.startsWith('==='));
+                
+                try {
+                    if (type === 'students') {
+                        const students = getStudents();
+                        const headers = lines[0].split(',');
+                        for (let i = 1; i < lines.length; i++) {
+                            const vals = lines[i].split(',');
+                            if (vals.length >= 5) {
+                                const newId = students.length ? Math.max(...students.map(s => s.id)) + 1 : 1;
+                                students.push({
+                                    id: newId,
+                                    firstName: vals[1]?.replace(/"/g, '') || 'Prénom',
+                                    lastName: vals[2]?.replace(/"/g, '') || 'Nom',
+                                    class: vals[3] || '6eme',
+                                    gender: vals[4] || 'fille',
+                                    seniority: 'nouveau',
+                                    registrationDate: new Date().toISOString().split('T')[0],
+                                    average: parseFloat(vals[6]) || 0
+                                });
+                            }
+                        }
+                        localStorage.setItem('students', JSON.stringify(students));
+                    } else if (type === 'grades') {
+                        // Import des notes
+                        alert('Import des notes à implémenter');
+                    }
+                } catch (error) {
+                    alert('Erreur lors de l\'import: ' + error.message);
+                }
+                
+                closeModal('importModal');
+                updateAll();
+                showStatus('Import réussi !');
+            };
+            reader.readAsText(file);
+        }
+
+        // Bulk import
+        function importBulkGrades() {
+            const bulk = document.getElementById('bulkGrades').value;
+            const lines = bulk.split('\n').filter(l => l.trim());
+            
+            const grades = getGrades();
+            const students = getStudents();
+            let imported = 0;
+            
+            lines.forEach(line => {
+                const parts = line.split(',');
+                if (parts.length >= 4) {
+                    const studentName = parts[0].trim();
+                    const subject = parts[1].trim();
+                    const value = parseFloat(parts[2]);
+                    const date = parts[3].trim();
+                    const lesson = parts[4] || 'Leçon';
+                    
+                    const student = students.find(s => 
+                        `${s.firstName} ${s.lastName}`.toLowerCase().includes(studentName.toLowerCase())
+                    );
+                    
+                    if (student && !isNaN(value)) {
+                        const newId = grades.length ? Math.max(...grades.map(g => g.id)) + 1 : 1;
+                        grades.push({
+                            id: newId,
+                            studentId: student.id,
+                            subject,
+                            lesson,
+                            value,
+                            date,
+                            type: 'devoir',
+                            comment: ''
+                        });
+                        imported++;
+                    }
+                }
+            });
+            
+            localStorage.setItem('grades', JSON.stringify(grades));
+            updateAll();
+            showStatus(`${imported} notes importées`);
+        }
+
+        function downloadTemplate() {
+            const template = "élève,matière,note,date,leçon\nEmma Martin,Mathématiques,15,2025-02-15,Pythagore";
+            const blob = new Blob([template], { type: 'text/csv' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = "modele_notes.csv";
+            link.click();
+        }
+
+        // Filters
+        function filterGrades() {
+            renderGrades();
+        }
+
+        function isInPeriod(date, period) {
+            const d = new Date(date);
+            const month = d.getMonth() + 1;
+            
+            if (period === 'trimestre1') return month >= 9 && month <= 11;
+            if (period === 'trimestre2') return month >= 12 || month <= 2;
+            if (period === 'trimestre3') return month >= 3 && month <= 6;
+            return true;
+        }
+
+        // Utils
+        function getSubjectName(subject) {
+            const names = {
+                'mathematiques': 'Mathématiques',
+                'francais': 'Français',
+                'anglais': 'Anglais',
+                'histoire': 'Histoire-Géo',
+                'physique': 'Physique-Chimie',
+                'svt': 'SVT',
+                'philosophie': 'Philosophie',
+                'espagnol': 'Espagnol',
+                'allemand': 'Allemand',
+                'arts': 'Arts',
+                'musique': 'Musique',
+                'eps': 'EPS'
+            };
+            return names[subject] || subject;
+        }
+
+        function getLevelText(level) {
+            const levels = {
+                'excellent': 'Excellent',
+                'good': 'Acquis',
+                'average': 'En cours',
+                'needs-improvement': 'À renforcer'
+            };
+            return levels[level] || level;
+        }
+
+        function getLevelBadge(level) {
+            const badges = {
+                'excellent': 'badge-success',
+                'good': 'badge-info',
+                'average': 'badge-warning',
+                'needs-improvement': 'badge-danger'
+            };
+            return badges[level] || 'badge-info';
+        }
+
+        function calculateAverage() {
+            const grades = getGrades();
+            if (grades.length > 0) {
+                const avg = grades.reduce((a,g) => a + g.value, 0) / grades.length;
+                alert(`Moyenne générale: ${avg.toFixed(2)}/20`);
+            } else {
+                alert('Aucune note');
+            }
+        }
+
+        function generateClassReport() {
+            showStatus('Génération rapport...');
+            setTimeout(() => showStatus('Rapport généré'), 1000);
+        }
+
+        // PDF
+        function showStatus(msg, isError = false) {
+            const status = document.getElementById('pdfStatus');
+            const span = status.querySelector('span');
+            if (span) span.textContent = msg;
+            status.className = `pdf-status ${isError ? 'error' : ''} show`;
+            setTimeout(() => status.classList.remove('show'), 2000);
+        }
+
+        function generateCompletePDF() {
+            showStatus('PDF généré');
+        }
+
+        function generateStudentsPDF() {
+            showStatus('PDF élèves');
+        }
+
+        function generateAnalyticsPDF() {
+            showStatus('PDF analyses');
+        }
+
+        // Update all
+        function updateAll() {
+            updateDashboard();
+            renderStudents();
+            renderGrades();
+            renderCompetences();
+            renderClassView();
+            updateAnalytics();
+            updateStudentSelects();
+            updateCompetenceSelects();
+            updateGradeStats();
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeData();
+            
+            // Set today's date
+            const today = new Date().toISOString().split('T')[0];
+            const gradeDate = document.getElementById('gradeDate');
+            if (gradeDate) gradeDate.value = today;
+            
+            // Filters
+            document.getElementById('filterClass')?.addEventListener('change', renderStudents);
+            document.getElementById('filterGender')?.addEventListener('change', renderStudents);
+            document.getElementById('searchStudent')?.addEventListener('input', renderStudents);
+            document.getElementById('viewClass')?.addEventListener('change', renderGrades);
+            document.getElementById('viewSubject')?.addEventListener('change', renderGrades);
+            document.getElementById('viewPeriod')?.addEventListener('change', renderGrades);
+            document.getElementById('statsClass')?.addEventListener('change', updateGradeStats);
+            document.getElementById('statsSubject')?.addEventListener('change', updateGradeStats);
+            document.getElementById('overviewClass')?.addEventListener('change', renderClassView);
+            document.getElementById('competenceStudentSelect')?.addEventListener('change', renderCompetences);
+            document.getElementById('competenceSubjectFilter')?.addEventListener('change', renderCompetences);
+            
+            // Grade form
+            document.getElementById('gradeForm')?.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const grades = getGrades();
+                const newId = grades.length ? Math.max(...grades.map(g => g.id)) + 1 : 1;
+                
+                const grade = {
+                    id: newId,
+                    studentId: parseInt(document.getElementById('studentSelect').value),
+                    subject: document.getElementById('subjectSelect').value,
+                    lesson: document.getElementById('lessonSelect').value,
+                    value: parseFloat(document.getElementById('gradeValue').value),
+                    date: document.getElementById('gradeDate').value,
+                    type: document.getElementById('gradeType').value,
+                    comment: document.getElementById('gradeComment').value
+                };
+                
+                grades.push(grade);
+                localStorage.setItem('grades', JSON.stringify(grades));
+                
+                // Update student average
+                const students = getStudents();
+                const studentGrades = grades.filter(g => g.studentId === grade.studentId);
+                const avg = studentGrades.reduce((s, g) => s + g.value, 0) / studentGrades.length;
+                const student = students.find(s => s.id === grade.studentId);
+                if (student) {
+                    student.average = avg;
+                    localStorage.setItem('students', JSON.stringify(students));
+                }
+                
+                this.reset();
+                document.getElementById('gradeDate').value = today;
+                updateAll();
+                showStatus('Note enregistrée');
+            });
+            
+            // Tabs
+            document.querySelectorAll('[data-grade-tab]').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    document.querySelectorAll('[data-grade-tab]').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    document.querySelectorAll('#grades .tab-content').forEach(c => c.classList.remove('active'));
+                    const targetId = this.getAttribute('data-grade-tab') + 'GradeTab';
+                    const target = document.getElementById(targetId);
+                    if (target) target.classList.add('active');
+                });
+            });
+            
+            updateAll();
+        });
+    </script>
+</body>
+</html>

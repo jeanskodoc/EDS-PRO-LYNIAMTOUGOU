@@ -1,0 +1,2889 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyse des Évaluations Scolaires</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-50: #eff6ff;
+            --primary-100: #dbeafe;
+            --primary-200: #bfdbfe;
+            --primary-300: #93c5fd;
+            --primary-400: #60a5fa;
+            --primary-500: #3b82f6;
+            --primary-600: #2563eb;
+            --primary-700: #1d4ed8;
+            --primary-800: #1e40af;
+            --primary-900: #1e3a8a;
+            
+            --success-50: #f0fdf4;
+            --success-100: #dcfce7;
+            --success-200: #bbf7d0;
+            --success-300: #86efac;
+            --success-400: #4ade80;
+            --success-500: #22c55e;
+            --success-600: #16a34a;
+            --success-700: #15803d;
+            --success-800: #166534;
+            --success-900: #14532d;
+            
+            --warning-50: #fefce8;
+            --warning-100: #fef9c3;
+            --warning-200: #fef08a;
+            --warning-300: #fde047;
+            --warning-400: #facc15;
+            --warning-500: #eab308;
+            --warning-600: #ca8a04;
+            --warning-700: #a16207;
+            --warning-800: #854d0e;
+            --warning-900: #713f12;
+            
+            --danger-50: #fef2f2;
+            --danger-100: #fee2e2;
+            --danger-200: #fecaca;
+            --danger-300: #fca5a5;
+            --danger-400: #f87171;
+            --danger-500: #ef4444;
+            --danger-600: #dc2626;
+            --danger-700: #b91c1c;
+            --danger-800: #991b1b;
+            --danger-900: #7f1d1d;
+            
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            
+            --radius-sm: 0.375rem;
+            --radius: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.5rem;
+            --radius-full: 9999px;
+            
+            --font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --font-mono: 'SF Mono', Monaco, 'Cascadia Mono', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+            color: var(--gray-800);
+            line-height: 1.6;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Layout */
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 1.5rem;
+            max-width: 1920px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Header */
+        .app-header {
+            background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
+            color: white;
+            padding: 1.5rem 1.5rem 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1920px;
+            margin: 0 auto;
+        }
+
+        .header-content h1 {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .header-content p {
+            font-size: clamp(0.875rem, 2vw, 1rem);
+            opacity: 0.9;
+            max-width: 800px;
+        }
+
+        .header-accent {
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        /* Tabs Navigation */
+        .tabs-container {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            margin: -1.5rem auto 2rem;
+            position: relative;
+            z-index: 10;
+            overflow: hidden;
+            max-width: 1920px;
+        }
+
+        .tabs-scroll {
+            display: flex;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding: 0.25rem;
+        }
+
+        .tabs-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab {
+            flex: 0 0 auto;
+            padding: 1rem 1.5rem;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--gray-500);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            white-space: nowrap;
+            font-size: 0.875rem;
+        }
+
+        .tab:hover {
+            color: var(--primary-600);
+            background: var(--primary-50);
+        }
+
+        .tab.active {
+            color: var(--primary-700);
+            border-bottom-color: var(--primary-600);
+            background: var(--primary-50);
+        }
+
+        .tab-badge {
+            background: var(--primary-100);
+            color: var(--primary-700);
+            border-radius: var(--radius-full);
+            padding: 0.25rem 0.625rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            min-width: 1.75rem;
+            text-align: center;
+        }
+
+        .tab.active .tab-badge {
+            background: var(--primary-600);
+            color: white;
+        }
+
+        /* Controls Section */
+        .controls-section {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .file-upload-area {
+            border: 2px dashed var(--primary-300);
+            border-radius: var(--radius-lg);
+            padding: 3rem 1.5rem;
+            text-align: center;
+            background: var(--primary-50);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .file-upload-area:hover {
+            border-color: var(--primary-500);
+            background: var(--primary-100);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .file-upload-area i {
+            font-size: 3rem;
+            color: var(--primary-500);
+            margin-bottom: 1rem;
+        }
+
+        .file-upload-area h3 {
+            font-size: 1.25rem;
+            color: var(--gray-800);
+            margin-bottom: 0.5rem;
+        }
+
+        .file-upload-area p {
+            color: var(--gray-600);
+            margin-bottom: 0.25rem;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.875rem 1.5rem;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            text-align: center;
+            min-height: 3rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success-600) 0%, var(--success-700) 100%);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger-600) 0%, var(--danger-700) 100%);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-200);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-200);
+            transform: translateY(-2px);
+        }
+
+        /* Summary Cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+        }
+
+        .summary-card.primary::before { background: var(--primary-500); }
+        .summary-card.success::before { background: var(--success-500); }
+        .summary-card.warning::before { background: var(--warning-500); }
+        .summary-card.danger::before { background: var(--danger-500); }
+
+        .summary-card h3 {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .summary-card .value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            line-height: 1;
+        }
+
+        .summary-card.primary .value { color: var(--primary-700); }
+        .summary-card.success .value { color: var(--success-700); }
+        .summary-card.warning .value { color: var(--warning-700); }
+        .summary-card.danger .value { color: var(--danger-700); }
+
+        .summary-card .change {
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .change.positive { color: var(--success-600); }
+        .change.negative { color: var(--danger-600); }
+
+        /* Group Containers */
+        .group-container {
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .group-container:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .group-header {
+            background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+            color: white;
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .group-header:hover {
+            background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
+        }
+
+        .group-header h2 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .group-stats {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .group-stat {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+        }
+
+        .group-content {
+            padding: 1.5rem;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Student Analysis */
+        .student-analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            position: relative;
+        }
+
+        .chart-container h3 {
+            font-size: 1rem;
+            color: var(--gray-700);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+            width: 100%;
+        }
+
+        .student-details-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .student-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid var(--gray-100);
+        }
+
+        .student-info h3 {
+            font-size: 1.5rem;
+            color: var(--gray-800);
+            margin-bottom: 0.5rem;
+        }
+
+        .student-class-badge {
+            background: var(--primary-100);
+            color: var(--primary-700);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-full);
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .student-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .student-stat {
+            background: var(--gray-50);
+            padding: 1rem;
+            border-radius: var(--radius);
+            text-align: center;
+            border: 1px solid var(--gray-200);
+        }
+
+        .student-stat .value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            line-height: 1;
+        }
+
+        .student-stat .label {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        /* Tables */
+        .data-table-container {
+            overflow-x: auto;
+            border-radius: var(--radius);
+            border: 1px solid var(--gray-200);
+            background: white;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        .data-table th {
+            background: var(--gray-50);
+            color: var(--gray-700);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+            border-bottom: 1px solid var(--gray-200);
+            white-space: nowrap;
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+            font-size: 0.875rem;
+        }
+
+        .data-table tr:hover {
+            background: var(--gray-50);
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .grade-badge {
+            display: inline-block;
+            padding: 0.375rem 0.875rem;
+            border-radius: var(--radius-full);
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-align: center;
+            min-width: 60px;
+        }
+
+        .grade-excellent { background: var(--success-100); color: var(--success-800); }
+        .grade-good { background: var(--primary-100); color: var(--primary-800); }
+        .grade-average { background: var(--warning-100); color: var(--warning-800); }
+        .grade-poor { background: var(--danger-100); color: var(--danger-800); }
+
+        /* Filter Section */
+        .filters-section {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-select, .filter-input {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            background: white;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .filter-select:focus, .filter-input:focus {
+            outline: none;
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Imported Files */
+        .files-section {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+        }
+
+        .files-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .file-tag {
+            background: var(--primary-50);
+            border: 1px solid var(--primary-200);
+            border-radius: var(--radius-full);
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .file-tag:hover {
+            background: var(--primary-100);
+            transform: translateY(-1px);
+        }
+
+        /* Messages */
+        .message {
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius);
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .error-message {
+            background: var(--danger-50);
+            color: var(--danger-700);
+            border: 1px solid var(--danger-200);
+        }
+
+        .success-message {
+            background: var(--success-50);
+            color: var(--success-700);
+            border: 1px solid var(--success-200);
+        }
+
+        /* Loading */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: var(--shadow-xl);
+            animation: scaleIn 0.3s ease;
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--gray-200);
+            border-top: 4px solid var(--primary-600);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--gray-500);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            opacity: 0.2;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--gray-700);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            z-index: 100;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1536px) {
+            .main-content {
+                padding: 1.25rem;
+            }
+        }
+
+        @media (max-width: 1280px) {
+            html {
+                font-size: 15px;
+            }
+            
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .student-analysis-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .controls-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .filters-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            html {
+                font-size: 14px;
+            }
+            
+            .app-header {
+                padding: 1rem;
+            }
+            
+            .header-content h1 {
+                padding-right: 3rem;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .tabs-container {
+                margin: -1rem 0 1.5rem;
+                border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+            }
+            
+            .summary-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .group-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .group-stats {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .student-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .student-stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .file-upload-area {
+                padding: 2rem 1rem;
+            }
+            
+            .file-upload-area i {
+                font-size: 2.5rem;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .main-content {
+                padding: 0.75rem;
+            }
+            
+            .summary-card .value {
+                font-size: 2rem;
+            }
+            
+            .group-stat {
+                padding: 0.375rem 0.75rem;
+                font-size: 0.75rem;
+            }
+            
+            .student-stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-wrapper {
+                height: 250px;
+            }
+            
+            .data-table {
+                min-width: 500px;
+            }
+            
+            .tab {
+                padding: 0.75rem 1rem;
+                font-size: 0.75rem;
+            }
+            
+            .tab-badge {
+                min-width: 1.5rem;
+                padding: 0.125rem 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-content h1 {
+                font-size: 1.25rem;
+            }
+            
+            .summary-card {
+                padding: 1.25rem;
+            }
+            
+            .controls-section,
+            .filters-section,
+            .files-section,
+            .group-content {
+                padding: 1.25rem;
+            }
+            
+            .group-header {
+                padding: 1rem;
+            }
+            
+            .student-details-card {
+                padding: 1.25rem;
+            }
+            
+            .data-table th,
+            .data-table td {
+                padding: 0.75rem;
+            }
+            
+            .empty-state {
+                padding: 3rem 1rem;
+            }
+            
+            .empty-state i {
+                font-size: 3rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .tab {
+                padding: 0.75rem;
+                gap: 0.5rem;
+            }
+            
+            .tab span:not(.tab-badge) {
+                display: none;
+            }
+            
+            .summary-card .value {
+                font-size: 1.75rem;
+            }
+            
+            .btn {
+                padding: 0.75rem 1rem;
+                font-size: 0.75rem;
+            }
+            
+            .student-info h3 {
+                font-size: 1.25rem;
+            }
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --gray-50: #0f172a;
+                --gray-100: #1e293b;
+                --gray-200: #334155;
+                --gray-300: #475569;
+                --gray-400: #64748b;
+                --gray-500: #94a3b8;
+                --gray-600: #cbd5e1;
+                --gray-700: #e2e8f0;
+                --gray-800: #f1f5f9;
+                --gray-900: #f8fafc;
+                
+                --primary-50: #1e3a8a;
+                --primary-100: #1e40af;
+                --primary-200: #1d4ed8;
+                --primary-300: #2563eb;
+                --primary-400: #3b82f6;
+                --primary-500: #60a5fa;
+                --primary-600: #93c5fd;
+                --primary-700: #bfdbfe;
+                --primary-800: #dbeafe;
+                --primary-900: #eff6ff;
+                
+                --success-50: #14532d;
+                --success-100: #166534;
+                --success-200: #15803d;
+                --success-300: #16a34a;
+                --success-400: #22c55e;
+                --success-500: #4ade80;
+                --success-600: #86efac;
+                --success-700: #bbf7d0;
+                --success-800: #dcfce7;
+                --success-900: #f0fdf4;
+            }
+            
+            body {
+                background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+                color: var(--gray-800);
+            }
+            
+            .summary-card,
+            .controls-section,
+            .filters-section,
+            .files-section,
+            .group-container,
+            .chart-container,
+            .student-details-card,
+            .tabs-container {
+                background: var(--gray-100);
+                color: var(--gray-800);
+            }
+            
+            .group-header {
+                background: linear-gradient(135deg, var(--primary-700) 0%, var(--primary-800) 100%);
+            }
+            
+            .data-table-container {
+                background: var(--gray-100);
+                border-color: var(--gray-200);
+            }
+            
+            .data-table th {
+                background: var(--gray-200);
+                color: var(--gray-800);
+                border-color: var(--gray-300);
+            }
+            
+            .data-table td {
+                border-color: var(--gray-200);
+                color: var(--gray-700);
+            }
+            
+            .data-table tr:hover {
+                background: var(--gray-200);
+            }
+            
+            .filter-select,
+            .filter-input {
+                background: var(--gray-100);
+                border-color: var(--gray-300);
+                color: var(--gray-800);
+            }
+            
+            .btn-secondary {
+                background: var(--gray-200);
+                color: var(--gray-800);
+                border-color: var(--gray-300);
+            }
+            
+            .student-stat {
+                background: var(--gray-200);
+                border-color: var(--gray-300);
+            }
+            
+            .grade-excellent { background: var(--success-900); color: var(--success-200); }
+            .grade-good { background: var(--primary-900); color: var(--primary-200); }
+            .grade-average { background: var(--warning-900); color: var(--warning-200); }
+            .grade-poor { background: var(--danger-900); color: var(--danger-200); }
+            
+            .file-tag {
+                background: var(--primary-900);
+                border-color: var(--primary-800);
+                color: var(--primary-200);
+            }
+            
+            .file-upload-area {
+                background: var(--primary-900);
+                border-color: var(--primary-700);
+            }
+            
+            .file-upload-area:hover {
+                background: var(--primary-800);
+                border-color: var(--primary-500);
+            }
+            
+            .loading-card {
+                background: var(--gray-100);
+                color: var(--gray-800);
+            }
+            
+            .loading-spinner {
+                border-color: var(--gray-300);
+                border-top-color: var(--primary-500);
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            .app-header,
+            .tabs-container,
+            .controls-section,
+            .filters-section,
+            .files-section,
+            .btn,
+            .mobile-menu-btn {
+                display: none !important;
+            }
+            
+            .main-content {
+                padding: 0;
+            }
+            
+            .tab-content {
+                display: block !important;
+            }
+            
+            .summary-card,
+            .group-container,
+            .chart-container,
+            .student-details-card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                break-inside: avoid;
+            }
+            
+            .group-content {
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1><i class="fas fa-chart-line"></i> Analyse des Évaluations Scolaires</h1>
+                <p>Importez plusieurs fichiers JSON pour analyser les performances par classe, matière, type d'évaluation et enseignant</p>
+            </div>
+            <div class="header-accent"></div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Tabs Navigation -->
+            <nav class="tabs-container" aria-label="Navigation principale">
+                <div class="tabs-scroll">
+                    <button class="tab active" onclick="showTab('overview')" aria-label="Vue d'ensemble">
+                        <i class="fas fa-home"></i>
+                        <span>Vue d'ensemble</span>
+                        <span class="tab-badge" id="overview-badge">0</span>
+                    </button>
+                    <button class="tab" onclick="showTab('classes')" aria-label="Vue par classe">
+                        <i class="fas fa-users"></i>
+                        <span>Par Classe</span>
+                        <span class="tab-badge" id="classes-badge">0</span>
+                    </button>
+                    <button class="tab" onclick="showTab('subjects')" aria-label="Vue par matière">
+                        <i class="fas fa-book"></i>
+                        <span>Par Matière</span>
+                        <span class="tab-badge" id="subjects-badge">0</span>
+                    </button>
+                    <button class="tab" onclick="showTab('types')" aria-label="Vue par type d'évaluation">
+                        <i class="fas fa-tags"></i>
+                        <span>Par Type</span>
+                        <span class="tab-badge" id="types-badge">0</span>
+                    </button>
+                    <button class="tab" onclick="showTab('teachers')" aria-label="Vue par enseignant">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        <span>Par Enseignant</span>
+                        <span class="tab-badge" id="teachers-badge">0</span>
+                    </button>
+                    <button class="tab" onclick="showTab('students')" aria-label="Analyse par élève">
+                        <i class="fas fa-user-graduate"></i>
+                        <span>Analyse Élève</span>
+                        <span class="tab-badge" id="students-badge">0</span>
+                    </button>
+                </div>
+            </nav>
+
+            <!-- Controls Section -->
+            <section class="controls-section">
+                <div class="file-upload-area" onclick="document.getElementById('file-input').click()" 
+                     role="button" tabindex="0" aria-label="Zone de dépôt de fichiers">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h3>Cliquez ou glissez-déposez des fichiers JSON</h3>
+                    <p>Sélectionnez un ou plusieurs fichiers d'évaluation au format JSON</p>
+                    <small>Format accepté : fichiers d'évaluation scolaire</small>
+                </div>
+                
+                <input type="file" id="file-input" class="file-input" accept=".json" multiple 
+                       aria-label="Sélectionner des fichiers JSON">
+                
+                <div class="controls-grid">
+                    <button class="btn btn-primary" onclick="loadFromDatabase()">
+                        <i class="fas fa-folder-open"></i>
+                        <span>Charger sauvegarde</span>
+                    </button>
+                    <button class="btn btn-success" onclick="saveToDatabase()">
+                        <i class="fas fa-save"></i>
+                        <span>Sauvegarder</span>
+                    </button>
+                    <button class="btn btn-danger" onclick="clearData()">
+                        <i class="fas fa-trash-alt"></i>
+                        <span>Effacer données</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportData()">
+                        <i class="fas fa-download"></i>
+                        <span>Exporter</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Messages -->
+            <div id="error-message" class="message error-message" role="alert" aria-live="assertive"></div>
+            <div id="success-message" class="message success-message" role="status" aria-live="polite"></div>
+
+            <!-- Imported Files -->
+            <section class="files-section" id="imported-files" style="display: none;">
+                <h3><i class="fas fa-file-import"></i> Fichiers importés</h3>
+                <div id="files-list" class="files-tags"></div>
+            </section>
+
+            <!-- Filters -->
+            <section class="filters-section" id="filters-section" style="display: none;" aria-label="Filtres">
+                <h3><i class="fas fa-filter"></i> Filtres</h3>
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label class="filter-label"><i class="fas fa-users"></i> Classe</label>
+                        <select id="filter-class" class="filter-select" onchange="applyFilters()" aria-label="Filtrer par classe">
+                            <option value="">Toutes les classes</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label"><i class="fas fa-book"></i> Matière</label>
+                        <select id="filter-subject" class="filter-select" onchange="applyFilters()" aria-label="Filtrer par matière">
+                            <option value="">Toutes les matières</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label"><i class="fas fa-tags"></i> Type</label>
+                        <select id="filter-type" class="filter-select" onchange="applyFilters()" aria-label="Filtrer par type">
+                            <option value="">Tous les types</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label"><i class="fas fa-chalkboard-teacher"></i> Enseignant</label>
+                        <select id="filter-teacher" class="filter-select" onchange="applyFilters()" aria-label="Filtrer par enseignant">
+                            <option value="">Tous les enseignants</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label"><i class="fas fa-user-graduate"></i> Élève</label>
+                        <select id="filter-student" class="filter-select" onchange="applyFilters()" aria-label="Filtrer par élève">
+                            <option value="">Tous les élèves</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tab Contents -->
+            
+            <!-- Overview Tab -->
+            <div id="tab-overview" class="tab-content active" role="tabpanel" aria-labelledby="overview-tab">
+                <div class="summary-grid" id="overview-cards"></div>
+                <div id="overview-content"></div>
+            </div>
+
+            <!-- Classes Tab -->
+            <div id="tab-classes" class="tab-content" role="tabpanel" aria-labelledby="classes-tab">
+                <div id="classes-content"></div>
+            </div>
+
+            <!-- Subjects Tab -->
+            <div id="tab-subjects" class="tab-content" role="tabpanel" aria-labelledby="subjects-tab">
+                <div id="subjects-content"></div>
+            </div>
+
+            <!-- Types Tab -->
+            <div id="tab-types" class="tab-content" role="tabpanel" aria-labelledby="types-tab">
+                <div id="types-content"></div>
+            </div>
+
+            <!-- Teachers Tab -->
+            <div id="tab-teachers" class="tab-content" role="tabpanel" aria-labelledby="teachers-tab">
+                <div id="teachers-content"></div>
+            </div>
+
+            <!-- Student Analysis Tab -->
+            <div id="tab-students" class="tab-content" role="tabpanel" aria-labelledby="students-tab">
+                <div class="student-analysis-grid">
+                    <div class="chart-container">
+                        <h3><i class="fas fa-chart-line"></i> Progression des notes</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="student-progress-chart" aria-label="Graphique de progression des notes de l'élève"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <h3><i class="fas fa-balance-scale"></i> Répartition par matière</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="student-subjects-chart" aria-label="Graphique de répartition des notes par matière"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="student-details-card" id="student-details">
+                    <div class="student-header">
+                        <div class="student-info">
+                            <h3 id="student-name">Sélectionnez un élève</h3>
+                            <div class="student-class-badge" id="student-class-info"></div>
+                        </div>
+                        <div class="student-stats-grid" id="student-stats"></div>
+                    </div>
+                    <h3><i class="fas fa-history"></i> Historique des évaluations</h3>
+                    <div class="data-table-container">
+                        <table class="data-table" id="student-evaluations-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Matière</th>
+                                    <th>Type</th>
+                                    <th>Note</th>
+                                    <th>Appréciation</th>
+                                    <th>Enseignant</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div id="no-data" class="empty-state" style="display: none;">
+                <i class="fas fa-database"></i>
+                <h3>Aucune donnée disponible</h3>
+                <p>Importez des fichiers JSON pour commencer l'analyse</p>
+            </div>
+        </main>
+
+        <!-- Loading Overlay -->
+        <div id="loading" class="loading-overlay">
+            <div class="loading-card">
+                <div class="loading-spinner"></div>
+                <h3 id="loading-title">Traitement en cours</h3>
+                <p id="loading-text">Analyse des données...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let allEvaluations = [];
+        let studentsData = {};
+        let classesData = {};
+        let subjectsData = {};
+        let typesData = {};
+        let teachersData = {};
+        let importedFiles = new Set();
+        let currentFilters = {};
+        let selectedStudent = null;
+        let studentProgressChart = null;
+        let studentSubjectsChart = null;
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            setupEventListeners();
+            loadFromDatabase();
+            setupMobileMenu();
+        }
+
+        function setupEventListeners() {
+            const fileInput = document.getElementById('file-input');
+            fileInput.addEventListener('change', handleFileImport);
+            
+            const dropArea = document.querySelector('.file-upload-area');
+            
+            // Drag and drop events
+            dropArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropArea.style.borderColor = 'var(--primary-500)';
+                dropArea.style.background = 'var(--primary-100)';
+            });
+            
+            dropArea.addEventListener('dragleave', () => {
+                dropArea.style.borderColor = 'var(--primary-300)';
+                dropArea.style.background = 'var(--primary-50)';
+            });
+            
+            dropArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropArea.style.borderColor = 'var(--primary-300)';
+                dropArea.style.background = 'var(--primary-50)';
+                
+                if (e.dataTransfer.files.length) {
+                    fileInput.files = e.dataTransfer.files;
+                    handleFileImport();
+                }
+            });
+            
+            // Keyboard accessibility for drop area
+            dropArea.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    fileInput.click();
+                }
+            });
+            
+            // Responsive window events
+            window.addEventListener('resize', debounce(handleResize, 250));
+        }
+
+        function setupMobileMenu() {
+            const menuBtn = document.getElementById('mobile-menu-btn');
+            const tabs = document.querySelector('.tabs-scroll');
+            
+            menuBtn?.addEventListener('click', () => {
+                tabs.classList.toggle('mobile-open');
+            });
+        }
+
+        function handleResize() {
+            // Update charts on resize
+            if (studentProgressChart) {
+                studentProgressChart.resize();
+            }
+            if (studentSubjectsChart) {
+                studentSubjectsChart.resize();
+            }
+        }
+
+        // Gestion de l'import de fichiers
+        async function handleFileImport() {
+            const files = document.getElementById('file-input').files;
+            if (!files.length) return;
+            
+            showLoading('Importation des fichiers...');
+            
+            try {
+                const newEvaluations = [];
+                
+                for (let file of files) {
+                    const data = await readFile(file);
+                    const evaluations = parseJSONData(data, file.name);
+                    newEvaluations.push(...evaluations);
+                    
+                    importedFiles.add(file.name);
+                }
+                
+                allEvaluations = [...allEvaluations, ...newEvaluations];
+                organizeData();
+                updateAllDisplays();
+                updateFileList();
+                
+                showSuccess(`${newEvaluations.length} évaluations importées avec succès !`);
+                
+            } catch (error) {
+                showError(`Erreur lors de l'import : ${error.message}`);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function readFile(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = () => reject(new Error('Erreur de lecture du fichier'));
+                reader.readAsText(file);
+            });
+        }
+
+        function parseJSONData(jsonString, fileName) {
+            try {
+                const data = JSON.parse(jsonString);
+                const evaluations = [];
+                
+                if (data.evaluation) {
+                    const evalData = data.evaluation;
+                    evalData.students.forEach(student => {
+                        evaluations.push({
+                            id: generateId(),
+                            fileName: fileName,
+                            teacher: evalData.teacher,
+                            cycle: evalData.cycle,
+                            class: evalData.class,
+                            subject: evalData.subject || 'Non spécifié',
+                            date: evalData.date,
+                            type: evalData.type,
+                            maxGrade: parseFloat(evalData.maxGrade) || 20,
+                            title: evalData.title,
+                            studentName: student.name,
+                            grade: parseFloat(student.grade) || 0,
+                            appreciation: student.appreciation,
+                            parentName: student.parentName || '',
+                            parentPhone: student.parentPhone || '',
+                            comment: student.comment || '',
+                            timestamp: evalData.timestamp || new Date().toISOString()
+                        });
+                    });
+                } else if (Array.isArray(data)) {
+                    data.forEach(item => {
+                        if (item.studentName && item.grade) {
+                            evaluations.push({
+                                id: generateId(),
+                                fileName: fileName,
+                                ...item
+                            });
+                        }
+                    });
+                }
+                
+                return evaluations;
+                
+            } catch (error) {
+                throw new Error(`Format JSON invalide dans ${fileName}`);
+            }
+        }
+
+        function organizeData() {
+            studentsData = {};
+            classesData = {};
+            subjectsData = {};
+            typesData = {};
+            teachersData = {};
+            
+            allEvaluations.forEach(eval => {
+                const studentName = eval.studentName;
+                const className = eval.class;
+                const subjectName = eval.subject;
+                const typeName = eval.type;
+                const teacherName = eval.teacher;
+                
+                // Student data
+                if (!studentsData[studentName]) {
+                    studentsData[studentName] = {
+                        evaluations: [],
+                        classes: new Set(),
+                        subjects: new Set(),
+                        teachers: new Set(),
+                        stats: {
+                            total: 0,
+                            count: 0,
+                            average: 0,
+                            bestGrade: 0,
+                            worstGrade: 20,
+                            lastUpdate: null
+                        }
+                    };
+                }
+                studentsData[studentName].evaluations.push(eval);
+                studentsData[studentName].classes.add(className);
+                studentsData[studentName].subjects.add(subjectName);
+                studentsData[studentName].teachers.add(teacherName);
+                
+                // Class data
+                if (!classesData[className]) {
+                    classesData[className] = {
+                        evaluations: [],
+                        students: new Set(),
+                        subjects: new Set(),
+                        teachers: new Set(),
+                        stats: {
+                            total: 0,
+                            count: 0,
+                            average: 0,
+                            bestStudent: '',
+                            worstStudent: ''
+                        }
+                    };
+                }
+                classesData[className].evaluations.push(eval);
+                classesData[className].students.add(studentName);
+                classesData[className].subjects.add(subjectName);
+                classesData[className].teachers.add(teacherName);
+                
+                // Subject data
+                if (!subjectsData[subjectName]) {
+                    subjectsData[subjectName] = {
+                        evaluations: [],
+                        students: new Set(),
+                        classes: new Set(),
+                        teachers: new Set(),
+                        stats: {
+                            total: 0,
+                            count: 0,
+                            average: 0
+                        }
+                    };
+                }
+                subjectsData[subjectName].evaluations.push(eval);
+                subjectsData[subjectName].students.add(studentName);
+                subjectsData[subjectName].classes.add(className);
+                subjectsData[subjectName].teachers.add(teacherName);
+                
+                // Type data
+                if (!typesData[typeName]) {
+                    typesData[typeName] = {
+                        evaluations: [],
+                        students: new Set(),
+                        classes: new Set(),
+                        subjects: new Set(),
+                        stats: {
+                            total: 0,
+                            count: 0,
+                            average: 0
+                        }
+                    };
+                }
+                typesData[typeName].evaluations.push(eval);
+                typesData[typeName].students.add(studentName);
+                typesData[typeName].classes.add(className);
+                typesData[typeName].subjects.add(subjectName);
+                
+                // Teacher data
+                if (!teachersData[teacherName]) {
+                    teachersData[teacherName] = {
+                        evaluations: [],
+                        students: new Set(),
+                        classes: new Set(),
+                        subjects: new Set(),
+                        stats: {
+                            total: 0,
+                            count: 0,
+                            average: 0
+                        }
+                    };
+                }
+                teachersData[teacherName].evaluations.push(eval);
+                teachersData[teacherName].students.add(studentName);
+                teachersData[teacherName].classes.add(className);
+                teachersData[teacherName].subjects.add(subjectName);
+            });
+            
+            calculateStatistics();
+        }
+
+        function calculateStatistics() {
+            // Student statistics
+            Object.keys(studentsData).forEach(studentName => {
+                const data = studentsData[studentName];
+                const evals = data.evaluations;
+                
+                let total = 0;
+                let bestGrade = 0;
+                let worstGrade = 20;
+                
+                evals.forEach(eval => {
+                    const grade = eval.grade;
+                    total += grade;
+                    if (grade > bestGrade) bestGrade = grade;
+                    if (grade < worstGrade) worstGrade = grade;
+                });
+                
+                data.stats = {
+                    total: total,
+                    count: evals.length,
+                    average: total / evals.length,
+                    bestGrade: bestGrade,
+                    worstGrade: worstGrade,
+                    lastUpdate: evals.reduce((latest, eval) => 
+                        new Date(eval.timestamp) > new Date(latest) ? eval.timestamp : latest, '')
+                };
+            });
+            
+            // Class statistics
+            Object.keys(classesData).forEach(className => {
+                const data = classesData[className];
+                const evals = data.evaluations;
+                
+                if (evals.length === 0) return;
+                
+                let total = 0;
+                let bestStudent = '';
+                let bestAverage = 0;
+                let worstStudent = '';
+                let worstAverage = 20;
+                
+                const studentAverages = {};
+                data.students.forEach(studentName => {
+                    const studentEvals = evals.filter(e => e.studentName === studentName);
+                    const average = studentEvals.reduce((sum, e) => sum + e.grade, 0) / studentEvals.length;
+                    studentAverages[studentName] = average;
+                    
+                    if (average > bestAverage) {
+                        bestAverage = average;
+                        bestStudent = studentName;
+                    }
+                    if (average < worstAverage) {
+                        worstAverage = average;
+                        worstStudent = studentName;
+                    }
+                });
+                
+                total = evals.reduce((sum, eval) => sum + eval.grade, 0);
+                
+                data.stats = {
+                    total: total,
+                    count: evals.length,
+                    average: total / evals.length,
+                    bestStudent: bestStudent,
+                    worstStudent: worstStudent,
+                    bestAverage: bestAverage,
+                    worstAverage: worstAverage
+                };
+            });
+            
+            // Other statistics
+            [subjectsData, typesData, teachersData].forEach(dataSet => {
+                Object.keys(dataSet).forEach(key => {
+                    const data = dataSet[key];
+                    const evals = data.evaluations;
+                    
+                    if (evals.length === 0) return;
+                    
+                    const total = evals.reduce((sum, eval) => sum + eval.grade, 0);
+                    
+                    data.stats = {
+                        total: total,
+                        count: evals.length,
+                        average: total / evals.length
+                    };
+                });
+            });
+        }
+
+        function updateAllDisplays() {
+            updateFilters();
+            updateOverview();
+            updateClassesDisplay();
+            updateSubjectsDisplay();
+            updateTypesDisplay();
+            updateTeachersDisplay();
+            updateTabBadges();
+            
+            if (allEvaluations.length > 0) {
+                document.getElementById('filters-section').style.display = 'block';
+                document.getElementById('imported-files').style.display = 'block';
+                document.getElementById('no-data').style.display = 'none';
+            } else {
+                document.getElementById('filters-section').style.display = 'none';
+                document.getElementById('imported-files').style.display = 'none';
+                document.getElementById('no-data').style.display = 'block';
+            }
+        }
+
+        function updateFilters() {
+            const classes = Object.keys(classesData).sort();
+            const subjects = Object.keys(subjectsData).sort();
+            const types = Object.keys(typesData).sort();
+            const teachers = Object.keys(teachersData).sort();
+            const students = Object.keys(studentsData).sort();
+            
+            updateSelectOptions('filter-class', classes);
+            updateSelectOptions('filter-subject', subjects);
+            updateSelectOptions('filter-type', types);
+            updateSelectOptions('filter-teacher', teachers);
+            updateSelectOptions('filter-student', students);
+        }
+
+        function updateSelectOptions(selectId, options) {
+            const select = document.getElementById(selectId);
+            const currentValue = select.value;
+            
+            select.innerHTML = `<option value="">Tous</option>`;
+            options.forEach(option => {
+                select.innerHTML += `<option value="${option}">${option}</option>`;
+            });
+            
+            if (options.includes(currentValue)) {
+                select.value = currentValue;
+            }
+        }
+
+        function updateOverview() {
+            const totalStudents = Object.keys(studentsData).length;
+            const totalEvaluations = allEvaluations.length;
+            const totalClasses = Object.keys(classesData).length;
+            const totalSubjects = Object.keys(subjectsData).length;
+            
+            const totalGrade = allEvaluations.reduce((sum, eval) => sum + eval.grade, 0);
+            const averageGrade = totalEvaluations > 0 ? (totalGrade / totalEvaluations).toFixed(1) : 0;
+            
+            const strugglingStudents = Object.keys(studentsData).filter(student => {
+                return studentsData[student].stats.average < 10;
+            }).length;
+            
+            document.getElementById('overview-cards').innerHTML = `
+                <div class="summary-card primary">
+                    <h3><i class="fas fa-user-graduate"></i> Élèves</h3>
+                    <div class="value">${totalStudents}</div>
+                    <div class="change positive">
+                        <i class="fas fa-chart-line"></i> ${Object.keys(studentsData).length} uniques
+                    </div>
+                </div>
+                <div class="summary-card success">
+                    <h3><i class="fas fa-file-alt"></i> Évaluations</h3>
+                    <div class="value">${totalEvaluations}</div>
+                    <div class="change positive">
+                        <i class="fas fa-database"></i> ${importedFiles.size} fichier(s)
+                    </div>
+                </div>
+                <div class="summary-card warning">
+                    <h3><i class="fas fa-school"></i> Classes</h3>
+                    <div class="value">${totalClasses}</div>
+                    <div class="change">
+                        <i class="fas fa-layer-group"></i> ${Object.keys(classesData).join(', ')}
+                    </div>
+                </div>
+                <div class="summary-card danger">
+                    <h3><i class="fas fa-exclamation-triangle"></i> En difficulté</h3>
+                    <div class="value">${strugglingStudents}</div>
+                    <div class="change ${strugglingStudents > 0 ? 'negative' : 'positive'}">
+                        <i class="fas ${strugglingStudents > 0 ? 'fa-user-times' : 'fa-check-circle'}"></i>
+                        ${strugglingStudents > 0 ? 'Attention requise' : 'Tout va bien'}
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('overview-content').innerHTML = `
+                <div class="group-container">
+                    <div class="group-header">
+                        <h2><i class="fas fa-chart-bar"></i> Statistiques Globales</h2>
+                        <div class="group-stats">
+                            <div class="group-stat">Moyenne: ${averageGrade}/20</div>
+                            <div class="group-stat">Matières: ${totalSubjects}</div>
+                        </div>
+                    </div>
+                    <div class="group-content" style="display: none;">
+                        <div class="student-stats-grid">
+                            <div class="student-stat">
+                                <div class="value">${averageGrade}/20</div>
+                                <div class="label">Moyenne générale</div>
+                            </div>
+                            <div class="student-stat">
+                                <div class="value">${Math.max(...allEvaluations.map(e => e.grade), 0).toFixed(1)}</div>
+                                <div class="label">Meilleure note</div>
+                            </div>
+                            <div class="student-stat">
+                                <div class="value">${Math.min(...allEvaluations.map(e => e.grade), 20).toFixed(1)}</div>
+                                <div class="label">Plus basse note</div>
+                            </div>
+                            <div class="student-stat">
+                                <div class="value">${totalStudents > 0 ? (strugglingStudents / totalStudents * 100).toFixed(1) : 0}%</div>
+                                <div class="label">En difficulté</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateClassesDisplay() {
+            const container = document.getElementById('classes-content');
+            const filteredData = filterData(classesData);
+            
+            if (Object.keys(filteredData).length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><h3>Aucune donnée de classe</h3></div>';
+                return;
+            }
+            
+            let html = '';
+            Object.keys(filteredData).sort().forEach(className => {
+                const data = filteredData[className];
+                const stats = data.stats;
+                
+                html += `
+                    <div class="group-container">
+                        <div class="group-header" onclick="toggleGroup(this)">
+                            <h2><i class="fas fa-users"></i> ${className}</h2>
+                            <div class="group-stats">
+                                <div class="group-stat">${data.students.size} élèves</div>
+                                <div class="group-stat">${data.evaluations.length} évals</div>
+                                <div class="group-stat">Moy: ${stats.average.toFixed(1)}/20</div>
+                                <div class="group-stat">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="group-content" style="display: none;">
+                            <div class="student-stats-grid">
+                                <div class="student-stat">
+                                    <div class="value">${stats.average.toFixed(1)}/20</div>
+                                    <div class="label">Moyenne classe</div>
+                                </div>
+                                <div class="student-stat">
+                                    <div class="value">${stats.bestStudent || '-'}</div>
+                                    <div class="label">Meilleur élève</div>
+                                </div>
+                                <div class="student-stat">
+                                    <div class="value">${stats.worstStudent || '-'}</div>
+                                    <div class="label">À surveiller</div>
+                                </div>
+                                <div class="student-stat">
+                                    <div class="value">${data.subjects.size}</div>
+                                    <div class="label">Matières</div>
+                                </div>
+                            </div>
+                            
+                            <h3><i class="fas fa-user-graduate"></i> Élèves</h3>
+                            <div class="data-table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Élève</th>
+                                            <th>Moyenne</th>
+                                            <th>Évaluations</th>
+                                            <th>Meilleure note</th>
+                                            <th>Plus basse</th>
+                                            <th>Statut</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                `;
+                
+                const studentsList = Array.from(data.students).map(studentName => ({
+                    name: studentName,
+                    data: studentsData[studentName]
+                })).sort((a, b) => b.data.stats.average - a.data.stats.average);
+                
+                studentsList.forEach(student => {
+                    const studentStats = student.data.stats;
+                    const statusClass = studentStats.average >= 12 ? 'grade-excellent' : 
+                                       studentStats.average >= 10 ? 'grade-good' : 
+                                       studentStats.average >= 8 ? 'grade-average' : 'grade-poor';
+                    
+                    html += `
+                        <tr onclick="selectStudent('${student.name.replace(/'/g, "\\'")}')" style="cursor: pointer;">
+                            <td>
+                                <strong>${student.name}</strong>
+                                ${student.data.evaluations[0]?.parentName ? `
+                                    <div style="font-size: 0.875rem; color: var(--gray-500);">
+                                        ${student.data.evaluations[0].parentName}
+                                    </div>
+                                ` : ''}
+                            </td>
+                            <td><span class="grade-badge ${statusClass}">${studentStats.average.toFixed(1)}/20</span></td>
+                            <td>${studentStats.count}</td>
+                            <td>${studentStats.bestGrade.toFixed(1)}</td>
+                            <td>${studentStats.worstGrade.toFixed(1)}</td>
+                            <td>
+                                ${studentStats.average >= 12 ? 'Excellent' : 
+                                  studentStats.average >= 10 ? 'Bon' : 
+                                  studentStats.average >= 8 ? 'Moyen' : 'À risque'}
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                html += `
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function updateSubjectsDisplay() {
+            const container = document.getElementById('subjects-content');
+            const filteredData = filterData(subjectsData);
+            
+            if (Object.keys(filteredData).length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-book"></i><h3>Aucune donnée de matière</h3></div>';
+                return;
+            }
+            
+            let html = '';
+            Object.keys(filteredData).sort().forEach(subjectName => {
+                if (!subjectName || subjectName === "Non spécifié") return;
+                
+                const data = filteredData[subjectName];
+                const stats = data.stats;
+                
+                html += `
+                    <div class="group-container">
+                        <div class="group-header" onclick="toggleGroup(this)">
+                            <h2><i class="fas fa-book"></i> ${subjectName}</h2>
+                            <div class="group-stats">
+                                <div class="group-stat">${data.students.size} élèves</div>
+                                <div class="group-stat">${data.evaluations.length} évals</div>
+                                <div class="group-stat">Moy: ${stats.average.toFixed(1)}/20</div>
+                                <div class="group-stat">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="group-content" style="display: none;">
+                            <div style="margin-bottom: 1.5rem;">
+                                <h3><i class="fas fa-info-circle"></i> Informations</h3>
+                                <p>Enseignants: ${Array.from(data.teachers).join(', ') || '-'}</p>
+                                <p>Classes concernées: ${Array.from(data.classes).join(', ') || '-'}</p>
+                            </div>
+                            
+                            <h3><i class="fas fa-chart-bar"></i> Performance par classe</h3>
+                            <div class="data-table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Classe</th>
+                                            <th>Moyenne</th>
+                                            <th>Élèves</th>
+                                            <th>Évaluations</th>
+                                            <th>Meilleure moyenne</th>
+                                            <th>Plus basse</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                `;
+                
+                data.classes.forEach(className => {
+                    const classEvals = data.evaluations.filter(e => e.class === className);
+                    if (classEvals.length === 0) return;
+                    
+                    const classStudents = new Set(classEvals.map(e => e.studentName));
+                    const classAverage = classEvals.reduce((sum, e) => sum + e.grade, 0) / classEvals.length;
+                    
+                    const studentAverages = {};
+                    classStudents.forEach(studentName => {
+                        const studentEvals = classEvals.filter(e => e.studentName === studentName);
+                        studentAverages[studentName] = studentEvals.reduce((sum, e) => sum + e.grade, 0) / studentEvals.length;
+                    });
+                    
+                    const bestStudent = Object.keys(studentAverages).reduce((a, b) => 
+                        studentAverages[a] > studentAverages[b] ? a : b, '');
+                    const worstStudent = Object.keys(studentAverages).reduce((a, b) => 
+                        studentAverages[a] < studentAverages[b] ? a : b, '');
+                    
+                    html += `
+                        <tr>
+                            <td><strong>${className}</strong></td>
+                            <td><span class="grade-badge ${getGradeClass(classAverage)}">${classAverage.toFixed(1)}/20</span></td>
+                            <td>${classStudents.size}</td>
+                            <td>${classEvals.length}</td>
+                            <td>${bestStudent || '-'} ${bestStudent ? `(${studentAverages[bestStudent].toFixed(1)})` : ''}</td>
+                            <td>${worstStudent || '-'} ${worstStudent ? `(${studentAverages[worstStudent].toFixed(1)})` : ''}</td>
+                        </tr>
+                    `;
+                });
+                
+                html += `
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html || '<div class="empty-state"><i class="fas fa-book"></i><h3>Aucune donnée de matière disponible</h3></div>';
+        }
+
+        function updateTypesDisplay() {
+            const container = document.getElementById('types-content');
+            const filteredData = filterData(typesData);
+            
+            if (Object.keys(filteredData).length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-tags"></i><h3>Aucune donnée par type</h3></div>';
+                return;
+            }
+            
+            let html = '';
+            Object.keys(filteredData).sort().forEach(typeName => {
+                const data = filteredData[typeName];
+                const stats = data.stats;
+                
+                html += `
+                    <div class="group-container">
+                        <div class="group-header" onclick="toggleGroup(this)">
+                            <h2><i class="fas fa-tags"></i> ${typeName}</h2>
+                            <div class="group-stats">
+                                <div class="group-stat">${data.students.size} élèves</div>
+                                <div class="group-stat">${data.evaluations.length} évals</div>
+                                <div class="group-stat">Moy: ${stats.average.toFixed(1)}/20</div>
+                                <div class="group-stat">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="group-content" style="display: none;">
+                            <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                                <div>
+                                    <h4><i class="fas fa-users"></i> Répartition par classe</h4>
+                                    <ul style="list-style: none; padding: 0;">
+                `;
+                
+                const classDistribution = {};
+                data.classes.forEach(className => {
+                    classDistribution[className] = data.evaluations.filter(e => e.class === className).length;
+                });
+                
+                Object.keys(classDistribution).sort().forEach(className => {
+                    const count = classDistribution[className];
+                    const percentage = (count / data.evaluations.length * 100).toFixed(1);
+                    html += `
+                        <li style="margin-bottom: 0.75rem;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.875rem;">
+                                <span>${className}</span>
+                                <span>${count} (${percentage}%)</span>
+                            </div>
+                            <div style="height: 4px; background: var(--gray-200); border-radius: 2px; margin-top: 0.25rem;">
+                                <div style="height: 100%; width: ${percentage}%; background: var(--primary-500); border-radius: 2px;"></div>
+                            </div>
+                        </li>
+                    `;
+                });
+                
+                html += `
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <h3><i class="fas fa-history"></i> Dernières évaluations</h3>
+                            <div class="data-table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Élève</th>
+                                            <th>Classe</th>
+                                            <th>Matière</th>
+                                            <th>Note</th>
+                                            <th>Enseignant</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                `;
+                
+                const recentEvals = [...data.evaluations]
+                    .sort((a, b) => new Date(b.date) - new Date(a.date))
+                    .slice(0, 10);
+                
+                recentEvals.forEach(eval => {
+                    html += `
+                        <tr>
+                            <td>${formatDate(eval.date)}</td>
+                            <td>${eval.studentName}</td>
+                            <td>${eval.class}</td>
+                            <td>${eval.subject}</td>
+                            <td><span class="grade-badge ${getGradeClass(eval.grade)}">${eval.grade.toFixed(1)}/20</span></td>
+                            <td>${eval.teacher}</td>
+                        </tr>
+                    `;
+                });
+                
+                html += `
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function updateTeachersDisplay() {
+            const container = document.getElementById('teachers-content');
+            const filteredData = filterData(teachersData);
+            
+            if (Object.keys(filteredData).length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-chalkboard-teacher"></i><h3>Aucune donnée d\'enseignant</h3></div>';
+                return;
+            }
+            
+            let html = '';
+            Object.keys(filteredData).sort().forEach(teacherName => {
+                const data = filteredData[teacherName];
+                const stats = data.stats;
+                
+                const strugglingStudents = Array.from(data.students).filter(studentName => {
+                    return studentsData[studentName]?.stats.average < 10;
+                }).length;
+                
+                html += `
+                    <div class="group-container">
+                        <div class="group-header" onclick="toggleGroup(this)">
+                            <h2><i class="fas fa-chalkboard-teacher"></i> ${teacherName}</h2>
+                            <div class="group-stats">
+                                <div class="group-stat">${data.students.size} élèves</div>
+                                <div class="group-stat">${data.evaluations.length} évals</div>
+                                <div class="group-stat">Moy: ${stats.average.toFixed(1)}/20</div>
+                                <div class="group-stat">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="group-content" style="display: none;">
+                            <div class="student-stats-grid">
+                                <div class="student-stat">
+                                    <div class="value">${stats.average.toFixed(1)}/20</div>
+                                    <div class="label">Moyenne générale</div>
+                                </div>
+                                <div class="student-stat">
+                                    <div class="value">${data.classes.size}</div>
+                                    <div class="label">Classes</div>
+                                </div>
+                                <div class="student-stat">
+                                    <div class="value">${data.subjects.size}</div>
+                                    <div class="label">Matières</div>
+                                </div>
+                                <div class="student-stat">
+                                    <div class="value">${strugglingStudents}</div>
+                                    <div class="label">Élèves en difficulté</div>
+                                </div>
+                            </div>
+                            
+                            <h3><i class="fas fa-exclamation-triangle"></i> Élèves à surveiller</h3>
+                            <div class="data-table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Élève</th>
+                                            <th>Classe</th>
+                                            <th>Moyenne</th>
+                                            <th>Évaluations</th>
+                                            <th>Dernière note</th>
+                                            <th>Tendance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                `;
+                
+                const strugglingList = Array.from(data.students)
+                    .filter(studentName => {
+                        const studentEvals = data.evaluations.filter(e => e.studentName === studentName);
+                        const average = studentEvals.reduce((sum, e) => sum + e.grade, 0) / studentEvals.length;
+                        return average < 10;
+                    })
+                    .slice(0, 10);
+                
+                if (strugglingList.length === 0) {
+                    html += `
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 2rem; color: var(--gray-500);">
+                                <i class="fas fa-check-circle" style="font-size: 1.5rem; margin-bottom: 1rem; display: block;"></i>
+                                Aucun élève en difficulté identifié
+                            </td>
+                        </tr>
+                    `;
+                } else {
+                    strugglingList.forEach(studentName => {
+                        const studentEvals = data.evaluations.filter(e => e.studentName === studentName);
+                        const average = studentEvals.reduce((sum, e) => sum + e.grade, 0) / studentEvals.length;
+                        const lastGrade = studentEvals[0]?.grade || 0;
+                        const trend = getTrend(studentEvals);
+                        
+                        html += `
+                            <tr onclick="selectStudent('${studentName.replace(/'/g, "\\'")}')" style="cursor: pointer;">
+                                <td><strong>${studentName}</strong></td>
+                                <td>${studentEvals[0]?.class || ''}</td>
+                                <td><span class="grade-badge grade-poor">${average.toFixed(1)}/20</span></td>
+                                <td>${studentEvals.length}</td>
+                                <td>${lastGrade.toFixed(1)}</td>
+                                <td>
+                                    ${trend === 'up' ? '<i class="fas fa-arrow-up" style="color: var(--success-600);"></i>' : 
+                                      trend === 'down' ? '<i class="fas fa-arrow-down" style="color: var(--danger-600);"></i>' : 
+                                      '<i class="fas fa-minus" style="color: var(--warning-600);"></i>'}
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+                
+                html += `
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function selectStudent(studentName) {
+            selectedStudent = studentName;
+            showTab('students');
+            updateStudentAnalysis();
+        }
+
+        function updateStudentAnalysis() {
+            if (!selectedStudent || !studentsData[selectedStudent]) {
+                document.getElementById('student-details').innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-user-graduate"></i>
+                        <h3>Sélectionnez un élève</h3>
+                        <p>Cliquez sur un élève dans les autres onglets</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const student = studentsData[selectedStudent];
+            const stats = student.stats;
+            
+            document.getElementById('student-name').textContent = selectedStudent;
+            document.getElementById('student-class-info').textContent = Array.from(student.classes).join(', ');
+            
+            document.getElementById('student-stats').innerHTML = `
+                <div class="student-stat">
+                    <div class="value">${stats.average.toFixed(1)}/20</div>
+                    <div class="label">Moyenne générale</div>
+                </div>
+                <div class="student-stat">
+                    <div class="value">${stats.count}</div>
+                    <div class="label">Évaluations</div>
+                </div>
+                <div class="student-stat">
+                    <div class="value">${stats.bestGrade.toFixed(1)}</div>
+                    <div class="label">Meilleure note</div>
+                </div>
+                <div class="student-stat">
+                    <div class="value">${stats.worstGrade.toFixed(1)}</div>
+                    <div class="label">Plus basse note</div>
+                </div>
+            `;
+            
+            const tableBody = document.querySelector('#student-evaluations-table tbody');
+            tableBody.innerHTML = '';
+            
+            student.evaluations
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .forEach(eval => {
+                    tableBody.innerHTML += `
+                        <tr>
+                            <td>${formatDate(eval.date)}</td>
+                            <td>${eval.subject}</td>
+                            <td>${eval.type}</td>
+                            <td><span class="grade-badge ${getGradeClass(eval.grade)}">${eval.grade.toFixed(1)}/20</span></td>
+                            <td>${eval.appreciation || '-'}</td>
+                            <td>${eval.teacher}</td>
+                        </tr>
+                    `;
+                });
+            
+            updateStudentCharts();
+        }
+
+        function updateStudentCharts() {
+            if (!selectedStudent || !studentsData[selectedStudent]) return;
+            
+            const student = studentsData[selectedStudent];
+            const evaluations = student.evaluations.sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            if (evaluations.length === 0) return;
+            
+            const dates = evaluations.map(e => formatDate(e.date));
+            const grades = evaluations.map(e => e.grade);
+            
+            if (studentProgressChart) studentProgressChart.destroy();
+            if (studentSubjectsChart) studentSubjectsChart.destroy();
+            
+            // Progress Chart
+            const progressCtx = document.getElementById('student-progress-chart').getContext('2d');
+            studentProgressChart = new Chart(progressCtx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [
+                        {
+                            label: 'Notes',
+                            data: grades,
+                            borderColor: 'var(--primary-500)',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.3,
+                            pointBackgroundColor: 'var(--primary-600)',
+                            pointBorderColor: 'white',
+                            pointBorderWidth: 2,
+                            pointRadius: 5,
+                            pointHoverRadius: 8
+                        },
+                        {
+                            label: 'Moyenne',
+                            data: Array(dates.length).fill(student.stats.average),
+                            borderColor: 'var(--success-500)',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: 'var(--gray-700)',
+                                padding: 20,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'var(--gray-800)',
+                            titleColor: 'white',
+                            bodyColor: 'white',
+                            borderColor: 'var(--gray-600)',
+                            borderWidth: 1,
+                            cornerRadius: 6,
+                            displayColors: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 20,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                color: 'var(--gray-600)',
+                                font: {
+                                    size: 11
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Note /20',
+                                color: 'var(--gray-600)',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                color: 'var(--gray-600)',
+                                font: {
+                                    size: 11
+                                },
+                                maxRotation: 45
+                            },
+                            title: {
+                                display: true,
+                                text: 'Date',
+                                color: 'var(--gray-600)',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Subjects Chart
+            const subjectGrades = {};
+            evaluations.forEach(eval => {
+                if (!subjectGrades[eval.subject]) {
+                    subjectGrades[eval.subject] = [];
+                }
+                subjectGrades[eval.subject].push(eval.grade);
+            });
+            
+            const subjectNames = Object.keys(subjectGrades);
+            const subjectAverages = subjectNames.map(subject => {
+                const grades = subjectGrades[subject];
+                return grades.reduce((a, b) => a + b, 0) / grades.length;
+            });
+            
+            const subjectsCtx = document.getElementById('student-subjects-chart').getContext('2d');
+            studentSubjectsChart = new Chart(subjectsCtx, {
+                type: 'bar',
+                data: {
+                    labels: subjectNames,
+                    datasets: [{
+                        label: 'Moyenne par matière',
+                        data: subjectAverages,
+                        backgroundColor: subjectAverages.map(avg => 
+                            avg >= 12 ? 'var(--success-500)' : 
+                            avg >= 10 ? 'var(--primary-500)' : 
+                            avg >= 8 ? 'var(--warning-500)' : 'var(--danger-500)'
+                        ),
+                        borderColor: subjectAverages.map(avg => 
+                            avg >= 12 ? 'var(--success-700)' : 
+                            avg >= 10 ? 'var(--primary-700)' : 
+                            avg >= 8 ? 'var(--warning-700)' : 'var(--danger-700)'
+                        ),
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'var(--gray-800)',
+                            titleColor: 'white',
+                            bodyColor: 'white',
+                            borderColor: 'var(--gray-600)',
+                            borderWidth: 1,
+                            cornerRadius: 6,
+                            displayColors: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 20,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                color: 'var(--gray-600)',
+                                font: {
+                                    size: 11
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Note /20',
+                                color: 'var(--gray-600)',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: 'var(--gray-600)',
+                                font: {
+                                    size: 11
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Matière',
+                                color: 'var(--gray-600)',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Utility functions
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            try {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('fr-FR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+            } catch (e) {
+                return dateString;
+            }
+        }
+
+        function getGradeClass(grade) {
+            if (grade >= 16) return 'grade-excellent';
+            if (grade >= 14) return 'grade-good';
+            if (grade >= 10) return 'grade-average';
+            return 'grade-poor';
+        }
+
+        function getTrend(evaluations) {
+            if (evaluations.length < 2) return 'stable';
+            const sorted = evaluations.sort((a, b) => new Date(a.date) - new Date(b.date));
+            const firstHalf = sorted.slice(0, Math.ceil(sorted.length / 2));
+            const lastHalf = sorted.slice(Math.floor(sorted.length / 2));
+            
+            const firstAvg = firstHalf.reduce((sum, e) => sum + e.grade, 0) / firstHalf.length;
+            const lastAvg = lastHalf.reduce((sum, e) => sum + e.grade, 0) / lastHalf.length;
+            
+            if (lastAvg > firstAvg + 1) return 'up';
+            if (lastAvg < firstAvg - 1) return 'down';
+            return 'stable';
+        }
+
+        function filterData(data) {
+            const filters = {
+                class: document.getElementById('filter-class').value,
+                subject: document.getElementById('filter-subject').value,
+                type: document.getElementById('filter-type').value,
+                teacher: document.getElementById('filter-teacher').value,
+                student: document.getElementById('filter-student').value
+            };
+            
+            const filteredData = {};
+            
+            Object.keys(data).forEach(key => {
+                const groupData = data[key];
+                
+                let matches = true;
+                
+                if (filters.class && !groupData.classes.has(filters.class)) matches = false;
+                if (filters.subject && !groupData.subjects.has(filters.subject)) matches = false;
+                if (filters.type && !groupData.types?.has(filters.type)) matches = false;
+                if (filters.teacher && !groupData.teachers.has(filters.teacher)) matches = false;
+                if (filters.student && !groupData.students.has(filters.student)) matches = false;
+                
+                if (matches) {
+                    filteredData[key] = groupData;
+                }
+            });
+            
+            return filteredData;
+        }
+
+        function applyFilters() {
+            updateClassesDisplay();
+            updateSubjectsDisplay();
+            updateTypesDisplay();
+            updateTeachersDisplay();
+        }
+
+        function toggleGroup(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.fa-chevron-down, .fa-chevron-up');
+            
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                icon.className = 'fas fa-chevron-up';
+            } else {
+                content.style.display = 'none';
+                icon.className = 'fas fa-chevron-down';
+            }
+        }
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            const tabButton = document.querySelector(`[onclick="showTab('${tabName}')"]`);
+            if (tabButton) {
+                tabButton.classList.add('active');
+                tabButton.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+            
+            if (tabName === 'students' && selectedStudent) {
+                updateStudentAnalysis();
+            }
+        }
+
+        function updateTabBadges() {
+            const totalStudents = Object.keys(studentsData).length;
+            const totalClasses = Object.keys(classesData).length;
+            const totalSubjects = Object.keys(subjectsData).length;
+            const totalTypes = Object.keys(typesData).length;
+            const totalTeachers = Object.keys(teachersData).length;
+            
+            document.getElementById('overview-badge').textContent = allEvaluations.length;
+            document.getElementById('classes-badge').textContent = totalClasses;
+            document.getElementById('subjects-badge').textContent = totalSubjects;
+            document.getElementById('types-badge').textContent = totalTypes;
+            document.getElementById('teachers-badge').textContent = totalTeachers;
+            document.getElementById('students-badge').textContent = totalStudents;
+        }
+
+        function updateFileList() {
+            const filesList = document.getElementById('files-list');
+            filesList.innerHTML = '';
+            
+            importedFiles.forEach(fileName => {
+                const fileTag = document.createElement('div');
+                fileTag.className = 'file-tag';
+                fileTag.innerHTML = `
+                    <i class="fas fa-file-alt"></i>
+                    <span>${fileName}</span>
+                `;
+                filesList.appendChild(fileTag);
+            });
+        }
+
+        function saveToDatabase() {
+            if (allEvaluations.length === 0) {
+                showError('Aucune donnée à sauvegarder');
+                return;
+            }
+            
+            try {
+                const data = {
+                    allEvaluations: allEvaluations,
+                    importedFiles: Array.from(importedFiles),
+                    savedAt: new Date().toISOString()
+                };
+                
+                localStorage.setItem('schoolEvaluationsData', JSON.stringify(data));
+                showSuccess('Données sauvegardées avec succès !');
+            } catch (error) {
+                showError('Erreur lors de la sauvegarde : ' + error.message);
+            }
+        }
+
+        function loadFromDatabase() {
+            try {
+                const savedData = localStorage.getItem('schoolEvaluationsData');
+                if (savedData) {
+                    const data = JSON.parse(savedData);
+                    
+                    allEvaluations = data.allEvaluations || [];
+                    importedFiles = new Set(data.importedFiles || []);
+                    
+                    organizeData();
+                    updateAllDisplays();
+                    
+                    if (allEvaluations.length > 0) {
+                        showSuccess(`Données chargées : ${allEvaluations.length} évaluations`);
+                    }
+                }
+            } catch (error) {
+                showError('Erreur lors du chargement : ' + error.message);
+            }
+        }
+
+        function clearData() {
+            if (confirm('Êtes-vous sûr de vouloir effacer toutes les données ? Cette action est irréversible.')) {
+                allEvaluations = [];
+                studentsData = {};
+                classesData = {};
+                subjectsData = {};
+                typesData = {};
+                teachersData = {};
+                importedFiles.clear();
+                selectedStudent = null;
+                
+                localStorage.removeItem('schoolEvaluationsData');
+                updateAllDisplays();
+                
+                showSuccess('Toutes les données ont été effacées');
+            }
+        }
+
+        function exportData() {
+            if (allEvaluations.length === 0) {
+                showError('Aucune donnée à exporter');
+                return;
+            }
+            
+            try {
+                const data = {
+                    allEvaluations: allEvaluations,
+                    exportedAt: new Date().toISOString(),
+                    summary: {
+                        totalStudents: Object.keys(studentsData).length,
+                        totalEvaluations: allEvaluations.length,
+                        totalClasses: Object.keys(classesData).length,
+                        totalSubjects: Object.keys(subjectsData).length
+                    }
+                };
+                
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `evaluations_${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                showSuccess('Données exportées avec succès !');
+            } catch (error) {
+                showError('Erreur lors de l\'export : ' + error.message);
+            }
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function showError(message) {
+            const element = document.getElementById('error-message');
+            element.textContent = message;
+            element.style.display = 'block';
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            const element = document.getElementById('success-message');
+            element.textContent = message;
+            element.style.display = 'block';
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 3000);
+        }
+
+        function showLoading(text = 'Traitement en cours') {
+            document.getElementById('loading-text').textContent = text;
+            document.getElementById('loading').style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

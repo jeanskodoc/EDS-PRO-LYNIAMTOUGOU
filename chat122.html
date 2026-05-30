@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduConnect - Regroupement Parents</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <style>
+        :root {
+            --primary: #2c5aa0;
+            --primary-light: #e8f0fe;
+            --accent: #4caf50;
+            --danger: #f44336;
+            --warning: #ff9800;
+            --dark: #2c3e50;
+            --light: #f8f9fa;
+            --whatsapp: #25d366;
+            --teacher: #2196f3;
+            --admin: #673ab7;
+            --success: #4caf50;
+            --parent: #e91e8c;
+            --parent-light: #fce4ec;
+            --shadow: 0 2px 8px rgba(0,0,0,0.1);
+            --radius: 8px;
+            --radius-lg: 12px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            color: var(--dark);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        .container { max-width: 1400px; margin: 0 auto; padding: 12px; }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary), #1a4480);
+            color: white;
+            padding: 16px 20px;
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .header h1 { font-size: 1.3rem; display: flex; align-items: center; gap: 8px; }
+
+        .user-info { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .badge-admin { background: var(--admin); color: white; }
+
+        /* Stats row */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 14px 16px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .stat-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        .stat-icon.blue { background: #e3f2fd; color: var(--teacher); }
+        .stat-icon.green { background: #e8f5e9; color: var(--success); }
+        .stat-icon.pink { background: #fce4ec; color: var(--parent); }
+        .stat-icon.orange { background: #fff3e0; color: var(--warning); }
+
+        .stat-info .stat-value { font-size: 1.4rem; font-weight: 700; }
+        .stat-info .stat-label { font-size: 0.8rem; color: #777; }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 16px;
+        }
+
+        .sidebar {
+            background: white;
+            border-radius: var(--radius);
+            padding: 16px;
+            box-shadow: var(--shadow);
+            height: fit-content;
+        }
+
+        .filters h3 {
+            color: var(--primary);
+            margin-bottom: 12px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-group { margin-bottom: 12px; }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+        select.form-control { cursor: pointer; }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 36px;
+            text-decoration: none;
+        }
+        .btn:hover { transform: translateY(-1px); opacity: 0.95; }
+        .btn-sm { padding: 6px 12px; font-size: 0.85rem; }
+        .btn-xs { padding: 4px 8px; font-size: 0.75rem; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-whatsapp { background: var(--whatsapp); color: white; }
+        .btn-teacher { background: var(--teacher); color: white; }
+        .btn-parent { background: var(--parent); color: white; }
+        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+        .btn-danger { background: var(--danger); color: white; }
+
+        .sidebar-actions { margin-top: 20px; display: flex; flex-direction: column; gap: 8px; }
+
+        /* Content area */
+        .content-area {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .content-header h2 {
+            color: var(--primary);
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .search-box input { width: 220px; }
+
+        /* Tab navigation */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 0;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 10px 16px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            font-weight: 600;
+            color: #888;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .tab:hover { color: var(--primary); }
+        .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+        /* Niveau / Class sections */
+        .level-section {
+            margin-bottom: 24px;
+        }
+
+        .level-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: var(--light);
+            border-radius: var(--radius);
+            margin-bottom: 12px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .level-header h3 {
+            font-size: 1rem;
+            color: var(--dark);
+            flex: 1;
+        }
+
+        .level-header .level-count {
+            font-size: 0.8rem;
+            color: #888;
+            background: white;
+            padding: 2px 10px;
+            border-radius: 12px;
+        }
+
+        .level-header i { transition: transform 0.2s; }
+        .level-header.collapsed i { transform: rotate(-90deg); }
+
+        .classes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 12px;
+            padding-left: 8px;
+        }
+
+        .class-card {
+            border: 1px solid #e8e8e8;
+            border-radius: var(--radius);
+            padding: 14px;
+            background: white;
+            transition: all 0.2s;
+        }
+        .class-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(44,90,160,0.1);
+        }
+
+        .class-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .class-name {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        .class-section {
+            font-size: 0.75rem;
+            color: #888;
+        }
+
+        .class-badge {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .class-badge.parent { background: var(--parent-light); color: var(--parent); }
+
+        .parent-groups-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .parent-group-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            background: #fafafa;
+            border-radius: 6px;
+            border-left: 3px solid var(--whatsapp);
+        }
+
+        .parent-group-item .pg-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .parent-group-item .pg-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .parent-group-item .pg-meta {
+            font-size: 0.75rem;
+            color: #888;
+        }
+
+        .parent-group-item .pg-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .parent-rep {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 6px;
+            padding: 4px 8px;
+            background: #fff8e1;
+            border-radius: 4px;
+        }
+
+        .parent-rep i { color: var(--warning); }
+
+        /* Original group cards (for staff tab) */
+        .groups-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .group-card {
+            border: 1px solid #e0e0e0;
+            border-radius: var(--radius);
+            padding: 16px;
+            background: white;
+            transition: all 0.3s;
+        }
+        .group-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+
+        .group-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .group-name { font-weight: 700; color: var(--primary); font-size: 1.1rem; }
+
+        .group-type {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .group-type-parents { background: #e8f5e9; color: #2e7d32; }
+        .group-type-staff { background: #e3f2fd; color: #1565c0; }
+
+        .group-details { margin-bottom: 15px; }
+        .group-detail { display: flex; margin-bottom: 4px; font-size: 0.9rem; }
+        .detail-label { font-weight: 600; min-width: 70px; color: #666; }
+
+        .group-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .group-actions .btn { flex: 1; justify-content: center; }
+
+        /* Chat Interface */
+        .chat-container {
+            display: none;
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+            z-index: 1000;
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+
+        .chat-header {
+            background: var(--primary); color: white; padding: 12px 16px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .chat-header h3 { display: flex; align-items: center; gap: 8px; font-size: 1rem; }
+        .close-chat { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
+
+        .chat-body {
+            height: calc(100% - 120px); padding: 16px; overflow-y: auto; background: #f9f9f9;
+        }
+
+        .message { margin-bottom: 12px; max-width: 80%; }
+        .message.sent {
+            margin-left: auto; background: var(--primary); color: white;
+            padding: 8px 12px; border-radius: 12px 12px 0 12px;
+        }
+        .message.received {
+            background: white; padding: 8px 12px; border-radius: 12px 12px 12px 0;
+            border: 1px solid #eee;
+        }
+        .message-info { font-size: 0.75rem; color: #999; margin-top: 4px; }
+
+        .chat-input {
+            position: absolute; bottom: 0; width: 100%; padding: 12px;
+            background: white; border-top: 1px solid #ddd; display: flex; gap: 8px;
+        }
+        .chat-input input { flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 20px; }
+
+        /* WhatsApp Widget */
+        .whatsapp-widget {
+            position: fixed; bottom: 20px; right: 20px;
+            width: 50px; height: 50px; background: var(--whatsapp);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 24px;
+            box-shadow: 0 4px 12px rgba(37,211,102,0.3); cursor: pointer; z-index: 999;
+        }
+
+        /* Modal */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white; border-radius: var(--radius); padding: 24px;
+            max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
+        }
+        .modal-header h3 { color: var(--primary); display: flex; align-items: center; gap: 8px; }
+
+        .form-group { margin-bottom: 16px; }
+
+        .form-row { display: flex; gap: 12px; }
+        .form-row .form-group { flex: 1; }
+
+        /* QR Code */
+        .qr-container {
+            display: flex; flex-direction: column; align-items: center;
+            padding: 16px; margin-top: 10px;
+        }
+        .qr-container canvas, .qr-container img { border-radius: 6px; }
+
+        /* Toast */
+        .toast {
+            position: fixed; top: 20px; right: 20px;
+            background: var(--success); color: white;
+            padding: 12px 20px; border-radius: var(--radius);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 3000; display: none;
+            animation: slideIn 0.3s ease;
+        }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-content { grid-template-columns: 1fr; }
+            .sidebar { order: 2; }
+            .content-area { order: 1; }
+        }
+        @media (max-width: 768px) {
+            .container { padding: 8px; }
+            .header-content { flex-direction: column; align-items: stretch; }
+            .classes-grid { grid-template-columns: 1fr; }
+            .groups-grid { grid-template-columns: 1fr; }
+            .chat-container {
+                width: calc(100% - 40px); height: 400px;
+                bottom: 70px; right: 20px; left: 20px;
+            }
+            .whatsapp-widget { bottom: 70px; right: 20px; }
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+            .form-row { flex-direction: column; }
+            .search-box input { width: 140px; }
+        }
+        @media (max-width: 480px) {
+            .stats-row { grid-template-columns: 1fr; }
+            .group-actions { flex-direction: column; }
+            .header h1 { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-graduation-cap"></i> EduConnect - Regroupement Parents</h1>
+                <div class="user-info">
+                    <span>KOLA M.Essohouna</span>
+                    <span class="badge badge-admin">
+                        <i class="fas fa-crown"></i> Chef d'établissement
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-icon blue"><i class="fas fa-chalkboard-teacher"></i></div>
+                <div class="stat-info">
+                    <div class="stat-value" id="totalClasses">8</div>
+                    <div class="stat-label">Classes</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon pink"><i class="fas fa-user-friends"></i></div>
+                <div class="stat-info">
+                    <div class="stat-value" id="totalParentGroups">12</div>
+                    <div class="stat-label">Groupes parents</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="fas fa-users"></i></div>
+                <div class="stat-info">
+                    <div class="stat-value" id="totalMembers">186</div>
+                    <div class="stat-label">Parents inscrits</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange"><i class="fas fa-bullhorn"></i></div>
+                <div class="stat-info">
+                    <div class="stat-value" id="activeBroadcasts">5</div>
+                    <div class="stat-label">Infos actives</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="filters">
+                    <h3><i class="fas fa-filter"></i> Filtres</h3>
+                    <div class="filter-group">
+                        <label>Niveau:</label>
+                        <select class="form-control" id="filterLevel">
+                            <option value="all">Tous les niveaux</option>
+                            <option value="college">Collège</option>
+                            <option value="lycee">Lycée</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Classe:</label>
+                        <select class="form-control" id="filterClass">
+                            <option value="all">Toutes les classes</option>
+                            <option value="6eme">6ème</option>
+                            <option value="5eme">5ème</option>
+                            <option value="4eme">4ème</option>
+                            <option value="3eme">3ème</option>
+                            <option value="2nde">2nde</option>
+                            <option value="1ere">1ère</option>
+                            <option value="tle">Tle</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Statut:</label>
+                        <select class="form-control" id="filterStatus">
+                            <option value="all">Tous</option>
+                            <option value="online">Actif</option>
+                            <option value="offline">Inactif</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" style="width:100%;margin-top:4px;" onclick="applyFilters()">
+                        <i class="fas fa-check"></i> Appliquer
+                    </button>
+                </div>
+
+                <div class="sidebar-actions">
+                    <h3><i class="fas fa-bolt"></i> Actions</h3>
+                    <button class="btn btn-success" onclick="openNewGroupModal()">
+                        <i class="fas fa-plus"></i> Nouveau groupe parents
+                    </button>
+                    <button class="btn btn-parent" onclick="openAddParentRepModal()">
+                        <i class="fas fa-user-tie"></i> Ajouter délégué parent
+                    </button>
+                    <button class="btn btn-teacher" onclick="startChat('Personnel Éducatif')">
+                        <i class="fas fa-users"></i> Chat personnel
+                    </button>
+                    <button class="btn btn-whatsapp" onclick="toggleChat()">
+                        <i class="fas fa-comment-dots"></i> Messagerie
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="content-area">
+                <!-- Tabs -->
+                <div class="tabs">
+                    <div class="tab active" data-tab="parents" onclick="switchTab('parents')">
+                        <i class="fas fa-user-friends"></i> Parents par classe
+                    </div>
+                    <div class="tab" data-tab="groups" onclick="switchTab('groups')">
+                        <i class="fas fa-layer-group"></i> Tous les groupes
+                    </div>
+                    <div class="tab" data-tab="directory" onclick="switchTab('directory')">
+                        <i class="fas fa-address-book"></i> Répertoire parents
+                    </div>
+                </div>
+
+                <div class="content-header">
+                    <h2><i class="fas fa-users"></i> <span id="tabTitle">Parents par classe</span></h2>
+                    <div class="search-box">
+                        <input type="text" placeholder="Rechercher..." class="form-control" id="searchInput" oninput="searchGroups()">
+                        <button class="btn btn-primary" onclick="refreshAll()"><i class="fas fa-sync-alt"></i></button>
+                    </div>
+                </div>
+
+                <!-- Tab: Parents par classe -->
+                <div id="tabParents">
+                    <div id="levelsContainer"></div>
+                </div>
+
+                <!-- Tab: Tous les groupes -->
+                <div id="tabGroups" style="display:none;">
+                    <div class="groups-grid" id="groupsContainer"></div>
+                </div>
+
+                <!-- Tab: Répertoire parents -->
+                <div id="tabDirectory" style="display:none;">
+                    <div class="groups-grid" id="directoryContainer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Interface -->
+    <div class="chat-container" id="chatContainer">
+        <div class="chat-header">
+            <h3><i class="fas fa-comments"></i> Messagerie</h3>
+            <button class="close-chat" onclick="toggleChat()">&times;</button>
+        </div>
+        <div class="chat-body" id="chatBody">
+            <div class="message received">
+                <div>Bonjour, je suis le titulaire de la classe. Comment puis-je vous aider?</div>
+                <div class="message-info">Titulaire - 10:23</div>
+            </div>
+        </div>
+        <div class="chat-input">
+            <input type="text" placeholder="Tapez votre message..." id="chatInput">
+            <button class="btn btn-primary" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- WhatsApp Widget -->
+    <div class="whatsapp-widget" onclick="openWhatsApp()">
+        <i class="fab fa-whatsapp"></i>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <!-- Modal: Nouveau groupe parents -->
+    <div class="modal" id="newGroupModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-plus-circle"></i> Nouveau groupe parents</h3>
+                <button class="close-chat" onclick="closeModal('newGroupModal')">&times;</button>
+            </div>
+            <form id="groupForm" onsubmit="createGroup(event)">
+                <div class="form-group">
+                    <label>Nom du groupe:</label>
+                    <input type="text" class="form-control" id="gName" placeholder="Ex: Parents 6ème A" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Niveau:</label>
+                        <select class="form-control" id="gLevel" required>
+                            <option value="">Sélectionner</option>
+                            <option value="Collège">Collège</option>
+                            <option value="Lycée">Lycée</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Classe:</label>
+                        <select class="form-control" id="gClass" required>
+                            <option value="">Sélectionner</option>
+                            <option>6ème</option><option>5ème</option><option>4ème</option><option>3ème</option>
+                            <option>2nde</option><option>1ère</option><option>Tle</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Section / Groupe:</label>
+                    <input type="text" class="form-control" id="gSection" placeholder="Ex: A, B, ou laisser vide">
+                </div>
+                <div class="form-group">
+                    <label>Titulaire de classe:</label>
+                    <input type="text" class="form-control" id="gTeacher" placeholder="Nom du professeur principal" required>
+                </div>
+                <div class="form-group">
+                    <label>Lien WhatsApp:</label>
+                    <input type="url" class="form-control" id="gLink" placeholder="https://chat.whatsapp.com/..." required>
+                </div>
+                <div class="form-group">
+                    <label>Délégué(s) parent(s) (séparés par des virgules):</label>
+                    <input type="text" class="form-control" id="gReps" placeholder="Ex: Mme Koffi, M. Aholou">
+                </div>
+                <div style="display:flex;gap:10px;margin-top:20px;">
+                    <button type="button" class="btn" onclick="closeModal('newGroupModal')" style="flex:1;">Annuler</button>
+                    <button type="submit" class="btn btn-success" style="flex:1;"><i class="fas fa-check"></i> Créer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Détails groupe -->
+    <div class="modal" id="groupDetailsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-info-circle"></i> Détails du groupe</h3>
+                <button class="close-chat" onclick="closeModal('groupDetailsModal')">&times;</button>
+            </div>
+            <div id="groupDetailsContent"></div>
+        </div>
+    </div>
+
+    <!-- Modal: Ajouter délégué parent -->
+    <div class="modal" id="addRepModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-tie"></i> Ajouter un délégué parent</h3>
+                <button class="close-chat" onclick="closeModal('addRepModal')">&times;</button>
+            </div>
+            <form onsubmit="addParentRep(event)">
+                <div class="form-group">
+                    <label>Classe:</label>
+                    <select class="form-control" id="repClass" required>
+                        <option value="">Sélectionner</option>
+                        <option>6ème</option><option>5ème</option><option>4ème</option><option>3ème</option>
+                        <option>2nde</option><option>1ère</option><option>Tle</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Section:</label>
+                    <input type="text" class="form-control" id="repSection" placeholder="A, B, ...">
+                </div>
+                <div class="form-group">
+                    <label>Nom complet:</label>
+                    <input type="text" class="form-control" id="repName" placeholder="Ex: Mme A. Koffi" required>
+                </div>
+                <div class="form-group">
+                    <label>Téléphone (WhatsApp):</label>
+                    <input type="tel" class="form-control" id="repPhone" placeholder="+228 90 00 00 00" required>
+                </div>
+                <div style="display:flex;gap:10px;margin-top:20px;">
+                    <button type="button" class="btn" onclick="closeModal('addRepModal')" style="flex:1;">Annuler</button>
+                    <button type="submit" class="btn btn-parent" style="flex:1;"><i class="fas fa-check"></i> Ajouter</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ============ DONNÉES ============
+        const schoolData = {
+            levels: [
+                {
+                    id: 'college',
+                    name: 'Collège',
+                    classes: [
+                        {
+                            name: '6ème', section: 'A', teacher: 'Prof. Martin', level: 'Collège', status: 'online',
+                            parentGroups: [
+                                { name: 'Parents 6ème A', members: 24, link: 'https://chat.whatsapp.com/Cx2m2ccAVHv8GVhTnBzFqs', status: 'online' }
+                            ],
+                            parentReps: [
+                                { name: 'Mme Koffi A.', phone: '+228 90 11 22 33' }
+                            ]
+                        },
+                        {
+                            name: '6ème', section: 'B', teacher: 'Mme Dzidzi', level: 'Collège', status: 'online',
+                            parentGroups: [
+                                { name: 'Parents 6ème B', members: 22, link: 'https://chat.whatsapp.com/Dx3m3ddBVHv9GWjUnCzGrt', status: 'online' }
+                            ],
+                            parentReps: [
+                                { name: 'M. Aholou K.', phone: '+228 90 44 55 66' }
+                            ]
+                        },
+                        {
+                            name: '5ème', section: 'A', teacher: 'Prof. Dupont', level: 'Collège', status: 'online',
+                            parentGroups: [
+                                { name: 'Parents 5ème A', members: 26, link: 'https://chat.whatsapp.com/Eg4n4eeCWJw0HXkVnDzHsu', status: 'online' }
+                            ],
+                            parentReps: []
+                        },
+                        {
+                            name: '5ème', section: 'B', teacher: 'Mme Afi', level: 'Collège', status: 'online',
+                            parentGroups: [
+                                { name: 'Parents 5ème B', members: 25, link: 'https://chat.whatsapp.com/Fh5o5ffDXKx1IYlWoEaItv', status: 'online' }
+                            ],
+                            parentReps: [
+                                { name: 'M. Adjeoda', phone: '+228 90 77 88 99' }
+                            ]
+                        },
+                        {
+                            name: '4ème', section: 'A', teacher: 'Prof. Yao', level: 'Collège', status: 'offline',
+                            parentGroups: [
+                                { name: 'Parents 4ème A', members: 20, link: 'https://chat.whatsapp.com/Gi6p6ggEYLy2JZmXpFbJuw', status: 'offline' }
+                            ],
+                            parentReps: []
+                        },
+                        {
+                            name: '3ème', section: 'A', teacher: 'Prof. Komlan', level: 'Collège', status: 'online',
+                            parentGroups: [
+                                { name: 'Parents 3ème A', members: 28, link: 'https://chat.whatsapp.com/Hj7q7hhFZMz3KAnYqGcKvx', status: 'online' },
+                                { name: 'Parents 3ème A - Sport', members: 15, link: 'https://chat.whatsapp.com/Ik8r8iiGA0n4LBoZrHdLwy', status: 'online' }
+                            ],
+                            parentReps: [
+                                { name: 'Mme Sena', phone: '+228 91 00 11 22' },
+                                { name: 'M. Togbui', phone: '+228 91 33 44 55' }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    id: 'lycee',
+                    name: 'Lycée',
+                    classes: [
+                        {
+                            name: '2nde', section: 'A', teacher: 'Prof. Akakpo', level: 'Lycée', status: 'online',
+                            parentGroups: [
+                                { name: 'Parents 2nde A', members: 30, link: 'https://chat.whatsapp.com/Jl9s9jjHB1o5McZsHiEmxz', status: 'online' }
+                            ],
+                            parentReps: [
+                                { name: 'M. Kokou', phone: '+228 91 66 77 88' }
+                            ]
+                        },
+                        {
+                            name: '1ère', section: 'A', teacher: 'Mme Amavi', level: 'Lycée', status: 'online',
+                            parentGroups: [
+                                { name: 'Parents 1ère A', members: 27, link: 'https://chat.whatsapp.com/Km0t0kkIC2p6NdAtIjFnya', status: 'online' }
+                            ],
+                            parentReps: []
+                        },
+                        {
+                            name: 'Tle', section: 'A', teacher: 'Prof. Mensah', level: 'Lycée', status: 'online',
+                            parentGroups: [
+                                { name: 'Parents Tle A', members: 32, link: 'https://chat.whatsapp.com/Ln1u1llJD3q7OeBuJkGozb', status: 'online' },
+                                { name: 'Parents Tle A - Orientation', members: 18, link: 'https://chat.whatsapp.com/Mo2v2mmKE4r8PfCvKlHpac', status: 'online' }
+                            ],
+                            parentReps: [
+                                { name: 'Mme Dovi', phone: '+228 92 00 11 22' }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        // Groupes additionnels (staff)
+        const additionalGroups = [
+            {
+                id: 101, name: "Personnel Éducatif", type: "staff",
+                level: "Tous", class: "-", teacher: "Directeur",
+                members: 18, link: "https://chat.whatsapp.com/Np2p2nnLF5s8SgCvLmIqda", status: "online"
+            },
+            {
+                id: 102, name: "Conseil Pédagogique", type: "staff",
+                level: "Tous", class: "-", teacher: "Directeur",
+                members: 10, link: "https://chat.whatsapp.com/Oq3q3ooMG6t9ThDwMnOerb", status: "online"
+            }
+        ];
+
+        // Délégués parents (pour le répertoire)
+        let parentReps = [];
+
+        // ============ INIT ============
+        document.addEventListener('DOMContentLoaded', function() {
+            collectParentReps();
+            renderParentsTab();
+            renderGroupsTab();
+            renderDirectoryTab();
+            updateStats();
+            setupEventListeners();
+        });
+
+        // ============ RENDU ============
+
+        function renderParentsTab() {
+            const container = document.getElementById('levelsContainer');
+            container.innerHTML = '';
+
+            schoolData.levels.forEach(level => {
+                const levelSection = document.createElement('div');
+                levelSection.className = 'level-section';
+
+                let classesHtml = '<div class="classes-grid">';
+                level.classes.forEach(cls => {
+                    classesHtml += createClassCard(cls);
+                });
+                classesHtml += '</div>';
+
+                levelSection.innerHTML = `
+                    <div class="level-header" onclick="toggleLevel(this)">
+                        <i class="fas fa-chevron-down"></i>
+                        <h3>${level.name}</h3>
+                        <span class="level-count">${level.classes.length} classe${level.classes.length > 1 ? 's' : ''}</span>
+                    </div>
+                    ${classesHtml}
+                `;
+
+                container.appendChild(levelSection);
+            });
+        }
+
+        function createClassCard(cls) {
+            const groupsHtml = cls.parentGroups.map(pg => `
+                <div class="parent-group-item">
+                    <div class="pg-info">
+                        <span class="pg-name"><i class="fab fa-whatsapp" style="color:var(--whatsapp);"></i> ${pg.name}</span>
+                        <span class="pg-meta">${pg.members} membres</span>
+                    </div>
+                    <div class="pg-actions">
+                        <button class="btn btn-xs btn-whatsapp" onclick="joinWhatsApp('${pg.link}')" title="Rejoindre">
+                            <i class="fab fa-whatsapp"></i>
+                        </button>
+                        <button class="btn btn-xs btn-primary" onclick="showGroupDetail('${pg.name}', '${cls.name}${cls.section ? ' ' + cls.section : ''}', '${cls.teacher}', '${pg.members}', '${pg.link}')" title="Détails">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            const repsHtml = cls.parentReps.length > 0 ? `
+                <div class="parent-rep">
+                    <i class="fas fa-star"></i>
+                    Délégué${cls.parentReps.length > 1 ? 's' : ''}: ${cls.parentReps.map(r => r.name).join(', ')}
+                </div>
+            ` : '';
+
+            const statusDot = cls.status === 'online' ? 'color:var(--success);' : 'color:#ccc;';
+
+            return `
+                <div class="class-card">
+                    <div class="class-card-header">
+                        <div>
+                            <div class="class-name">${cls.name} ${cls.section || ''}</div>
+                            <div class="class-section">
+                                <i class="fas fa-chalkboard-teacher"></i> ${cls.teacher}
+                                <span style="margin-left:8px;">
+                                    <i class="fas fa-circle" style="${statusDot}font-size:8px;"></i> ${cls.status === 'online' ? 'Actif' : 'Inactif'}
+                                </span>
+                            </div>
+                        </div>
+                        <span class="class-badge parent">${cls.parentGroups.reduce((s, g) => s + g.members, 0)} parents</span>
+                    </div>
+                    <div class="parent-groups-list">
+                        ${groupsHtml}
+                    </div>
+                    ${repsHtml}
+                </div>
+            `;
+        }
+
+        function renderGroupsTab() {
+            const container = document.getElementById('groupsContainer');
+            container.innerHTML = '';
+
+            // Collect all parent groups as flat cards
+            const allGroups = [];
+
+            schoolData.levels.forEach(level => {
+                level.classes.forEach(cls => {
+                    cls.parentGroups.forEach(pg => {
+                        allGroups.push({
+                            name: pg.name,
+                            type: 'parents',
+                            level: level.name,
+                            class: `${cls.name} ${cls.section || ''}`,
+                            teacher: cls.teacher,
+                            members: pg.members,
+                            link: pg.link,
+                            status: pg.status
+                        });
+                    });
+                });
+            });
+
+            allGroups.push(...additionalGroups);
+
+            allGroups.forEach(group => {
+                const card = document.createElement('div');
+                card.className = 'group-card';
+                card.setAttribute('data-group', JSON.stringify(group));
+                card.innerHTML = `
+                    <div class="group-header">
+                        <div class="group-name">${group.name}</div>
+                        <div class="group-type group-type-${group.type || 'parents'}">
+                            ${group.type === 'staff' ? 'Personnel' : 'Parents'}
+                        </div>
+                    </div>
+                    <div class="group-details">
+                        <div class="group-detail"><span class="detail-label">Classe:</span><span>${group.class}</span></div>
+                        <div class="group-detail"><span class="detail-label">Titulaire:</span><span>${group.teacher}</span></div>
+                        <div class="group-detail"><span class="detail-label">Membres:</span><span>${group.members}</span></div>
+                        <div class="group-detail"><span class="detail-label">Niveau:</span><span>${group.level}</span></div>
+                    </div>
+                    <div class="group-actions">
+                        <button class="btn btn-primary btn-sm" onclick="showGroupDetail('${group.name}', '${group.class}', '${group.teacher}', '${group.members}', '${group.link}')">
+                            <i class="fas fa-eye"></i> Détails
+                        </button>
+                        <button class="btn btn-success btn-sm" onclick="startChat('${group.teacher}')">
+                            <i class="fas fa-comment"></i> Chat
+                        </button>
+                        <button class="btn btn-whatsapp btn-sm" onclick="joinWhatsApp('${group.link}')">
+                            <i class="fab fa-whatsapp"></i> Rejoindre
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderDirectoryTab() {
+            const container = document.getElementById('directoryContainer');
+            container.innerHTML = '';
+
+            // Collect all parent reps with their class info
+            const directory = [];
+
+            schoolData.levels.forEach(level => {
+                level.classes.forEach(cls => {
+                    cls.parentReps.forEach(rep => {
+                        directory.push({
+                            name: rep.name,
+                            phone: rep.phone,
+                            class: `${cls.name} ${cls.section || ''}`,
+                            level: level.name,
+                            teacher: cls.teacher
+                        });
+                    });
+                });
+            });
+
+            if (directory.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align:center;padding:40px;color:#888;">
+                        <i class="fas fa-address-book" style="font-size:3rem;margin-bottom:12px;display:block;"></i>
+                        <p>Aucun délégué parent enregistré.</p>
+                        <button class="btn btn-parent" style="margin-top:12px;" onclick="openAddParentRepModal()">
+                            <i class="fas fa-user-tie"></i> Ajouter un délégué
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            directory.forEach(entry => {
+                const card = document.createElement('div');
+                card.className = 'group-card';
+                card.innerHTML = `
+                    <div class="group-header">
+                        <div class="group-name"><i class="fas fa-user-tie" style="color:var(--parent);"></i> ${entry.name}</div>
+                        <span class="group-type group-type-parents">Délégué</span>
+                    </div>
+                    <div class="group-details">
+                        <div class="group-detail"><span class="detail-label">Classe:</span><span>${entry.class}</span></div>
+                        <div class="group-detail"><span class="detail-label">Niveau:</span><span>${entry.level}</span></div>
+                        <div class="group-detail"><span class="detail-label">Titulaire:</span><span>${entry.teacher}</span></div>
+                        <div class="group-detail">
+                            <span class="detail-label">Contact:</span>
+                            <span><a href="tel:${entry.phone}" style="color:var(--primary);text-decoration:none;">${entry.phone}</a></span>
+                        </div>
+                    </div>
+                    <div class="group-actions">
+                        <button class="btn btn-success btn-sm" onclick="startChat('${entry.name}')">
+                            <i class="fas fa-comment"></i> Chat
+                        </button>
+                        <button class="btn btn-whatsapp btn-sm" onclick="window.open('https://wa.me/${entry.phone.replace(/[^0-9]/g, '')}', '_blank')">
+                            <i class="fab fa-whatsapp"></i> WhatsApp
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function collectParentReps() {
+            parentReps = [];
+            schoolData.levels.forEach(level => {
+                level.classes.forEach(cls => {
+                    cls.parentReps.forEach(rep => {
+                        parentReps.push({
+                            ...rep,
+                            class: `${cls.name} ${cls.section || ''}`.trim(),
+                            level: level.name
+                        });
+                    });
+                });
+            });
+        }
+
+        // ============ UTILITIES ============
+
+        function toggleLevel(el) {
+            el.classList.toggle('collapsed');
+            const grid = el.nextElementSibling;
+            if (grid) {
+                grid.style.display = grid.style.display === 'none' ? '' : 'none';
+            }
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.tab[data-tab="${tabName}"]`).classList.add('active');
+
+            document.getElementById('tabParents').style.display = tabName === 'parents' ? '' : 'none';
+            document.getElementById('tabGroups').style.display = tabName === 'groups' ? '' : 'none';
+            document.getElementById('tabDirectory').style.display = tabName === 'directory' ? '' : 'none';
+
+            const titles = { parents: 'Parents par classe', groups: 'Tous les groupes', directory: 'Répertoire parents' };
+            document.getElementById('tabTitle').textContent = titles[tabName];
+        }
+
+        function applyFilters() {
+            const level = document.getElementById('filterLevel').value;
+            const cls = document.getElementById('filterClass').value;
+            const status = document.getElementById('filterStatus').value;
+
+            document.querySelectorAll('.level-section').forEach(section => {
+                const levelName = section.querySelector('h3')?.textContent || '';
+                const levelId = levelName === 'Collège' ? 'college' : levelName === 'Lycée' ? 'lycee' : '';
+
+                if (level !== 'all' && levelId !== level) {
+                    section.style.display = 'none';
+                    return;
+                }
+                section.style.display = '';
+
+                const cards = section.querySelectorAll('.class-card');
+                cards.forEach(card => {
+                    const nameEl = card.querySelector('.class-name');
+                    const className = nameEl ? nameEl.textContent.trim().split(' ')[0] : '';
+                    const statusDot = card.querySelector('.fa-circle');
+                    const isOnline = statusDot ? statusDot.style.color.includes('success') || statusDot.style.color === 'color:var(--success);' : true;
+
+                    let show = true;
+                    if (cls !== 'all' && className !== cls) show = false;
+                    if (status !== 'all') {
+                        const actualStatus = isOnline ? 'online' : 'offline';
+                        if (status !== actualStatus) show = false;
+                    }
+
+                    card.style.display = show ? '' : 'none';
+                });
+            });
+        }
+
+        function searchGroups() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+
+            document.querySelectorAll('.class-card').forEach(card => {
+                const text = card.textContent.toLowerCase();
+                card.style.display = text.includes(q) ? '' : 'none';
+            });
+
+            document.querySelectorAll('.group-card').forEach(card => {
+                const text = card.textContent.toLowerCase();
+                card.style.display = text.includes(q) ? '' : 'none';
+            });
+        }
+
+        function refreshAll() {
+            renderParentsTab();
+            renderGroupsTab();
+            renderDirectoryTab();
+            updateStats();
+            showToast('Données actualisées');
+        }
+
+        function updateStats() {
+            let totalClasses = 0;
+            let totalParentGroups = 0;
+            let totalMembers = 0;
+
+            schoolData.levels.forEach(level => {
+                level.classes.forEach(cls => {
+                    totalClasses++;
+                    cls.parentGroups.forEach(pg => {
+                        totalParentGroups++;
+                        totalMembers += pg.members;
+                    });
+                });
+            });
+
+            document.getElementById('totalClasses').textContent = totalClasses;
+            document.getElementById('totalParentGroups').textContent = totalParentGroups;
+            document.getElementById('totalMembers').textContent = totalMembers;
+            document.getElementById('activeBroadcasts').textContent = Math.floor(totalParentGroups * 0.4);
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.style.display = 'block';
+            setTimeout(() => { t.style.display = 'none'; }, 2500);
+        }
+
+        // ============ MODALS ============
+
+        function openNewGroupModal() {
+            document.getElementById('newGroupModal').style.display = 'flex';
+        }
+
+        function openAddParentRepModal() {
+            document.getElementById('addRepModal').style.display = 'flex';
+        }
+
+        window.closeModal = function(id) {
+            document.getElementById(id).style.display = 'none';
+        };
+
+        window.addEventListener('click', function(e) {
+            document.querySelectorAll('.modal').forEach(m => {
+                if (e.target === m) m.style.display = 'none';
+            });
+        });
+
+        // ============ FORMULAIRES ============
+
+        function createGroup(e) {
+            e.preventDefault();
+            const name = document.getElementById('gName').value.trim();
+            const level = document.getElementById('gLevel').value;
+            const cls = document.getElementById('gClass').value;
+            const section = document.getElementById('gSection').value.trim();
+            const teacher = document.getElementById('gTeacher').value.trim();
+            const link = document.getElementById('gLink').value.trim();
+            const reps = document.getElementById('gReps').value.trim();
+
+            // Find or create class entry
+            const levelObj = schoolData.levels.find(l => l.name === level);
+            if (!levelObj) { showToast('Niveau invalide'); return; }
+
+            let classObj = levelObj.classes.find(c => c.name === cls && (c.section || '') === section);
+            if (!classObj) {
+                classObj = {
+                    name: cls,
+                    section: section || '',
+                    teacher: teacher,
+                    level: level,
+                    status: 'online',
+                    parentGroups: [],
+                    parentReps: []
+                };
+                levelObj.classes.push(classObj);
+            }
+
+            classObj.parentGroups.push({
+                name: name,
+                members: 0,
+                link: link,
+                status: 'online'
+            });
+
+            if (reps) {
+                reps.split(',').forEach(r => {
+                    const repName = r.trim();
+                    if (repName) {
+                        classObj.parentReps.push({ name: repName, phone: '' });
+                    }
+                });
+            }
+
+            closeModal('newGroupModal');
+            document.getElementById('groupForm').reset();
+            refreshAll();
+            showToast(`Groupe "${name}" créé avec succès`);
+        }
+
+        function addParentRep(e) {
+            e.preventDefault();
+            const cls = document.getElementById('repClass').value;
+            const section = document.getElementById('repSection').value.trim();
+            const name = document.getElementById('repName').value.trim();
+            const phone = document.getElementById('repPhone').value.trim();
+
+            // Find class
+            for (const level of schoolData.levels) {
+                const classObj = level.classes.find(c => c.name === cls && (c.section || '') === section);
+                if (classObj) {
+                    classObj.parentReps.push({ name, phone });
+                    closeModal('addRepModal');
+                    document.getElementById('addRepModal').querySelector('form').reset();
+                    refreshAll();
+                    showToast(`Délégué "${name}" ajouté à ${cls} ${section}`);
+                    return;
+                }
+            }
+            showToast('Classe non trouvée');
+        }
+
+        // ============ ACTIONS ============
+
+        window.showGroupDetail = function(name, cls, teacher, members, link) {
+            const content = document.getElementById('groupDetailsContent');
+
+            // Find reps for this class
+            let repsHtml = '';
+            let classObj = null;
+            for (const level of schoolData.levels) {
+                classObj = level.classes.find(c => `${c.name} ${c.section || ''}`.trim() === cls);
+                if (classObj) break;
+            }
+
+            if (classObj && classObj.parentReps.length > 0) {
+                repsHtml = `
+                    <p><strong>Délégué(s):</strong></p>
+                    <ul style="margin-left:20px;margin-bottom:10px;">
+                        ${classObj.parentReps.map(r => `<li>${r.name} ${r.phone ? '- ' + r.phone : ''}</li>`).join('')}
+                    </ul>
+                `;
+            } else {
+                repsHtml = '<p><em>Aucun délégué enregistré</em></p>';
+            }
+
+            content.innerHTML = `
+                <h4 style="margin-bottom:15px;color:var(--primary);">${name}</h4>
+                <div style="margin-bottom:15px;">
+                    <p><strong>Classe:</strong> ${cls}</p>
+                    <p><strong>Titulaire:</strong> ${teacher}</p>
+                    <p><strong>Membres:</strong> ${members}</p>
+                    ${repsHtml}
+                </div>
+                <div id="qrcode" class="qr-container"></div>
+                <div class="group-actions" style="margin-top:20px;">
+                    <button class="btn btn-success" onclick="startChat('${teacher}')">
+                        <i class="fas fa-comment"></i> Chat titulaire
+                    </button>
+                    <button class="btn btn-whatsapp" onclick="joinWhatsApp('${link}')">
+                        <i class="fab fa-whatsapp"></i> Groupe WhatsApp
+                    </button>
+                </div>
+            `;
+            document.getElementById('groupDetailsModal').style.display = 'flex';
+
+            // Generate QR code
+            setTimeout(() => {
+                const qrEl = document.getElementById('qrcode');
+                qrEl.innerHTML = '';
+                if (typeof QRCode !== 'undefined') {
+                    new QRCode(qrEl, {
+                        text: link,
+                        width: 150,
+                        height: 150,
+                        correctLevel: QRCode.CorrectLevel.M
+                    });
+                }
+            }, 100);
+        };
+
+        window.toggleChat = function() {
+            const chat = document.getElementById('chatContainer');
+            chat.style.display = chat.style.display === 'flex' ? 'none' : 'flex';
+        };
+
+        window.startChat = function(name) {
+            const chat = document.getElementById('chatContainer');
+            const header = chat.querySelector('h3');
+            header.innerHTML = `<i class="fas fa-comments"></i> Chat avec ${name}`;
+            chat.style.display = 'flex';
+            document.getElementById('chatBody').scrollTop = document.getElementById('chatBody').scrollHeight;
+        };
+
+        window.sendMessage = function() {
+            const input = document.getElementById('chatInput');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            const body = document.getElementById('chatBody');
+            const d = document.createElement('div');
+            d.className = 'message sent';
+            d.innerHTML = `
+                <div>${msg}</div>
+                <div class="message-info">Vous - ${new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</div>
+            `;
+            body.appendChild(d);
+            input.value = '';
+            body.scrollTop = body.scrollHeight;
+
+            setTimeout(() => {
+                const r = document.createElement('div');
+                r.className = 'message received';
+                r.innerHTML = `
+                    <div>Message reçu. Je vous répondrai dès que possible.</div>
+                    <div class="message-info">Titulaire - ${new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</div>
+                `;
+                body.appendChild(r);
+                body.scrollTop = body.scrollHeight;
+            }, 1000);
+        };
+
+        window.joinWhatsApp = function(link) {
+            window.open(link, '_blank');
+        };
+
+        window.openWhatsApp = function() {
+            window.open('https://wa.me/?text=Bonjour, je souhaite rejoindre le groupe de discussion', '_blank');
+        };
+
+        // ============ EVENT LISTENERS ============
+
+        function setupEventListeners() {
+            document.getElementById('chatInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') sendMessage();
+            });
+        }
+    </script>
+</body>
+</html>

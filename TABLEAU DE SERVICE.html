@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion Emploi du Temps - Lycée Niamtougou</title>
+    <style>
+        /* Variables CSS pour une meilleure maintenabilité */
+        :root {
+            --primary-color: #4CAF50;
+            --primary-hover: #45a049;
+            --secondary-color: #2196F3;
+            --danger-color: #f44336;
+            --warning-color: #FF9800;
+            --neutral-color: #607d8b;
+            --light-gray: #f4f4f4;
+            --medium-gray: #ddd;
+            --dark-gray: #555;
+            --border-radius: 4px;
+            --shadow: 0 2px 4px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        /* Reset et styles de base */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f9f9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            margin-bottom: 0;
+        }
+
+        .header h2, .header h3, .header h4 {
+            margin: 5px 0;
+        }
+
+        /* Navigation */
+        .tabs {
+            display: flex;
+            background-color: #f0f0f0;
+            padding: 0 20px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .tab.active {
+            background: white;
+            color: var(--primary-color);
+            border-radius: 4px 4px 0 0;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--primary-color);
+        }
+
+        /* Contenu des onglets */
+        .tab-content {
+            display: none;
+            padding: 20px;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Formulaires */
+        .form-container {
+            background: var(--light-gray);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+        }
+
+        /* Boutons */
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-secondary {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        .btn-neutral {
+            background: var(--neutral-color);
+            color: white;
+        }
+
+        .btn-retour {
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+        }
+
+        .btn-retour:hover {
+            background-color: #e0e0e0;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Tableaux */
+        .timetable {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .timetable th, .timetable td {
+            border: 1px solid var(--medium-gray);
+            padding: 12px;
+            text-align: center;
+        }
+
+        .timetable th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+        }
+
+        .time-col {
+            width: 100px;
+            background-color: #f9f9f9;
+            font-weight: 600;
+        }
+
+        /* Sélection multiple */
+        .multi-select-container {
+            margin-bottom: 15px;
+        }
+
+        .multi-select-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .multi-select-option {
+            background: #e9e9e9;
+            padding: 8px 16px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .multi-select-option:hover {
+            background: #d9d9d9;
+        }
+
+        .multi-select-option.selected {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .selected-items {
+            margin-top: 10px;
+            font-size: 14px;
+            color: var(--dark-gray);
+            padding: 8px;
+            background: #f9f9f9;
+            border-radius: var(--border-radius);
+        }
+
+        /* Groupes de créneaux horaires */
+        .time-slot-group {
+            margin-bottom: 15px;
+            border: 1px solid var(--medium-gray);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            background: white;
+        }
+
+        .time-slot-group h4 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        /* Actions sur les données */
+        .data-actions {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* Filtres */
+        .filters {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            min-width: 200px;
+            flex: 1;
+        }
+
+        /* Styles pour les cycles */
+        .cycle-college {
+            background-color: #e6f7ff;
+        }
+
+        .cycle-lycee {
+            background-color: #fff7e6;
+        }
+
+        .break {
+            background-color: #f0f0f0;
+        }
+
+        /* Volumes horaires */
+        .volume-table {
+            width: auto;
+            margin: 20px 0;
+            border-collapse: collapse;
+        }
+
+        .volume-table caption {
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+        .volume-table th, .volume-table td {
+            border: 1px solid var(--medium-gray);
+            padding: 8px;
+            text-align: left;
+        }
+
+        .volume-table th {
+            background-color: #f2f2f2;
+        }
+
+        .total-row {
+            font-weight: bold;
+            background-color: #f9f9f9;
+        }
+
+        .total-volume {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: var(--light-gray);
+            border-radius: var(--border-radius);
+        }
+
+        .volumes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        /* Messages et notifications */
+        .notification {
+            padding: 12px 16px;
+            border-radius: var(--border-radius);
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notification.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .notification.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .notification.warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                margin: 10px;
+            }
+            
+            .tabs {
+                flex-direction: column;
+                padding: 0;
+            }
+            
+            .tab {
+                border-radius: 0;
+                text-align: center;
+            }
+            
+            .filters {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .filter-group {
+                min-width: 100%;
+            }
+            
+            .data-actions {
+                flex-direction: column;
+            }
+            
+            .volumes-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .multi-select-options {
+                gap: 5px;
+            }
+            
+            .multi-select-option {
+                flex: 1 0 calc(50% - 5px);
+                text-align: center;
+            }
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #timetable-tab, #timetable-tab * {
+                visibility: visible;
+            }
+            #timetable-tab {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .tabs, .filters, .data-actions {
+                display: none;
+            }
+        }
+
+        /* Accessibilité */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Loading state */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        /* Animation pour les nouveaux éléments */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .slide-in {
+            animation: slideIn 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <button class="btn btn-retour" onclick="history.back()" aria-label="Retour à la page précédente">
+        <span aria-hidden="true">←</span> Retour
+    </button>
+
+    <div class="container">
+        <div class="header">
+            <h2>LYCÉE NIAMTOUGOU</h2>
+            <h3>IESG NIAMTOUGOU</h3>
+            <h4>DRE- KARA</h4>
+        </div>
+
+        <nav class="tabs" role="tablist" aria-label="Navigation principale">
+            <button class="tab active" role="tab" aria-selected="true" aria-controls="form-tab" onclick="switchTab('form')">Saisie des données</button>
+            <button class="tab" role="tab" aria-selected="false" aria-controls="timetable-tab" onclick="switchTab('timetable')">Visualisation</button>
+            <button class="tab" role="tab" aria-selected="false" aria-controls="all-data-tab" onclick="switchTab('all-data')">Toutes les données</button>
+        </nav>
+
+        <main>
+            <section id="form-tab" class="tab-content active" role="tabpanel" aria-labelledby="form-tab">
+                <div class="form-container">
+                    <h2>Saisie des cours</h2>
+                    <form id="courseForm">
+                        <div class="form-group">
+                            <label for="teacherName">Nom de l'enseignant:</label>
+                            <input type="text" id="teacherName" required aria-required="true">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="classOptions">Classes/Niveaux:</label>
+                            <div class="multi-select-container">
+                                <div class="multi-select-options" id="classOptions" role="listbox" aria-multiselectable="true" aria-label="Sélection des classes">
+                                    <!-- Les options seront ajoutées dynamiquement -->
+                                </div>
+                                <div class="selected-items" id="selectedClasses" aria-live="polite">Aucune classe sélectionnée</div>
+                                <div class="form-group">
+                                    <label for="newClass" class="sr-only">Ajouter une nouvelle classe</label>
+                                    <input type="text" id="newClass" placeholder="Ajouter une nouvelle classe">
+                                    <button type="button" class="btn btn-secondary" onclick="addNewClass()">Ajouter</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="cycle">Cycle:</label>
+                            <select id="cycle" required aria-required="true">
+                                <option value="">Sélectionner un cycle</option>
+                                <option value="Collège">Collège</option>
+                                <option value="Lycée">Lycée</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="subjectOptions">Matières:</label>
+                            <div class="multi-select-container">
+                                <div class="multi-select-options" id="subjectOptions" role="listbox" aria-multiselectable="true" aria-label="Sélection des matières">
+                                    <!-- Les options seront ajoutées dynamiquement -->
+                                </div>
+                                <div class="selected-items" id="selectedSubjects" aria-live="polite">Aucune matière sélectionnée</div>
+                                <div class="form-group">
+                                    <label for="newSubject" class="sr-only">Ajouter une nouvelle matière</label>
+                                    <input type="text" id="newSubject" placeholder="Ajouter une nouvelle matière">
+                                    <button type="button" class="btn btn-secondary" onclick="addNewSubject()">Ajouter</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="dayOptions">Jours:</label>
+                            <div class="multi-select-container">
+                                <div class="multi-select-options" id="dayOptions" role="listbox" aria-multiselectable="true" aria-label="Sélection des jours">
+                                    <div class="multi-select-option" role="option" tabindex="0" data-value="Lundi">Lundi</div>
+                                    <div class="multi-select-option" role="option" tabindex="0" data-value="Mardi">Mardi</div>
+                                    <div class="multi-select-option" role="option" tabindex="0" data-value="Mercredi">Mercredi</div>
+                                    <div class="multi-select-option" role="option" tabindex="0" data-value="Jeudi">Jeudi</div>
+                                    <div class="multi-select-option" role="option" tabindex="0" data-value="Vendredi">Vendredi</div>
+                                </div>
+                                <div class="selected-items" id="selectedDays" aria-live="polite">Aucun jour sélectionné</div>
+                            </div>
+                        </div>
+                        
+                        <div id="timeSlotGroups">
+                            <div class="time-slot-group slide-in">
+                                <h4>Créneau horaire 1</h4>
+                                <div class="form-group">
+                                    <label for="timeSlot1">Créneau horaire:</label>
+                                    <select class="time-slot" id="timeSlot1" required aria-required="true">
+                                        <option value="">Sélectionner un créneau</option>
+                                        <option value="07:00 - 07:55">07:00 - 07:55</option>
+                                        <option value="07:55 - 08:50">07:55 - 08:50</option>
+                                        <option value="08:50 - 09:45">08:50 - 09:45</option>
+                                        <option value="09:45 - 10:10">09:45 - 10:10 (Pause)</option>
+                                        <option value="10:10 - 11:05">10:10 - 11:05</option>
+                                        <option value="11:05 - 12:00">11:05 - 12:00</option>
+                                        <option value="14:30 - 15:30">14:30 - 15:30</option>
+                                        <option value="15:30 - 16:30">15:30 - 16:30</option>
+                                        <option value="16:30 - 17:30">16:30 - 17:30</option>
+                                    </select>
+                                </div>
+                                <button type="button" class="btn btn-danger remove-btn" onclick="removeTimeSlotGroup(this)" style="display: none;">Supprimer ce créneau</button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-secondary add-more-btn" onclick="addTimeSlotGroup()">Ajouter un autre créneau</button>
+                        
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                            <button type="button" class="btn btn-neutral" onclick="clearForm()">Effacer</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <section id="timetable-tab" class="tab-content" role="tabpanel" aria-labelledby="timetable-tab">
+                <h2>Visualisation de l'emploi du temps</h2>
+                <div class="data-actions no-print">
+                    <button class="btn btn-secondary export-btn" onclick="exportData()">Exporter les données</button>
+                    <button class="btn btn-warning import-btn" onclick="document.getElementById('fileInput').click()">Importer des données</button>
+                    <input type="file" id="fileInput" accept=".json" onchange="importData(this)" class="sr-only">
+                    <button class="btn btn-danger delete-btn" onclick="clearAllData()">Supprimer toutes les données</button>
+                    <button class="btn btn-neutral print-btn" onclick="window.print()">Imprimer</button>
+                </div>
+                
+                <div class="filters no-print">
+                    <div class="filter-group">
+                        <label for="selectTeacher">Enseignant:</label>
+                        <select id="selectTeacher" onchange="generateTimetable()">
+                            <option value="">-- Tous --</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="selectCycle">Cycle:</label>
+                        <select id="selectCycle" onchange="generateTimetable()">
+                            <option value="">-- Tous --</option>
+                            <option value="Collège">Collège</option>
+                            <option value="Lycée">Lycée</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="selectClass">Classe:</label>
+                        <select id="selectClass" onchange="generateTimetable()">
+                            <option value="">-- Toutes --</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="timetableContainer">
+                    <table class="timetable" id="timetable">
+                        <caption class="sr-only">Emploi du temps des cours</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Horaire</th>
+                                <th scope="col">Lundi</th>
+                                <th scope="col">Mardi</th>
+                                <th scope="col">Mercredi</th>
+                                <th scope="col">Jeudi</th>
+                                <th scope="col">Vendredi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="timetableBody">
+                            <!-- Les créneaux horaires seront générés ici par JavaScript -->
+                        </tbody>
+                    </table>
+
+                    <div class="teacher-name" id="displayTeacherName" aria-live="polite"></div>
+                    <div id="timeVolumesContainer"></div>
+                </div>
+            </section>
+
+            <section id="all-data-tab" class="tab-content" role="tabpanel" aria-labelledby="all-data-tab">
+                <h2>Toutes les données enregistrées</h2>
+                <div class="data-actions">
+                    <button class="btn btn-secondary export-btn" onclick="exportData()">Exporter les données</button>
+                    <button class="btn btn-warning import-btn" onclick="document.getElementById('fileInput2').click()">Importer des données</button>
+                    <input type="file" id="fileInput2" accept=".json" onchange="importData(this)" class="sr-only">
+                    <button class="btn btn-danger delete-btn" onclick="clearAllData()">Supprimer toutes les données</button>
+                </div>
+                
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="filterTeacher">Filtrer par enseignant:</label>
+                        <select id="filterTeacher" onchange="displayAllData()">
+                            <option value="">-- Tous --</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="filterCycle">Filtrer par cycle:</label>
+                        <select id="filterCycle" onchange="displayAllData()">
+                            <option value="">-- Tous --</option>
+                            <option value="Collège">Collège</option>
+                            <option value="Lycée">Lycée</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <h3>Tous les cours enregistrés</h3>
+                <div id="allDataTableContainer">
+                    <table class="timetable">
+                        <caption class="sr-only">Liste de tous les cours enregistrés</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Enseignant</th>
+                                <th scope="col">Classe</th>
+                                <th scope="col">Cycle</th>
+                                <th scope="col">Matière</th>
+                                <th scope="col">Jour</th>
+                                <th scope="col">Crénau</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="allDataBody">
+                            <!-- Toutes les données seront affichées ici -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Module pattern pour organiser le code
+        const TimetableManager = (function() {
+            // Données des créneaux horaires
+            const timeSlots = [
+                "07:00 - 07:55",
+                "07:55 - 08:50",
+                "08:50 - 09:45",
+                "09:45 - 10:10",
+                "10:10 - 11:05",
+                "11:05 - 12:00",
+                "14:30 - 15:30",
+                "15:30 - 16:30",
+                "16:30 - 17:30"
+            ];
+
+            // Données initiales pour les classes et matières
+            let allClasses = ["6ème", "5ème", "4ème", "3ème", "2nde", "1ère", "Tle"];
+            let allSubjects = ["Maths", "Français", "Anglais", "Physique", "Chimie", "SVT", "Histoire", "Géographie", "Philosophie"];
+
+            // Éléments DOM fréquemment utilisés
+            const elements = {
+                courseForm: document.getElementById('courseForm'),
+                classOptions: document.getElementById('classOptions'),
+                subjectOptions: document.getElementById('subjectOptions'),
+                dayOptions: document.getElementById('dayOptions'),
+                timeSlotGroups: document.getElementById('timeSlotGroups'),
+                timetableBody: document.getElementById('timetableBody'),
+                allDataBody: document.getElementById('allDataBody'),
+                displayTeacherName: document.getElementById('displayTeacherName'),
+                timeVolumesContainer: document.getElementById('timeVolumesContainer'),
+                selectTeacher: document.getElementById('selectTeacher'),
+                selectCycle: document.getElementById('selectCycle'),
+                selectClass: document.getElementById('selectClass'),
+                filterTeacher: document.getElementById('filterTeacher'),
+                filterCycle: document.getElementById('filterCycle')
+            };
+
+            // Fonctions utilitaires
+            const utils = {
+                // Afficher une notification
+                showNotification(message, type = 'success') {
+                    // Supprimer les notifications existantes
+                    document.querySelectorAll('.notification').forEach(notif => notif.remove());
+                    
+                    const notification = document.createElement('div');
+                    notification.className = `notification ${type}`;
+                    notification.innerHTML = `
+                        <span>${message}</span>
+                        <button onclick="this.parentElement.remove()" aria-label="Fermer la notification">×</button>
+                    `;
+                    
+                    // Ajouter la notification en haut de la page
+                    document.querySelector('.container').insertBefore(notification, document.querySelector('.header'));
+                    
+                    // Supprimer automatiquement après 5 secondes
+                    setTimeout(() => {
+                        if (notification.parentElement) {
+                            notification.remove();
+                        }
+                    }, 5000);
+                },
+                
+                // Générer un ID unique
+                generateId() {
+                    return Date.now() + Math.floor(Math.random() * 1000);
+                }
+            };
+
+            // Gestion du stockage local
+            const storage = {
+                // Récupérer tous les cours
+                getCourses() {
+                    return JSON.parse(localStorage.getItem('courses')) || [];
+                },
+                
+                // Sauvegarder un cours
+                saveCourse(course) {
+                    const courses = this.getCourses();
+                    courses.push(course);
+                    localStorage.setItem('courses', JSON.stringify(courses));
+                },
+                
+                // Supprimer un cours par ID
+                deleteCourse(id) {
+                    let courses = this.getCourses();
+                    courses = courses.filter(course => course.id !== id);
+                    localStorage.setItem('courses', JSON.stringify(courses));
+                },
+                
+                // Vider toutes les données
+                clearAllData() {
+                    localStorage.removeItem('courses');
+                }
+            };
+
+            // Gestion des sélections multiples
+            const multiSelect = {
+                // Activer/désactiver une sélection
+                toggleSelection(element, selectedItemsId) {
+                    element.classList.toggle('selected');
+                    this.updateSelectedItemsDisplay(selectedItemsId);
+                    
+                    // Mettre à jour l'accessibilité
+                    const isSelected = element.classList.contains('selected');
+                    element.setAttribute('aria-selected', isSelected);
+                },
+                
+                // Obtenir les éléments sélectionnés
+                getSelectedItems(optionsContainerId) {
+                    const options = document.getElementById(optionsContainerId).querySelectorAll('.selected');
+                    return Array.from(options).map(opt => opt.dataset.value);
+                },
+                
+                // Mettre à jour l'affichage des éléments sélectionnés
+                updateSelectedItemsDisplay(selectedItemsId) {
+                    const selectedItems = this.getSelectedItems(selectedItemsId.replace('selected', '').replace('s', '') + 'Options');
+                    const displayElement = document.getElementById(selectedItemsId);
+                    
+                    if (selectedItems.length === 0) {
+                        displayElement.textContent = selectedItemsId.includes('Classes') ? 'Aucune classe sélectionnée' : 
+                                                   selectedItemsId.includes('Subjects') ? 'Aucune matière sélectionnée' : 
+                                                   'Aucun jour sélectionné';
+                    } else {
+                        displayElement.textContent = selectedItems.join(', ');
+                    }
+                },
+                
+                // Initialiser les options de sélection
+                initOptions() {
+                    // Initialiser les options pour les classes
+                    elements.classOptions.innerHTML = '';
+                    allClasses.forEach(cls => {
+                        const option = document.createElement('div');
+                        option.className = 'multi-select-option';
+                        option.setAttribute('role', 'option');
+                        option.setAttribute('tabindex', '0');
+                        option.setAttribute('aria-selected', 'false');
+                        option.textContent = cls;
+                        option.dataset.value = cls;
+                        option.onclick = () => this.toggleSelection(option, 'selectedClasses');
+                        // Permettre la sélection avec la touche Entrée
+                        option.onkeydown = (e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                this.toggleSelection(option, 'selectedClasses');
+                            }
+                        };
+                        elements.classOptions.appendChild(option);
+                    });
+                    
+                    // Initialiser les options pour les matières
+                    elements.subjectOptions.innerHTML = '';
+                    allSubjects.forEach(subject => {
+                        const option = document.createElement('div');
+                        option.className = 'multi-select-option';
+                        option.setAttribute('role', 'option');
+                        option.setAttribute('tabindex', '0');
+                        option.setAttribute('aria-selected', 'false');
+                        option.textContent = subject;
+                        option.dataset.value = subject;
+                        option.onclick = () => this.toggleSelection(option, 'selectedSubjects');
+                        option.onkeydown = (e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                this.toggleSelection(option, 'selectedSubjects');
+                            }
+                        };
+                        elements.subjectOptions.appendChild(option);
+                    });
+                    
+                    // Initialiser les options pour les jours
+                    Array.from(elements.dayOptions.children).forEach(option => {
+                        option.setAttribute('role', 'option');
+                        option.setAttribute('tabindex', '0');
+                        option.setAttribute('aria-selected', 'false');
+                        option.onclick = () => this.toggleSelection(option, 'selectedDays');
+                        option.onkeydown = (e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                this.toggleSelection(option, 'selectedDays');
+                            }
+                        };
+                    });
+                }
+            };
+
+            // Gestion des créneaux horaires
+            const timeSlotManager = {
+                // Ajouter un groupe de créneaux horaires
+                addGroup() {
+                    const groupCount = elements.timeSlotGroups.querySelectorAll('.time-slot-group').length + 1;
+                    
+                    const newGroup = document.createElement('div');
+                    newGroup.className = 'time-slot-group slide-in';
+                    newGroup.innerHTML = `
+                        <h4>Créneau horaire ${groupCount}</h4>
+                        <div class="form-group">
+                            <label for="timeSlot${groupCount}">Créneau horaire:</label>
+                            <select class="time-slot" id="timeSlot${groupCount}" required aria-required="true">
+                                <option value="">Sélectionner un créneau</option>
+                                ${timeSlots.map(slot => 
+                                    `<option value="${slot}">${slot}</option>`
+                                ).join('')}
+                            </select>
+                        </div>
+                        <button type="button" class="btn btn-danger remove-btn" onclick="TimetableManager.removeTimeSlotGroup(this)">Supprimer ce créneau</button>
+                    `;
+                    
+                    elements.timeSlotGroups.appendChild(newGroup);
+                    
+                    // Afficher le bouton de suppression pour tous les groupes sauf le premier
+                    const removeButtons = document.querySelectorAll('.remove-btn');
+                    if (removeButtons.length > 1) {
+                        removeButtons.forEach(btn => btn.style.display = 'inline-block');
+                    }
+                },
+                
+                // Supprimer un groupe de créneaux horaires
+                removeGroup(button) {
+                    const groups = document.querySelectorAll('.time-slot-group');
+                    if (groups.length > 1) {
+                        button.parentElement.remove();
+                        
+                        // Mettre à jour les titres des groupes restants
+                        document.querySelectorAll('.time-slot-group h4').forEach((h4, index) => {
+                            h4.textContent = `Créneau horaire ${index + 1}`;
+                        });
+                        
+                        // Cacher le bouton de suppression s'il ne reste qu'un groupe
+                        if (groups.length === 2) { // Avant suppression
+                            document.querySelector('.remove-btn').style.display = 'none';
+                        }
+                    }
+                }
+            };
+
+            // Gestion des onglets
+            const tabManager = {
+                // Changer d'onglet
+                switchTab(tabName) {
+                    // Désactiver tous les onglets
+                    document.querySelectorAll('.tab').forEach(tab => {
+                        tab.classList.remove('active');
+                        tab.setAttribute('aria-selected', 'false');
+                    });
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // Activer l'onglet sélectionné
+                    const activeTab = document.querySelector(`.tab[onclick="switchTab('${tabName}')"]`);
+                    const activeContent = document.getElementById(`${tabName}-tab`);
+                    
+                    if (activeTab && activeContent) {
+                        activeTab.classList.add('active');
+                        activeTab.setAttribute('aria-selected', 'true');
+                        activeContent.classList.add('active');
+                    }
+                    
+                    // Si on passe à l'onglet de visualisation, générer l'emploi du temps
+                    if (tabName === 'timetable') {
+                        this.updateFilters();
+                        this.generateTimetable();
+                    } else if (tabName === 'all-data') {
+                        this.updateFilters();
+                        this.displayAllData();
+                    }
+                },
+                
+                // Mettre à jour les filtres
+                updateFilters() {
+                    const courses = storage.getCourses();
+                    
+                    // Mettre à jour la liste des enseignants
+                    this.updateSelectOptions('selectTeacher', [...new Set(courses.map(c => c.teacherName))]);
+                    this.updateSelectOptions('filterTeacher', [...new Set(courses.map(c => c.teacherName))]);
+                    
+                    // Mettre à jour la liste des classes
+                    this.updateSelectOptions('selectClass', [...new Set(courses.map(c => c.className))]);
+                },
+                
+                // Mettre à jour les options d'un select
+                updateSelectOptions(selectId, options) {
+                    const select = document.getElementById(selectId);
+                    if (!select) return;
+                    
+                    const currentValue = select.value;
+                    
+                    select.innerHTML = '';
+                    select.appendChild(new Option('-- ' + (selectId.includes('Teacher') ? 'Tous' : 'Toutes') + ' --', ''));
+                    
+                    options.forEach(option => {
+                        select.appendChild(new Option(option, option));
+                    });
+                    
+                    if (options.includes(currentValue)) {
+                        select.value = currentValue;
+                    }
+                }
+            };
+
+            // Gestion de l'affichage des données
+            const displayManager = {
+                // Générer l'emploi du temps
+                generateTimetable() {
+                    const courses = storage.getCourses();
+                    const selectedTeacher = elements.selectTeacher ? elements.selectTeacher.value : '';
+                    const selectedCycle = elements.selectCycle ? elements.selectCycle.value : '';
+                    const selectedClass = elements.selectClass ? elements.selectClass.value : '';
+                    
+                    if (elements.timetableBody) {
+                        elements.timetableBody.innerHTML = '';
+                    }
+                    
+                    // Filtrer les cours selon les sélections
+                    let filteredCourses = courses;
+                    
+                    if (selectedTeacher) {
+                        filteredCourses = filteredCourses.filter(c => c.teacherName === selectedTeacher);
+                    }
+                    
+                    if (selectedCycle) {
+                        filteredCourses = filteredCourses.filter(c => c.cycle === selectedCycle);
+                    }
+                    
+                    if (selectedClass) {
+                        filteredCourses = filteredCourses.filter(c => c.className === selectedClass);
+                    }
+                    
+                    if (!elements.timeVolumesContainer) {
+                        const container = document.createElement('div');
+                        container.id = 'timeVolumesContainer';
+                        document.getElementById('timetableContainer').appendChild(container);
+                    }
+                    
+                    if (filteredCourses.length === 0) {
+                        if (elements.displayTeacherName) {
+                            elements.displayTeacherName.textContent = "Aucun cours trouvé avec les filtres sélectionnés";
+                        }
+                        if (elements.timeVolumesContainer) {
+                            elements.timeVolumesContainer.innerHTML = '';
+                        }
+                        if (elements.timetableBody) {
+                            elements.timetableBody.innerHTML = '<tr><td colspan="6">Aucun cours trouvé</td></tr>';
+                        }
+                        return;
+                    }
+                    
+                    // Afficher le titre selon les filtres
+                    let title = "";
+                    if (selectedTeacher) title += `Enseignant: ${selectedTeacher}`;
+                    if (selectedCycle) title += `${title ? ' | ' : ''}Cycle: ${selectedCycle}`;
+                    if (selectedClass) title += `${title ? ' | ' : ''}Classe: ${selectedClass}`;
+                    
+                    if (elements.displayTeacherName) {
+                        elements.displayTeacherName.textContent = title || "Emploi du temps combiné";
+                    }
+                    
+                    // Calculer et afficher les volumes horaires
+                    const volumes = this.calculateTimeVolumes(filteredCourses);
+                    this.displayTimeVolumes(volumes);
+                    
+                    // Créer la structure de l'emploi du temps
+                    if (elements.timetableBody) {
+                        timeSlots.forEach(slot => {
+                            const row = document.createElement('tr');
+                            
+                            // Colonne horaire
+                            const timeCell = document.createElement('td');
+                            timeCell.className = 'time-col';
+                            timeCell.textContent = slot;
+                            row.appendChild(timeCell);
+                            
+                            // Colonnes pour chaque jour
+                            const days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
+                            days.forEach(day => {
+                                const dayCell = document.createElement('td');
+                                
+                                // Vérifier si c'est une pause
+                                if (slot === '09:45 - 10:10') {
+                                    dayCell.className = 'break';
+                                    dayCell.textContent = 'Pause';
+                                    row.appendChild(dayCell);
+                                    return;
+                                }
+                                
+                                // Trouver les cours correspondants à ce créneau et ce jour
+                                const matchingCourses = filteredCourses.filter(c => c.day === day && c.timeSlot === slot);
+                                
+                                if (matchingCourses.length > 0) {
+                                    let content = '';
+                                    matchingCourses.forEach(course => {
+                                        const courseInfo = `${course.className}${course.subject ? ` (${course.subject})` : ''}`;
+                                        content += `<div class="${course.cycle === 'Collège' ? 'cycle-college' : 'cycle-lycee'}">${courseInfo}</div>`;
+                                    });
+                                    dayCell.innerHTML = content;
+                                }
+                                
+                                row.appendChild(dayCell);
+                            });
+                            
+                            elements.timetableBody.appendChild(row);
+                        });
+                    }
+                },
+                
+                // Afficher toutes les données
+                displayAllData() {
+                    const courses = storage.getCourses();
+                    const filterTeacher = elements.filterTeacher ? elements.filterTeacher.value : '';
+                    const filterCycle = elements.filterCycle ? elements.filterCycle.value : '';
+                    
+                    if (elements.allDataBody) {
+                        elements.allDataBody.innerHTML = '';
+                    }
+                    
+                    // Filtrer les cours
+                    let filteredCourses = courses;
+                    
+                    if (filterTeacher) {
+                        filteredCourses = filteredCourses.filter(c => c.teacherName === filterTeacher);
+                    }
+                    
+                    if (filterCycle) {
+                        filteredCourses = filteredCourses.filter(c => c.cycle === filterCycle);
+                    }
+                    
+                    if (!elements.allDataBody) {
+                        console.error("Élément allDataBody non trouvé");
+                        return;
+                    }
+                    
+                    if (filteredCourses.length === 0) {
+                        elements.allDataBody.innerHTML = '<tr><td colspan="7">Aucun cours trouvé avec les filtres sélectionnés</td></tr>';
+                        return;
+                    }
+                    
+                    filteredCourses.forEach(course => {
+                        const row = document.createElement('tr');
+                        
+                        // Appliquer une classe CSS selon le cycle
+                        if (course.cycle === 'Collège') {
+                            row.classList.add('cycle-college');
+                        } else if (course.cycle === 'Lycée') {
+                            row.classList.add('cycle-lycee');
+                        }
+                        
+                        row.innerHTML = `
+                            <td>${course.teacherName}</td>
+                            <td>${course.className}</td>
+                            <td>${course.cycle}</td>
+                            <td>${course.subject || '-'}</td>
+                            <td>${course.day}</td>
+                            <td>${course.timeSlot}</td>
+                            <td>
+                                <button class="btn btn-danger" onclick="TimetableManager.deleteCourse(${course.id})">Supprimer</button>
+                            </td>
+                        `;
+                        
+                        elements.allDataBody.appendChild(row);
+                    });
+                },
+                
+                // Calculer les volumes horaires
+                calculateTimeVolumes(courses) {
+                    const volumes = {
+                        bySubject: {},
+                        byClass: {},
+                        byTeacher: {},
+                        total: 0
+                    };
+
+                    courses.forEach(course => {
+                        // Calculer la durée en heures (supposons que chaque créneau = 1 heure)
+                        const duration = 1; 
+
+                        // Par matière
+                        if (!volumes.bySubject[course.subject]) {
+                            volumes.bySubject[course.subject] = 0;
+                        }
+                        volumes.bySubject[course.subject] += duration;
+
+                        // Par classe
+                        if (!volumes.byClass[course.className]) {
+                            volumes.byClass[course.className] = 0;
+                        }
+                        volumes.byClass[course.className] += duration;
+
+                        // Par enseignant
+                        if (!volumes.byTeacher[course.teacherName]) {
+                            volumes.byTeacher[course.teacherName] = 0;
+                        }
+                        volumes.byTeacher[course.teacherName] += duration;
+
+                        // Total général
+                        volumes.total += duration;
+                    });
+
+                    return volumes;
+                },
+
+                // Afficher les volumes horaires
+                displayTimeVolumes(volumes) {
+                    if (!elements.timeVolumesContainer) return;
+
+                    elements.timeVolumesContainer.innerHTML = '';
+
+                    // Créer les tableaux de volumes
+                    const createVolumeTable = (title, data) => {
+                        const table = document.createElement('table');
+                        table.className = 'volume-table';
+                        table.innerHTML = `
+                            <caption>${title}</caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Nom</th>
+                                    <th scope="col">Volume horaire (heures)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${Object.entries(data).map(([name, hours]) => `
+                                    <tr>
+                                        <td>${name}</td>
+                                        <td>${hours}</td>
+                                    </tr>
+                                `).join('')}
+                                ${title.includes('Total') ? '' : `
+                                    <tr class="total-row">
+                                        <td><strong>Total</strong></td>
+                                        <td><strong>${Object.values(data).reduce((a, b) => a + b, 0)}</strong></td>
+                                    </tr>
+                                `}
+                            </tbody>
+                        `;
+                        return table;
+                    };
+
+                    // Créer un conteneur grid pour les tableaux
+                    const gridContainer = document.createElement('div');
+                    gridContainer.className = 'volumes-grid';
+
+                    // Ajouter les tableaux au conteneur grid
+                    if (Object.keys(volumes.bySubject).length > 0) {
+                        gridContainer.appendChild(createVolumeTable('Volume horaire par matière', volumes.bySubject));
+                    }
+                    if (Object.keys(volumes.byClass).length > 0) {
+                        gridContainer.appendChild(createVolumeTable('Volume horaire par classe', volumes.byClass));
+                    }
+                    if (Object.keys(volumes.byTeacher).length > 0) {
+                        gridContainer.appendChild(createVolumeTable('Volume horaire par enseignant', volumes.byTeacher));
+                    }
+
+                    elements.timeVolumesContainer.appendChild(gridContainer);
+
+                    // Ajouter le total général
+                    const totalDiv = document.createElement('div');
+                    totalDiv.className = 'total-volume';
+                    totalDiv.innerHTML = `<h4>Volume horaire total: ${volumes.total} heures</h4>`;
+                    elements.timeVolumesContainer.appendChild(totalDiv);
+                }
+            };
+
+            // Gestion des données (import/export)
+            const dataManager = {
+                // Exporter les données au format JSON
+                exportData() {
+                    const courses = storage.getCourses();
+                    if (courses.length === 0) {
+                        utils.showNotification("Aucune donnée à exporter", "warning");
+                        return;
+                    }
+                    
+                    const dataStr = JSON.stringify(courses, null, 2);
+                    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+                    
+                    const exportFileDefaultName = `emploi_du_temps_${new Date().toISOString().slice(0,10)}.json`;
+                    
+                    const linkElement = document.createElement('a');
+                    linkElement.setAttribute('href', dataUri);
+                    linkElement.setAttribute('download', exportFileDefaultName);
+                    linkElement.click();
+                    
+                    utils.showNotification("Données exportées avec succès");
+                },
+                
+                // Importer des données depuis un fichier JSON
+                importData(input) {
+                    const file = input.files[0];
+                    if (!file) return;
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const importedCourses = JSON.parse(e.target.result);
+                            if (!Array.isArray(importedCourses)) {
+                                throw new Error("Le fichier ne contient pas un tableau de données valide");
+                            }
+                            
+                            if (confirm(`Voulez-vous importer ${importedCourses.length} cours? Les données existantes seront conservées.`)) {
+                                const currentCourses = storage.getCourses();
+                                const mergedCourses = [...currentCourses, ...importedCourses];
+                                localStorage.setItem('courses', JSON.stringify(mergedCourses));
+                                
+                                // Mettre à jour les affichages
+                                tabManager.updateFilters();
+                                displayManager.generateTimetable();
+                                displayManager.displayAllData();
+                                
+                                utils.showNotification("Données importées avec succès");
+                            }
+                        } catch (error) {
+                            utils.showNotification("Erreur lors de l'importation: " + error.message, "error");
+                        }
+                        
+                        // Réinitialiser l'input file pour permettre la sélection du même fichier à nouveau
+                        input.value = '';
+                    };
+                    reader.readAsText(file);
+                }
+            };
+
+            // Initialisation de l'application
+            function init() {
+                // Initialiser les options de sélection multiple
+                multiSelect.initOptions();
+                
+                // Charger les données existantes
+                const courses = storage.getCourses();
+                if (courses.length > 0) {
+                    tabManager.updateFilters();
+                    displayManager.generateTimetable();
+                    displayManager.displayAllData();
+                }
+                
+                // Gérer la soumission du formulaire
+                elements.courseForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const teacherName = document.getElementById('teacherName').value;
+                    const selectedClasses = multiSelect.getSelectedItems('classOptions');
+                    const cycle = document.getElementById('cycle').value;
+                    const selectedSubjects = multiSelect.getSelectedItems('subjectOptions');
+                    const selectedDays = multiSelect.getSelectedItems('dayOptions');
+                    const timeSlotGroups = document.querySelectorAll('.time-slot-group');
+                    
+                    if (selectedClasses.length === 0 || selectedDays.length === 0 || selectedSubjects.length === 0) {
+                        utils.showNotification("Veuillez sélectionner au moins une classe, une matière et un jour", "warning");
+                        return;
+                    }
+                    
+                    // Vérifier que chaque groupe de créneau a une sélection valide
+                    let hasValidTimeSlot = false;
+                    timeSlotGroups.forEach(group => {
+                        const timeSlotSelect = group.querySelector('.time-slot');
+                        if (timeSlotSelect.value) {
+                            hasValidTimeSlot = true;
+                        }
+                    });
+                    
+                    if (!hasValidTimeSlot) {
+                        utils.showNotification("Veuillez sélectionner au moins un créneau horaire valide", "warning");
+                        return;
+                    }
+                    
+                    // Créer un objet cours pour chaque combinaison
+                    timeSlotGroups.forEach(group => {
+                        const timeSlotSelect = group.querySelector('.time-slot');
+                        const timeSlot = timeSlotSelect.value;
+                        
+                        if (!timeSlot) return; // Ignorer les créneaux non sélectionnés
+                        
+                        selectedDays.forEach(day => {
+                            selectedClasses.forEach(className => {
+                                selectedSubjects.forEach(subject => {
+                                    // Créer un objet cours
+                                    const course = {
+                                        id: utils.generateId(),
+                                        teacherName,
+                                        className,
+                                        cycle,
+                                        subject,
+                                        day,
+                                        timeSlot
+                                    };
+                                    
+                                    // Enregistrer dans le localStorage
+                                    storage.saveCourse(course);
+                                });
+                            });
+                        });
+                    });
+                    
+                    // Mettre à jour les listes et affichages
+                    tabManager.updateFilters();
+                    displayManager.generateTimetable();
+                    displayManager.displayAllData();
+                    
+                    // Réinitialiser le formulaire
+                    clearForm();
+                    
+                    utils.showNotification("Cours enregistrés avec succès!");
+                });
+            }
+
+            // Fonctions publiques
+            return {
+                init,
+                switchTab: tabManager.switchTab,
+                addNewClass() {
+                    const newClassInput = document.getElementById('newClass');
+                    const newClassName = newClassInput.value.trim();
+                    
+                    if (newClassName && !allClasses.includes(newClassName)) {
+                        allClasses.push(newClassName);
+                        multiSelect.initOptions();
+                        newClassInput.value = '';
+                        utils.showNotification("Classe ajoutée avec succès");
+                    }
+                },
+                addNewSubject() {
+                    const newSubjectInput = document.getElementById('newSubject');
+                    const newSubjectName = newSubjectInput.value.trim();
+                    
+                    if (newSubjectName && !allSubjects.includes(newSubjectName)) {
+                        allSubjects.push(newSubjectName);
+                        multiSelect.initOptions();
+                        newSubjectInput.value = '';
+                        utils.showNotification("Matière ajoutée avec succès");
+                    }
+                },
+                addTimeSlotGroup: timeSlotManager.addGroup,
+                removeTimeSlotGroup: timeSlotManager.removeGroup,
+                deleteCourse(id) {
+                    if (confirm("Voulez-vous vraiment supprimer ce cours?")) {
+                        storage.deleteCourse(id);
+                        tabManager.updateFilters();
+                        displayManager.generateTimetable();
+                        displayManager.displayAllData();
+                        utils.showNotification("Cours supprimé avec succès");
+                    }
+                },
+                clearForm() {
+                    elements.courseForm.reset();
+                    
+                    // Réinitialiser les sélections multiples
+                    document.querySelectorAll('.multi-select-option.selected').forEach(option => {
+                        option.classList.remove('selected');
+                        option.setAttribute('aria-selected', 'false');
+                    });
+                    
+                    // Mettre à jour les affichages des sélections
+                    multiSelect.updateSelectedItemsDisplay('selectedClasses');
+                    multiSelect.updateSelectedItemsDisplay('selectedSubjects');
+                    multiSelect.updateSelectedItemsDisplay('selectedDays');
+                    
+                    // Réinitialiser les créneaux horaires (garder seulement le premier)
+                    while (elements.timeSlotGroups.children.length > 1) {
+                        elements.timeSlotGroups.removeChild(elements.timeSlotGroups.lastChild);
+                    }
+                    
+                    // Réinitialiser le premier créneau
+                    elements.timeSlotGroups.querySelector('.time-slot').value = '';
+                    
+                    // Cacher le bouton de suppression
+                    document.querySelector('.remove-btn').style.display = 'none';
+                },
+                clearAllData() {
+                    if (confirm("Voulez-vous vraiment supprimer TOUTES les données?")) {
+                        storage.clearAllData();
+                        tabManager.updateFilters();
+                        displayManager.generateTimetable();
+                        displayManager.displayAllData();
+                        utils.showNotification("Toutes les données ont été supprimées");
+                    }
+                },
+                exportData: dataManager.exportData,
+                importData: dataManager.importData,
+                generateTimetable: displayManager.generateTimetable,
+                displayAllData: displayManager.displayAllData
+            };
+        })();
+
+        // Initialiser l'application lorsque le DOM est chargé
+        document.addEventListener('DOMContentLoaded', function() {
+            TimetableManager.init();
+        });
+
+        // Exposer les fonctions globales pour l'HTML
+        window.switchTab = (tabName) => TimetableManager.switchTab(tabName);
+        window.addNewClass = () => TimetableManager.addNewClass();
+        window.addNewSubject = () => TimetableManager.addNewSubject();
+        window.addTimeSlotGroup = () => TimetableManager.addTimeSlotGroup();
+        window.removeTimeSlotGroup = (button) => TimetableManager.removeTimeSlotGroup(button);
+        window.deleteCourse = (id) => TimetableManager.deleteCourse(id);
+        window.clearForm = () => TimetableManager.clearForm();
+        window.clearAllData = () => TimetableManager.clearAllData();
+        window.exportData = () => TimetableManager.exportData();
+        window.importData = (input) => TimetableManager.importData(input);
+        window.generateTimetable = () => TimetableManager.generateTimetable();
+        window.displayAllData = () => TimetableManager.displayAllData();
+    </script>
+</body>
+</html>

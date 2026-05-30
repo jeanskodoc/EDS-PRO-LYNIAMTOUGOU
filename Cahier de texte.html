@@ -1,0 +1,1885 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cahier de Texte Numérique</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* Variables CSS pour une meilleure maintenabilité */
+    :root {
+      --primary-color: #3498db;
+      --secondary-color: #2980b9;
+      --success-color: #2ecc71;
+      --warning-color: #f39c12;
+      --danger-color: #e74c3c;
+      --info-color: #9b59b6;
+      --dark-color: #2c3e50;
+      --light-color: #f5f5f5;
+      --gray-color: #7f8c8d;
+      --border-radius: 8px;
+      --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+    }
+
+    /* Reset et styles de base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      line-height: 1.6;
+      background-color: var(--light-color);
+      color: var(--dark-color);
+      padding: 20px;
+    }
+
+    /* Container principal */
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+    }
+
+    /* Écran de connexion */
+    .login-container {
+      max-width: 400px;
+      margin: 50px auto;
+      padding: 30px;
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+    }
+
+    /* En-têtes */
+    h1, h2 {
+      color: var(--dark-color);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      border-bottom: 2px solid var(--primary-color);
+      padding-bottom: 10px;
+    }
+
+    /* Sections */
+    .section {
+      margin-bottom: 30px;
+      padding: 20px;
+      background: #f9f9f9;
+      border-radius: 5px;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    /* Formulaires */
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: var(--dark-color);
+    }
+
+    input[type="text"], input[type="password"], input[type="date"], textarea, select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+      transition: var(--transition);
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    /* Boutons */
+    .btn {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn:hover {
+      background-color: var(--secondary-color);
+      transform: translateY(-2px);
+    }
+
+    .btn-success {
+      background-color: var(--success-color);
+    }
+
+    .btn-success:hover {
+      background-color: #27ae60;
+    }
+
+    .btn-warning {
+      background-color: var(--warning-color);
+    }
+
+    .btn-warning:hover {
+      background-color: #e67e22;
+    }
+
+    .btn-danger {
+      background-color: var(--danger-color);
+    }
+
+    .btn-danger:hover {
+      background-color: #c0392b;
+    }
+
+    .btn-info {
+      background-color: var(--info-color);
+    }
+
+    .btn-info:hover {
+      background-color: #8e44ad;
+    }
+
+    .btn-sm {
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+
+    /* Tableaux */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    /* Onglets */
+    .tabs {
+      display: flex;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      padding: 10px 20px;
+      background: #ddd;
+      cursor: pointer;
+      border-radius: 5px 5px 0 0;
+      margin-right: 5px;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tab.active {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Liste des étudiants */
+    .student-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .student-item {
+      display: flex;
+      flex-direction: column;
+      background: #eee;
+      padding: 8px;
+      border-radius: 4px;
+    }
+
+    .student-item .status-options {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+
+    .student-item .student-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .student-item input {
+      margin-right: 5px;
+    }
+
+    /* Recherche */
+    .search-box {
+      margin-bottom: 15px;
+    }
+
+    /* Statuts */
+    .status-present {
+      color: var(--success-color);
+    }
+
+    .status-absent {
+      color: var(--danger-color);
+    }
+
+    .status-late {
+      color: var(--warning-color);
+    }
+
+    /* Bouton WhatsApp */
+    .whatsapp-btn {
+      background-color: #25D366;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-right: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition);
+    }
+
+    .whatsapp-btn:hover {
+      background-color: #128C7E;
+      transform: translateY(-2px);
+    }
+
+    /* Bouton de déconnexion */
+    .logout-btn {
+      background-color: var(--danger-color);
+      float: right;
+    }
+
+    .logout-btn:hover {
+      background-color: #c0392b;
+    }
+
+    /* Classes utilitaires */
+    .hidden {
+      display: none;
+    }
+
+    .error-message {
+      color: var(--danger-color);
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .gender-icon {
+      font-size: 14px;
+      margin-left: 5px;
+    }
+
+    /* Résumé de présence */
+    .attendance-summary {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f8f9fa;
+      border-radius: 5px;
+      border-left: 4px solid var(--dark-color);
+    }
+
+    .summary-item {
+      margin: 5px 0;
+    }
+
+    /* Saisie intelligente */
+    .autocomplete-container {
+      position: relative;
+      width: 100%;
+    }
+
+    .autocomplete-items {
+      position: absolute;
+      border: 1px solid #d4d4d4;
+      border-bottom: none;
+      border-top: none;
+      z-index: 99;
+      top: 100%;
+      left: 0;
+      right: 0;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .autocomplete-items div {
+      padding: 10px;
+      cursor: pointer;
+      background-color: #fff;
+      border-bottom: 1px solid #d4d4d4;
+    }
+
+    .autocomplete-items div:hover {
+      background-color: #e9e9e9;
+    }
+
+    .autocomplete-active {
+      background-color: var(--primary-color) !important;
+      color: #ffffff;
+    }
+
+    .suggestion-chip {
+      display: inline-block;
+      background-color: #e0e0e0;
+      padding: 4px 8px;
+      margin: 4px;
+      border-radius: 16px;
+      font-size: 0.9em;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .suggestion-chip:hover {
+      background-color: #d0d0d0;
+    }
+
+    .suggestions-container {
+      margin-top: 5px;
+      margin-bottom: 15px;
+    }
+
+    /* Éditeur de texte enrichi */
+    .rich-text-editor {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 15px;
+    }
+
+    .toolbar {
+      background-color: #f5f5f5;
+      border-bottom: 1px solid #ddd;
+      padding: 5px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .toolbar button, .toolbar select {
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+      padding: 5px 8px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: var(--transition);
+    }
+
+    .toolbar button:hover {
+      background-color: #f0f0f0;
+    }
+
+    .toolbar select {
+      height: 30px;
+    }
+
+    .editor-content {
+      min-height: 100px;
+      padding: 10px;
+      resize: vertical;
+      overflow-y: auto;
+    }
+
+    .editor-content:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+
+    .color-picker {
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      border: 1px solid #ddd;
+    }
+
+    /* Mode visualisation */
+    .view-mode {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      margin-bottom: 15px;
+    }
+
+    .view-mode h3 {
+      margin-top: 0;
+      color: var(--dark-color);
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 10px;
+    }
+
+    .view-mode .content {
+      margin: 10px 0;
+    }
+
+    /* Import/Export */
+    .import-btn {
+      background-color: var(--success-color);
+    }
+
+    .import-btn:hover {
+      background-color: #27ae60;
+    }
+
+    .view-btn {
+      background-color: var(--info-color);
+    }
+
+    .view-btn:hover {
+      background-color: #8e44ad;
+    }
+
+    .export-btn {
+      background-color: var(--warning-color);
+    }
+
+    .export-btn:hover {
+      background-color: #e67e22;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .file-input-label {
+      display: inline-block;
+      padding: 10px 15px;
+      background-color: var(--success-color);
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 10px;
+      transition: var(--transition);
+    }
+
+    .file-input-label:hover {
+      background-color: #27ae60;
+    }
+
+    .import-container {
+      margin-bottom: 20px;
+      padding: 15px;
+      background-color: #f8f9fa;
+      border-radius: 5px;
+      border-left: 4px solid var(--success-color);
+    }
+
+    /* Champs de saisie enrichis */
+    .rich-input {
+      position: relative;
+    }
+
+    .rich-input-toolbar {
+      background-color: #f5f5f5;
+      border: 1px solid #ddd;
+      border-bottom: none;
+      border-radius: 4px 4px 0 0;
+      padding: 5px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .rich-input-content {
+      min-height: 60px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 0 0 4px 4px;
+      resize: vertical;
+      overflow-y: auto;
+    }
+
+    .rich-input-content:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+
+    /* Bouton retour */
+    .btn-retour {
+      padding: 8px 16px;
+      background-color: #f0f0f0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-bottom: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: var(--transition);
+    }
+
+    .btn-retour:hover {
+      background-color: #e0e0e0;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+    }
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: 5% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 800px;
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: black;
+      text-decoration: none;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      .container {
+        padding: 15px;
+      }
+
+      .login-container {
+        margin: 20px auto;
+        padding: 20px;
+      }
+
+      .tabs {
+        flex-direction: column;
+      }
+
+      .tab {
+        margin-bottom: 5px;
+        border-radius: 5px;
+      }
+
+      .student-list {
+        grid-template-columns: 1fr;
+      }
+
+      .btn {
+        width: 100%;
+        margin-right: 0;
+        justify-content: center;
+      }
+
+      .modal-content {
+        width: 95%;
+        margin: 10% auto;
+      }
+
+      .toolbar {
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .section {
+        padding: 15px;
+      }
+
+      .btn {
+        padding: 8px 12px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Écran de connexion -->
+  <div id="loginScreen" class="login-container">
+    <button class="btn-retour" onclick="history.back()">
+      <i class="fas fa-arrow-left"></i> Retour
+    </button>
+    <h1><i class="fas fa-chalkboard-teacher"></i> Connexion Enseignants</h1>
+    <div id="loginError" class="error-message hidden"></div>
+    <label for="username">Nom d'utilisateur:</label>
+    <input type="text" id="username" placeholder="Votre nom d'utilisateur">
+
+    <label for="password">Mot de passe:</label>
+    <input type="password" id="password" placeholder="Votre mot de passe">
+
+    <button class="btn" onclick="login()">
+      <i class="fas fa-sign-in-alt"></i> Se connecter
+    </button>
+  </div>
+
+  <!-- Application principale (cachée jusqu'à l'authentification) -->
+  <div id="appContainer" class="container hidden">
+    <button class="btn logout-btn" onclick="logout()">
+      <i class="fas fa-sign-out-alt"></i> Déconnexion
+    </button>
+    <h1><i class="fas fa-book"></i> Cahier de Texte Numérique</h1>
+
+    <div class="tabs">
+      <div class="tab active" onclick="openTab('lesson')">
+        <i class="fas fa-plus-circle"></i> Nouvelle Leçon
+      </div>
+      <div class="tab" onclick="openTab('attendance')">
+        <i class="fas fa-clipboard-check"></i> Présence
+      </div>
+      <div class="tab" onclick="openTab('view')">
+        <i class="fas fa-eye"></i> Voir les Entrées
+      </div>
+    </div>
+
+    <!-- Nouvelle Leçon Tab -->
+    <div id="lesson" class="tab-content active">
+      <div class="import-container">
+        <h2><i class="fas fa-file-import"></i> Importer/Exporter des données</h2>
+        <label for="jsonFile" class="file-input-label">
+          <i class="fas fa-folder-open"></i> Choisir un fichier JSON
+        </label>
+        <input type="file" id="jsonFile" accept=".json" class="file-input" onchange="importJSON(this.files)">
+        <button class="btn import-btn" onclick="document.getElementById('jsonFile').click()">
+          <i class="fas fa-file-import"></i> Importer JSON
+        </button>
+        <button class="btn export-btn" onclick="exportJSON()">
+          <i class="fas fa-file-export"></i> Exporter JSON
+        </button>
+        <p><small>Importez ou exportez un fichier JSON pour sauvegarder ou charger vos données.</small></p>
+      </div>
+
+      <div class="section">
+        <h2><i class="fas fa-info-circle"></i> Informations de la Leçon</h2>
+        <label for="lessonDate">Date:</label>
+        <input type="date" id="lessonDate" required>
+
+        <label for="subject">Matière:</label>
+        <select id="subject" required>
+          <option value="">-- Sélectionnez une matière --</option>
+          <option value="math">Mathématiques</option>
+          <option value="french">Français</option>
+          <option value="history">Histoire-Géographie</option>
+          <option value="science">Sciences</option>
+          <option value="english">Anglais</option>
+          <option value="art">Arts Plastiques</option>
+          <option value="pe">Éducation Physique</option>
+          <option value="other">Autre</option>
+        </select>
+
+        <label for="class">Classe:</label>
+        <select id="class" required>
+          <option value="">-- Sélectionnez une classe --</option>
+          <option value="6eme">6ème</option>
+          <option value="5eme">5ème</option>
+          <option value="4eme">4ème</option>
+          <option value="3eme">3ème</option>
+          <option value="2nde">Seconde</option>
+          <option value="1ere">Première</option>
+          <option value="terminale">Terminale</option>
+        </select>
+
+        <label for="lessonTitle">Titre de la leçon:</label>
+        <div class="autocomplete-container">
+          <input type="text" id="lessonTitle" placeholder="Titre de la leçon" required autocomplete="off">
+        </div>
+        <div id="titleSuggestions" class="suggestions-container"></div>
+      </div>
+
+      <div class="section">
+        <h2><i class="fas fa-book-open"></i> Contenu du Cours</h2>
+        <label>Grandes lignes du cours:</label>
+        <div class="rich-text-editor">
+          <div class="toolbar">
+            <select id="fontName" onchange="formatText('fontName', this.value, 'lessonContent')">
+              <option value="Arial">Arial</option>
+              <option value="Helvetica">Helvetica</option>
+              <option value="Times New Roman">Times New Roman</option>
+              <option value="Courier New">Courier New</option>
+              <option value="Verdana">Verdana</option>
+              <option value="Georgia">Georgia</option>
+            </select>
+            <select id="fontSize" onchange="formatText('fontSize', this.value, 'lessonContent')">
+              <option value="1">Très petit</option>
+              <option value="2">Petit</option>
+              <option value="3" selected>Normal</option>
+              <option value="4">Moyen</option>
+              <option value="5">Grand</option>
+              <option value="6">Très grand</option>
+              <option value="7">Maximum</option>
+            </select>
+            <button onclick="formatText('bold', null, 'lessonContent')"><i class="fas fa-bold"></i></button>
+            <button onclick="formatText('italic', null, 'lessonContent')"><i class="fas fa-italic"></i></button>
+            <button onclick="formatText('underline', null, 'lessonContent')"><i class="fas fa-underline"></i></button>
+            <button onclick="formatText('insertOrderedList', null, 'lessonContent')"><i class="fas fa-list-ol"></i></button>
+            <button onclick="formatText('insertUnorderedList', null, 'lessonContent')"><i class="fas fa-list-ul"></i></button>
+            <input type="color" id="textColor" class="color-picker" onchange="applyColor('forecolor', this.value, 'lessonContent')" value="#000000">
+            <input type="color" id="bgColor" class="color-picker" onchange="applyColor('backcolor', this.value, 'lessonContent')" value="#ffffff">
+            <button onclick="formatText('removeFormat', null, 'lessonContent')"><i class="fas fa-eraser"></i></button>
+          </div>
+          <div id="lessonContent" class="editor-content" contenteditable="true" placeholder="Décrivez les points principaux abordés pendant le cours..."></div>
+        </div>
+        <div id="contentSuggestions" class="suggestions-container"></div>
+      </div>
+
+      <div class="section">
+        <h2><i class="fas fa-home"></i> Devoirs à la Maison</h2>
+        <label>Devoirs assignés:</label>
+        <div class="rich-text-editor">
+          <div class="toolbar">
+            <select onchange="formatText('fontName', this.value, 'homework')">
+              <option value="Arial">Arial</option>
+              <option value="Helvetica">Helvetica</option>
+              <option value="Times New Roman">Times New Roman</option>
+              <option value="Courier New">Courier New</option>
+              <option value="Verdana">Verdana</option>
+              <option value="Georgia">Georgia</option>
+            </select>
+            <select onchange="formatText('fontSize', this.value, 'homework')">
+              <option value="1">Très petit</option>
+              <option value="2">Petit</option>
+              <option value="3" selected>Normal</option>
+              <option value="4">Moyen</option>
+              <option value="5">Grand</option>
+              <option value="6">Très grand</option>
+              <option value="7">Maximum</option>
+            </select>
+            <button onclick="formatText('bold', null, 'homework')"><i class="fas fa-bold"></i></button>
+            <button onclick="formatText('italic', null, 'homework')"><i class="fas fa-italic"></i></button>
+            <button onclick="formatText('underline', null, 'homework')"><i class="fas fa-underline"></i></button>
+            <button onclick="formatText('insertOrderedList', null, 'homework')"><i class="fas fa-list-ol"></i></button>
+            <button onclick="formatText('insertUnorderedList', null, 'homework')"><i class="fas fa-list-ul"></i></button>
+            <input type="color" class="color-picker" onchange="applyColor('forecolor', this.value, 'homework')" value="#000000">
+            <input type="color" class="color-picker" onchange="applyColor('backcolor', this.value, 'homework')" value="#ffffff">
+            <button onclick="formatText('removeFormat', null, 'homework')"><i class="fas fa-eraser"></i></button>
+          </div>
+          <div id="homework" class="editor-content" contenteditable="true" placeholder="Décrivez les devoirs à faire pour la prochaine séance..."></div>
+        </div>
+        <div id="homeworkSuggestions" class="suggestions-container"></div>
+
+        <label for="dueDate">Date de rendu:</label>
+        <input type="date" id="dueDate">
+      </div>
+
+      <button class="btn btn-success" onclick="saveLesson()">
+        <i class="fas fa-save"></i> Enregistrer la Leçon
+      </button>
+      <button class="btn btn-danger" onclick="clearForm()">
+        <i class="fas fa-trash"></i> Effacer le Formulaire
+      </button>
+      <button class="btn btn-info view-btn" onclick="previewLesson()">
+        <i class="fas fa-eye"></i> Visualiser la Leçon
+      </button>
+    </div>
+
+    <!-- Contrôle de Présence Tab -->
+    <div id="attendance" class="tab-content">
+      <div class="section">
+        <h2><i class="fas fa-clipboard-check"></i> Contrôle de Présence</h2>
+
+        <label for="attendanceDate">Date:</label>
+        <input type="date" id="attendanceDate" required>
+
+        <label for="attendanceClass">Classe:</label>
+        <select id="attendanceClass" onchange="loadStudents()" required>
+          <option value="">-- Sélectionnez une classe --</option>
+          <option value="6eme">6ème</option>
+          <option value="5eme">5ème</option>
+          <option value="4eme">4ème</option>
+          <option value="3eme">3ème</option>
+          <option value="2nde">Seconde</option>
+          <option value="1ere">Première</option>
+          <option value="terminale">Terminale</option>
+        </select>
+
+        <label for="attendanceSubject">Matière:</label>
+        <select id="attendanceSubject" required>
+          <option value="">-- Sélectionnez une matière --</option>
+          <option value="math">Mathématiques</option>
+          <option value="french">Français</option>
+          <option value="history">Histoire-Géographie</option>
+          <option value="science">Sciences</option>
+          <option value="english">Anglais</option>
+          <option value="art">Arts Plastiques</option>
+          <option value="pe">Éducation Physique</option>
+          <option value="other">Autre</option>
+        </select>
+
+        <div class="search-box">
+          <label for="studentSearch">Rechercher un élève:</label>
+          <input type="text" id="studentSearch" placeholder="Nom de l'élève..." oninput="filterStudents()">
+        </div>
+
+        <h3><i class="fas fa-users"></i> Liste des Élèves</h3>
+        <div id="studentsContainer" class="student-list">
+          <!-- Les élèves seront chargés ici dynamiquement -->
+        </div>
+
+        <button class="btn btn-success" onclick="saveAttendance()">
+          <i class="fas fa-save"></i> Enregistrer la Présence
+        </button>
+        <button class="btn btn-danger" onclick="clearAttendance()">
+          <i class="fas fa-trash"></i> Effacer
+        </button>
+      </div>
+
+      <div class="section">
+        <h2><i class="fas fa-history"></i> Historique de Présence</h2>
+        <div id="attendanceHistory">
+          <!-- L'historique sera chargé ici dynamiquement -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Voir les Entrées Tab -->
+    <div id="view" class="tab-content">
+      <div class="section">
+        <h2><i class="fas fa-filter"></i> Filtrer les Entrées</h2>
+
+        <label for="filterClass">Classe:</label>
+        <select id="filterClass" onchange="filterEntries()">
+          <option value="">Toutes les classes</option>
+          <option value="6eme">6ème</option>
+          <option value="5eme">5ème</option>
+          <option value="4eme">4ème</option>
+          <option value="3eme">3ème</option>
+          <option value="2nde">Seconde</option>
+          <option value="1ere">Première</option>
+          <option value="terminale">Terminale</option>
+        </select>
+
+        <label for="filterSubject">Matière:</label>
+        <select id="filterSubject" onchange="filterEntries()">
+          <option value="">Toutes les matières</option>
+          <option value="math">Mathématiques</option>
+          <option value="french">Français</option>
+          <option value="history">Histoire-Géographie</option>
+          <option value="science">Sciences</option>
+          <option value="english">Anglais</option>
+          <option value="art">Arts Plastiques</option>
+          <option value="pe">Éducation Physique</option>
+          <option value="other">Autre</option>
+        </select>
+
+        <label for="filterDateFrom">Date de début:</label>
+        <input type="date" id="filterDateFrom" onchange="filterEntries()">
+
+        <label for="filterDateTo">Date de fin:</label>
+        <input type="date" id="filterDateTo" onchange="filterEntries()">
+      </div>
+
+      <div class="section">
+        <h2><i class="fas fa-book"></i> Leçons Enregistrées</h2>
+        <button class="whatsapp-btn" onclick="sendViaWhatsApp()">
+          <i class="fab fa-whatsapp"></i> Envoyer via WhatsApp
+        </button>
+        <div id="lessonsList">
+          <!-- Les leçons seront chargées ici dynamiquement -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal pour l'aperçu et les alertes -->
+  <div id="previewModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <script>
+    // Variables globales
+    let lessons = JSON.parse(localStorage.getItem('teacherLessons')) || [];
+    let attendanceRecords = JSON.parse(localStorage.getItem('teacherAttendance')) || [];
+
+    // Structure des élèves avec leur sexe
+    let students = {
+      '6eme': [
+        { name: 'Jean Dupont', gender: 'M' },
+        { name: 'Marie Martin', gender: 'F' },
+        { name: 'Pierre Durand', gender: 'M' },
+        { name: 'Sophie Lambert', gender: 'F' },
+        { name: 'Lucie Petit', gender: 'F' }
+      ],
+      '5eme': [
+        { name: 'Thomas Moreau', gender: 'M' },
+        { name: 'Julie Laurent', gender: 'F' },
+        { name: 'Nicolas Simon', gender: 'M' },
+        { name: 'Camille Michel', gender: 'F' },
+        { name: 'Alexandre Bernard', gender: 'M' }
+      ],
+      '4eme': [
+        { name: 'Laura Robert', gender: 'F' },
+        { name: 'Hugo Lefebvre', gender: 'M' },
+        { name: 'Emma Roux', gender: 'F' },
+        { name: 'Louis David', gender: 'M' },
+        { name: 'Chloé Bertrand', gender: 'F' }
+      ],
+      '3eme': [
+        { name: 'Mathieu Leroy', gender: 'M' },
+        { name: 'Manon Morel', gender: 'F' },
+        { name: 'Antoine Fournier', gender: 'M' },
+        { name: 'Sarah Girard', gender: 'F' },
+        { name: 'Julien Bonnet', gender: 'M' }
+      ],
+      '2nde': [
+        { name: 'Léa Dumont', gender: 'F' },
+        { name: 'Paul François', gender: 'M' },
+        { name: 'Zoé Martinez', gender: 'F' },
+        { name: 'Gabriel Legrand', gender: 'M' },
+        { name: 'Inès Garnier', gender: 'F' }
+      ],
+      '1ere': [
+        { name: 'Romain Faure', gender: 'M' },
+        { name: 'Elodie Rousseau', gender: 'F' },
+        { name: 'Maxime Blanc', gender: 'M' },
+        { name: 'Charlotte Caron', gender: 'F' },
+        { name: 'Victor Henry', gender: 'M' }
+      ],
+      'terminale': [
+        { name: 'Clara Perrot', gender: 'F' },
+        { name: 'Baptiste Nicolas', gender: 'M' },
+        { name: 'Margaux Meyer', gender: 'F' },
+        { name: 'Arthur Adam', gender: 'M' },
+        { name: 'Léna Chevalier', gender: 'F' }
+      ]
+    };
+
+    // Base de données des suggestions pour la saisie intelligente
+    const smartSuggestions = {
+      lessonTitles: [
+        "Introduction à",
+        "Révision de",
+        "Exercices pratiques sur",
+        "Cours avancé de",
+        "Les fondamentaux de",
+        "Histoire et évolution des",
+        "Applications pratiques des",
+        "Théorie et pratique des",
+        "Analyse approfondie de",
+        "Synthèse sur"
+      ],
+      lessonContents: [
+        "Définition des concepts clés",
+        "Étude de cas pratiques",
+        "Analyse comparative",
+        "Méthodologie d'application",
+        "Exercices d'approfondissement",
+        "Réponses aux questions fréquentes",
+        "Perspectives historiques",
+        "Applications contemporaines",
+        "Synthèse des connaissances",
+        "Préparation à l'évaluation"
+      ],
+      homework: [
+        "Exercices pages 12-15",
+        "Révision pour l'évaluation",
+        "Préparation exposé",
+        "Recherche documentaire",
+        "QCM en ligne à compléter",
+        "Devoir maison à rendre",
+        "Lecture pages 45-52",
+        "Rédaction de synthèse",
+        "Exercices supplémentaires",
+        "Préparation questions oral"
+      ],
+      subjects: {
+        math: ["algèbre", "géométrie", "calcul", "statistiques", "probabilités", "équations", "fonctions", "théorèmes"],
+        french: ["grammaire", "conjugaison", "orthographe", "littérature", "rédaction", "analyse de texte", "vocabulaire"],
+        history: ["chronologie", "civilisations", "événements clés", "personnages historiques", "cartes", "documents historiques"],
+        science: ["expériences", "méthode scientifique", "hypothèses", "observations", "conclusions", "manipulations"],
+        english: ["vocabulary", "grammar", "conversation", "reading comprehension", "writing", "listening exercises"],
+        art: ["œuvres d'art", "techniques", "artistes", "mouvements artistiques", "analyse d'œuvre", "création"],
+        pe: ["échauffement", "exercices techniques", "règles du jeu", "stratégies", "entraînement", "performance"]
+      }
+    };
+
+    // Base de données des utilisateurs (en production, utiliser un système sécurisé)
+    const users = [
+      { username: "prof1", password: "pass123", name: "Professeur Dupont" },
+      { username: "prof2", password: "pass456", name: "Professeur Martin" },
+      { username: "admin", password: "admin123", name: "Administrateur" }
+    ];
+
+    // Vérifier si l'utilisateur est déjà connecté au chargement
+    document.addEventListener('DOMContentLoaded', function() {
+      const loggedInUser = localStorage.getItem('loggedInUser');
+      if (loggedInUser) {
+        showApp();
+        initAutocomplete();
+      } else {
+        showLogin();
+      }
+      
+      // Définir la date d'aujourd'hui par défaut
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('lessonDate').value = today;
+      document.getElementById('attendanceDate').value = today;
+    });
+
+    // Fonctions d'authentification
+    function login() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const errorElement = document.getElementById('loginError');
+
+      // Réinitialiser le message d'erreur
+      errorElement.classList.add('hidden');
+      errorElement.textContent = '';
+
+      // Validation basique
+      if (!username || !password) {
+        showError("Veuillez saisir un nom d'utilisateur et un mot de passe");
+        return;
+      }
+
+      // Vérifier les informations de connexion
+      const user = users.find(u => u.username === username && u.password === password);
+
+      if (user) {
+        // Enregistrer l'utilisateur connecté
+        localStorage.setItem('loggedInUser', JSON.stringify(user));
+        showApp();
+
+        // Charger les données existantes
+        filterEntries();
+        loadAttendanceHistory();
+
+        // Initialiser la saisie intelligente
+        initAutocomplete();
+      } else {
+        showError("Nom d'utilisateur ou mot de passe incorrect");
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('loggedInUser');
+      showLogin();
+      // Réinitialiser les champs de connexion
+      document.getElementById('username').value = '';
+      document.getElementById('password').value = '';
+    }
+
+    function showError(message) {
+      const errorElement = document.getElementById('loginError');
+      errorElement.textContent = message;
+      errorElement.classList.remove('hidden');
+    }
+
+    function showApp() {
+      document.getElementById('loginScreen').classList.add('hidden');
+      document.getElementById('appContainer').classList.remove('hidden');
+    }
+
+    function showLogin() {
+      document.getElementById('loginScreen').classList.remove('hidden');
+      document.getElementById('appContainer').classList.add('hidden');
+    }
+
+    // Fonctions pour les onglets
+    function openTab(tabId) {
+      // Cacher tous les onglets
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+
+      // Désactiver tous les boutons d'onglet
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+
+      // Activer l'onglet sélectionné
+      document.getElementById(tabId).classList.add('active');
+
+      // Activer le bouton de l'onglet
+      document.querySelector(`.tab[onclick="openTab('${tabId}')"]`).classList.add('active');
+
+      // Si c'est l'onglet de présence, charger les élèves
+      if (tabId === 'attendance') {
+        loadStudents();
+      }
+    }
+
+    // Fonctions pour la gestion des leçons
+    function saveLesson() {
+      const lessonDate = document.getElementById('lessonDate').value;
+      const subject = document.getElementById('subject').value;
+      const classLevel = document.getElementById('class').value;
+      const lessonTitle = document.getElementById('lessonTitle').value;
+      const lessonContent = document.getElementById('lessonContent').innerHTML;
+      const homework = document.getElementById('homework').innerHTML;
+      const dueDate = document.getElementById('dueDate').value;
+
+      if (!lessonDate || !subject || !classLevel || !lessonTitle || !lessonContent) {
+        alert('Veuillez remplir tous les champs obligatoires.');
+        return;
+      }
+
+      const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+
+      const newLesson = {
+        id: Date.now(),
+        date: lessonDate,
+        subject: subject,
+        class: classLevel,
+        title: lessonTitle,
+        content: lessonContent,
+        homework: homework,
+        dueDate: dueDate,
+        teacher: loggedInUser.username // Associer la leçon à l'enseignant
+      };
+
+      lessons.push(newLesson);
+      localStorage.setItem('teacherLessons', JSON.stringify(lessons));
+
+      alert('Leçon enregistrée avec succès!');
+      clearForm();
+      filterEntries();
+    }
+
+    function clearForm() {
+      document.getElementById('lessonDate').value = new Date().toISOString().split('T')[0];
+      document.getElementById('subject').value = '';
+      document.getElementById('class').value = '';
+      document.getElementById('lessonTitle').value = '';
+      document.getElementById('lessonContent').innerHTML = '';
+      document.getElementById('homework').innerHTML = '';
+      document.getElementById('dueDate').value = '';
+    }
+
+    // Fonction pour visualiser la leçon sans modifier
+    function previewLesson() {
+      const lessonDate = document.getElementById('lessonDate').value;
+      const subject = document.getElementById('subject').value;
+      const classLevel = document.getElementById('class').value;
+      const lessonTitle = document.getElementById('lessonTitle').value;
+      const lessonContent = document.getElementById('lessonContent').innerHTML;
+      const homework = document.getElementById('homework').innerHTML;
+      const dueDate = document.getElementById('dueDate').value;
+
+      if (!lessonDate || !subject || !classLevel || !lessonTitle || !lessonContent) {
+        alert('Veuillez remplir tous les champs obligatoires pour visualiser.');
+        return;
+      }
+
+      let previewHTML = `
+        <h3>Aperçu de la Leçon</h3>
+        <p><strong>Date:</strong> ${formatDate(lessonDate)}</p>
+        <p><strong>Matière:</strong> ${getSubjectName(subject)}</p>
+        <p><strong>Classe:</strong> ${getClassName(classLevel)}</p>
+        <p><strong>Titre:</strong> ${lessonTitle}</p>
+        <div class="content">
+          <p><strong>Contenu:</strong></p>
+          <div class="view-mode">${lessonContent}</div>
+        </div>
+      `;
+
+      if (homework) {
+        previewHTML += `
+          <div class="content">
+            <p><strong>Devoirs:</strong></p>
+            <div class="view-mode">${homework}</div>
+          </div>
+        `;
+      }
+
+      if (dueDate) {
+        previewHTML += `<p><strong>À rendre pour le:</strong> ${formatDate(dueDate)}</p>`;
+      }
+
+      showModal(previewHTML, 'Aperçu de la Leçon');
+    }
+
+    // Fonction pour exporter les données en JSON
+    function exportJSON() {
+      const lessonData = {
+        date: document.getElementById('lessonDate').value,
+        subject: document.getElementById('subject').value,
+        class: document.getElementById('class').value,
+        title: document.getElementById('lessonTitle').value,
+        content: document.getElementById('lessonContent').innerHTML,
+        homework: document.getElementById('homework').innerHTML,
+        dueDate: document.getElementById('dueDate').value
+      };
+
+      // Créer un blob avec les données JSON
+      const dataStr = JSON.stringify(lessonData, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+
+      // Créer un lien de téléchargement
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(dataBlob);
+      
+      // Générer un nom de fichier avec la date et le titre
+      const date = new Date().toISOString().slice(0, 10);
+      const title = lessonData.title ? lessonData.title.replace(/\s+/g, '_') : 'leçon';
+      link.download = `leçon_${date}_${title}.json`;
+      
+      // Simuler un clic sur le lien pour déclencher le téléchargement
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      alert('Fichier JSON exporté avec succès!');
+    }
+
+    // Fonction pour importer un fichier JSON
+    function importJSON(files) {
+      if (files.length === 0) return;
+      
+      const file = files[0];
+      const reader = new FileReader();
+      
+      reader.onload = function(e) {
+        try {
+          const data = JSON.parse(e.target.result);
+          
+          // Remplir les champs avec les données importées
+          if (data.date) document.getElementById('lessonDate').value = data.date;
+          if (data.subject) document.getElementById('subject').value = data.subject;
+          if (data.class) document.getElementById('class').value = data.class;
+          if (data.title) document.getElementById('lessonTitle').value = data.title;
+          if (data.content) document.getElementById('lessonContent').innerHTML = data.content;
+          if (data.homework) document.getElementById('homework').innerHTML = data.homework;
+          if (data.dueDate) document.getElementById('dueDate').value = data.dueDate;
+          
+          alert('Données importées avec succès!');
+        } catch (error) {
+          alert('Erreur lors de l\'importation du fichier JSON: ' + error.message);
+        }
+      };
+      
+      reader.readAsText(file);
+    }
+
+    // Fonctions pour le contrôle de présence
+    function loadStudents() {
+      const classLevel = document.getElementById('attendanceClass').value;
+      if (!classLevel) return;
+
+      const studentsContainer = document.getElementById('studentsContainer');
+      studentsContainer.innerHTML = '';
+
+      students[classLevel].forEach(student => {
+        const studentItem = document.createElement('div');
+        studentItem.className = 'student-item';
+        studentItem.innerHTML = `
+          <div class="status-options">
+            <div>
+              <input type="radio" name="${student.name.replace(/\s+/g, '-')}" value="present" id="${student.name.replace(/\s+/g, '-')}-present" checked>
+              <label for="${student.name.replace(/\s+/g, '-')}-present">Présent(e)</label>
+            </div>
+            <div>
+              <input type="radio" name="${student.name.replace(/\s+/g, '-')}" value="absent" id="${student.name.replace(/\s+/g, '-')}-absent">
+              <label for="${student.name.replace(/\s+/g, '-')}-absent">Absent(e)</label>
+            </div>
+            <div>
+              <input type="radio" name="${student.name.replace(/\s+/g, '-')}" value="late" id="${student.name.replace(/\s+/g, '-')}-late">
+              <label for="${student.name.replace(/\s+/g, '-')}-late">En retard</label>
+            </div>
+          </div>
+          <div class="student-info">
+            <span>${student.name}</span>
+            <span class="gender-icon">${student.gender === 'M' ? '♂' : '♀'}</span>
+          </div>
+        `;
+        studentsContainer.appendChild(studentItem);
+      });
+    }
+
+    function filterStudents() {
+      const searchTerm = document.getElementById('studentSearch').value.toLowerCase();
+      const studentItems = document.querySelectorAll('.student-item');
+
+      studentItems.forEach(item => {
+        const studentName = item.querySelector('.student-info span:first-child').textContent.toLowerCase();
+        if (studentName.includes(searchTerm)) {
+          item.style.display = 'flex';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+
+    function saveAttendance() {
+      const attendanceDate = document.getElementById('attendanceDate').value;
+      const classLevel = document.getElementById('attendanceClass').value;
+      const subject = document.getElementById('attendanceSubject').value;
+
+      if (!attendanceDate || !classLevel || !subject) {
+        alert('Veuillez remplir tous les champs obligatoires.');
+        return;
+      }
+
+      const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+
+      const attendanceData = {
+        id: Date.now(),
+        date: attendanceDate,
+        class: classLevel,
+        subject: subject,
+        students: [],
+        teacher: loggedInUser.username // Associer la présence à l'enseignant
+      };
+
+      students[classLevel].forEach(student => {
+        const status = document.querySelector(`input[name="${student.name.replace(/\s+/g, '-')}"]:checked`).value;
+        attendanceData.students.push({
+          name: student.name,
+          gender: student.gender,
+          status: status
+        });
+      });
+
+      attendanceRecords.push(attendanceData);
+      localStorage.setItem('teacherAttendance', JSON.stringify(attendanceRecords));
+
+      alert('Présence enregistrée avec succès!');
+      loadAttendanceHistory();
+    }
+
+    function clearAttendance() {
+      document.getElementById('attendanceDate').value = new Date().toISOString().split('T')[0];
+      document.getElementById('attendanceClass').value = '';
+      document.getElementById('attendanceSubject').value = '';
+      document.getElementById('studentSearch').value = '';
+      document.getElementById('studentsContainer').innerHTML = '';
+    }
+
+    function loadAttendanceHistory() {
+      const historyContainer = document.getElementById('attendanceHistory');
+      historyContainer.innerHTML = '';
+
+      const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+      const teacherRecords = attendanceRecords.filter(record => record.teacher === loggedInUser.username);
+
+      if (teacherRecords.length === 0) {
+        historyContainer.innerHTML = '<p>Aucun enregistrement de présence trouvé.</p>';
+        return;
+      }
+
+      // Trier par date (du plus récent au plus ancien)
+      const sortedRecords = [...teacherRecords].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      sortedRecords.forEach(record => {
+        const recordElement = document.createElement('div');
+        recordElement.className = 'section';
+        recordElement.style.marginBottom = '15px';
+
+        let presentCount = 0;
+        let absentCount = 0;
+        let lateCount = 0;
+        let presentMale = 0;
+        let presentFemale = 0;
+        let absentMale = 0;
+        let absentFemale = 0;
+        let lateMale = 0;
+        let lateFemale = 0;
+
+        record.students.forEach(student => {
+          if (student.status === 'present') {
+            presentCount++;
+            if (student.gender === 'M') presentMale++;
+            else presentFemale++;
+          } else if (student.status === 'absent') {
+            absentCount++;
+            if (student.gender === 'M') absentMale++;
+            else absentFemale++;
+          } else if (student.status === 'late') {
+            lateCount++;
+            if (student.gender === 'M') lateMale++;
+            else lateFemale++;
+          }
+        });
+
+        recordElement.innerHTML = `
+          <h3>${formatDate(record.date)} - ${getSubjectName(record.subject)} - ${getClassName(record.class)}</h3>
+          <div class="attendance-summary">
+            <h4>Résumé de présence</h4>
+            <p class="summary-item"><strong>Total élèves:</strong> ${record.students.length}</p>
+            <p class="summary-item"><strong>Présents:</strong> ${presentCount} (Garçons: ${presentMale}, Filles: ${presentFemale})</p>
+            <p class="summary-item"><strong>Absents:</strong> ${absentCount} (Garçons: ${absentMale}, Filles: ${absentFemale})</p>
+            <p class="summary-item"><strong>Retards:</strong> ${lateCount} (Garçons: ${lateMale}, Filles: ${lateFemale})</p>
+          </div>
+          <button class="btn btn-sm" onclick="viewAttendanceDetails(${record.id})">Voir détails</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteAttendanceRecord(${record.id})">Supprimer</button>
+        `;
+
+        historyContainer.appendChild(recordElement);
+      });
+    }
+
+    function viewAttendanceDetails(recordId) {
+      const record = attendanceRecords.find(r => r.id === recordId);
+      if (!record) return;
+
+      let detailsHTML = `
+        <h3>Détails de présence - ${formatDate(record.date)}</h3>
+        <p>Matière: ${getSubjectName(record.subject)}</p>
+        <p>Classe: ${getClassName(record.class)}</p>
+        <table>
+          <tr>
+            <th>Élève</th>
+            <th>Sexe</th>
+            <th>Statut</th>
+          </tr>
+      `;
+
+      record.students.forEach(student => {
+        let statusClass = '';
+        if (student.status === 'present') statusClass = 'status-present';
+        else if (student.status === 'absent') statusClass = 'status-absent';
+        else if (student.status === 'late') statusClass = 'status-late';
+
+        detailsHTML += `
+          <tr>
+            <td>${student.name}</td>
+            <td>${student.gender === 'M' ? 'Garçon' : 'Fille'}</td>
+            <td class="${statusClass}">${getStatusName(student.status)}</td>
+          </tr>
+        `;
+      });
+
+      detailsHTML += '</table>';
+
+      showModal(detailsHTML, 'Détails de présence');
+    }
+
+    function deleteAttendanceRecord(recordId) {
+      if (confirm('Êtes-vous sûr de vouloir supprimer cet enregistrement de présence?')) {
+        attendanceRecords = attendanceRecords.filter(r => r.id !== recordId);
+        localStorage.setItem('teacherAttendance', JSON.stringify(attendanceRecords));
+        loadAttendanceHistory();
+      }
+    }
+
+    // Fonctions pour visualiser les entrées
+    function filterEntries() {
+      const classFilter = document.getElementById('filterClass').value;
+      const subjectFilter = document.getElementById('filterSubject').value;
+      const dateFrom = document.getElementById('filterDateFrom').value;
+      const dateTo = document.getElementById('filterDateTo').value;
+
+      const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+      let filteredLessons = lessons.filter(lesson => lesson.teacher === loggedInUser.username);
+
+      if (classFilter) {
+        filteredLessons = filteredLessons.filter(lesson => lesson.class === classFilter);
+      }
+
+      if (subjectFilter) {
+        filteredLessons = filteredLessons.filter(lesson => lesson.subject === subjectFilter);
+      }
+
+      if (dateFrom) {
+        filteredLessons = filteredLessons.filter(lesson => lesson.date >= dateFrom);
+      }
+
+      if (dateTo) {
+        filteredLessons = filteredLessons.filter(lesson => lesson.date <= dateTo);
+      }
+
+      displayLessons(filteredLessons);
+    }
+
+    function displayLessons(lessonsToDisplay) {
+      const lessonsList = document.getElementById('lessonsList');
+      lessonsList.innerHTML = '';
+
+      if (lessonsToDisplay.length === 0) {
+        lessonsList.innerHTML = '<p>Aucune leçon trouvée avec les critères sélectionnés.</p>';
+        return;
+      }
+
+      // Trier par date (du plus récent au plus ancien)
+      const sortedLessons = [...lessonsToDisplay].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      sortedLessons.forEach(lesson => {
+        const lessonElement = document.createElement('div');
+        lessonElement.className = 'section';
+        lessonElement.style.marginBottom = '15px';
+
+        lessonElement.innerHTML = `
+          <h3>${formatDate(lesson.date)} - ${getSubjectName(lesson.subject)} - ${getClassName(lesson.class)}</h3>
+          <h4>${lesson.title}</h4>
+          <p><strong>Contenu du cours:</strong></p>
+          <div class="lesson-content">${lesson.content}</div>
+          ${lesson.homework ? `<p><strong>Devoirs:</strong></p><div class="lesson-content">${lesson.homework}</div>` : ''}
+          ${lesson.dueDate ? `<p><strong>À rendre pour le:</strong> ${formatDate(lesson.dueDate)}</p>` : ''}
+          <button class="btn btn-sm" onclick="editLesson(${lesson.id})">Modifier</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteLesson(${lesson.id})">Supprimer</button>
+        `;
+
+        lessonsList.appendChild(lessonElement);
+      });
+    }
+
+    function editLesson(lessonId) {
+      const lesson = lessons.find(l => l.id === lessonId);
+      if (!lesson) return;
+
+      openTab('lesson');
+
+      document.getElementById('lessonDate').value = lesson.date;
+      document.getElementById('subject').value = lesson.subject;
+      document.getElementById('class').value = lesson.class;
+      document.getElementById('lessonTitle').value = lesson.title;
+      document.getElementById('lessonContent').innerHTML = lesson.content;
+      document.getElementById('homework').innerHTML = lesson.homework;
+      document.getElementById('dueDate').value = lesson.dueDate;
+
+      // Supprimer l'ancienne version
+      lessons = lessons.filter(l => l.id !== lessonId);
+      localStorage.setItem('teacherLessons', JSON.stringify(lessons));
+    }
+
+    function deleteLesson(lessonId) {
+      if (confirm('Êtes-vous sûr de vouloir supprimer cette leçon?')) {
+        lessons = lessons.filter(l => l.id !== lessonId);
+        localStorage.setItem('teacherLessons', JSON.stringify(lessons));
+        filterEntries();
+      }
+    }
+
+    // Fonction pour envoyer via WhatsApp
+    function sendViaWhatsApp() {
+      // Récupérer les données filtrées
+      const classFilter = document.getElementById('filterClass').value;
+      const subjectFilter = document.getElementById('filterSubject').value;
+      const dateFrom = document.getElementById('filterDateFrom').value;
+      const dateTo = document.getElementById('filterDateTo').value;
+
+      const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+      let filteredLessons = lessons.filter(lesson => lesson.teacher === loggedInUser.username);
+
+      if (classFilter) {
+        filteredLessons = filteredLessons.filter(lesson => lesson.class === classFilter);
+      }
+
+      if (subjectFilter) {
+        filteredLessons = filteredLessons.filter(lesson => lesson.subject === subjectFilter);
+      }
+
+      if (dateFrom) {
+        filteredLessons = filteredLessons.filter(lesson => lesson.date >= dateFrom);
+      }
+
+      if (dateTo) {
+        filteredLessons = filteredLessons.filter(lesson => lesson.date <= dateTo);
+      }
+
+      // Formater le message
+      let message = "📚 Résumé des leçons enregistrées:\n\n";
+
+      filteredLessons.forEach(lesson => {
+        message += `📅 ${formatDate(lesson.date)}\n`;
+        message += `🏫 ${getClassName(lesson.class)} - ${getSubjectName(lesson.subject)}\n`;
+        message += `📖 ${lesson.title}\n`;
+
+        // Convertir le HTML en texte brut pour WhatsApp
+        const contentDiv = document.createElement('div');
+        contentDiv.innerHTML = lesson.content;
+        const plainContent = contentDiv.textContent || contentDiv.innerText || '';
+
+        message += `📝 ${plainContent.substring(0, 100)}${plainContent.length > 100 ? '...' : ''}\n`;
+
+        if (lesson.homework) {
+          const homeworkDiv = document.createElement('div');
+          homeworkDiv.innerHTML = lesson.homework;
+          const plainHomework = homeworkDiv.textContent || homeworkDiv.innerText || '';
+
+          message += `📌 Devoirs: ${plainHomework.substring(0, 100)}${plainHomework.length > 100 ? '...' : ''}\n`;
+        }
+        if (lesson.dueDate) {
+          message += `⏰ À rendre pour le: ${formatDate(lesson.dueDate)}\n`;
+        }
+        message += "\n――――――――――\n\n";
+      });
+
+      // Encoder le message pour l'URL
+      const encodedMessage = encodeURIComponent(message);
+
+      // Numéro WhatsApp (92871605)
+      const phoneNumber = "92871605";
+
+      // Créer le lien WhatsApp
+      const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+
+      // Ouvrir dans un nouvel onglet
+      window.open(whatsappUrl, '_blank');
+    }
+
+    // Fonctions utilitaires
+    function formatDate(dateString) {
+      if (!dateString) return '';
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      return new Date(dateString).toLocaleDateString('fr-FR', options);
+    }
+
+    function getSubjectName(subjectCode) {
+      const subjects = {
+        'math': 'Mathématiques',
+        'french': 'Français',
+        'history': 'Histoire-Géographie',
+        'science': 'Sciences',
+        'english': 'Anglais',
+        'art': 'Arts Plastiques',
+        'pe': 'Éducation Physique',
+        'other': 'Autre'
+      };
+      return subjects[subjectCode] || subjectCode;
+    }
+
+    function getClassName(classCode) {
+      const classes = {
+        '6eme': '6ème',
+        '5eme': '5ème',
+        '4eme': '4ème',
+        '3eme': '3ème',
+        '2nde': 'Seconde',
+        '1ere': 'Première',
+        'terminale': 'Terminale'
+      };
+      return classes[classCode] || classCode;
+    }
+
+    function getStatusName(statusCode) {
+      const statuses = {
+        'present': 'Présent(e)',
+        'absent': 'Absent(e)',
+        'late': 'En retard'
+      };
+      return statuses[statusCode] || statusCode;
+    }
+
+    function alert(message, title = 'Information') {
+      showModal(message, title);
+    }
+
+    function showModal(content, title = 'Information') {
+      const modal = document.getElementById('previewModal');
+      const modalContent = document.getElementById('modalContent');
+      
+      modalContent.innerHTML = `
+        <h2>${title}</h2>
+        <div>${content}</div>
+        <button class="btn" style="margin-top: 15px;" onclick="closeModal()">Fermer</button>
+      `;
+      
+      modal.style.display = 'block';
+    }
+
+    function closeModal() {
+      document.getElementById('previewModal').style.display = 'none';
+    }
+
+    // Fermer la modal en cliquant en dehors
+    window.onclick = function(event) {
+      const modal = document.getElementById('previewModal');
+      if (event.target == modal) {
+        closeModal();
+      }
+    };
+
+    // Fonctions pour la saisie intelligente
+    function initAutocomplete() {
+      // Configuration de l'autocomplétion pour le titre de leçon
+      const lessonTitleInput = document.getElementById('lessonTitle');
+      lessonTitleInput.addEventListener('input', function() {
+        const subject = document.getElementById('subject').value;
+        showTitleSuggestions(this.value, subject);
+      });
+
+      // Configuration de l'autocomplétion pour le contenu de leçon
+      const lessonContentInput = document.getElementById('lessonContent');
+      lessonContentInput.addEventListener('input', function() {
+        showContentSuggestions(this.textContent);
+      });
+
+      // Configuration de l'autocomplétion pour les devoirs
+      const homeworkInput = document.getElementById('homework');
+      homeworkInput.addEventListener('input', function() {
+        showHomeworkSuggestions(this.textContent);
+      });
+
+      // Ajouter les écouteurs pour les changements de matière
+      document.getElementById('subject').addEventListener('change', function() {
+        const title = document.getElementById('lessonTitle').value;
+        if (title) {
+          showTitleSuggestions(title, this.value);
+        }
+      });
+    }
+
+    function showTitleSuggestions(input, subject) {
+      const suggestionsContainer = document.getElementById('titleSuggestions');
+      suggestionsContainer.innerHTML = '';
+
+      if (!input && !subject) return;
+
+      let suggestions = [];
+
+      // Si une matière est sélectionnée, proposer des suggestions contextuelles
+      if (subject && subject !== 'other') {
+        const subjectKeywords = smartSuggestions.subjects[subject] || [];
+        suggestions = smartSuggestions.lessonTitles.map(title => {
+          return title + ' ' + (subjectKeywords[0] || 'cette matière');
+        });
+      } else {
+        suggestions = [...smartSuggestions.lessonTitles];
+      }
+
+      // Filtrer les suggestions en fonction de la saisie
+      if (input) {
+        const inputLower = input.toLowerCase();
+        suggestions = suggestions.filter(suggestion => 
+          suggestion.toLowerCase().includes(inputLower)
+        );
+      }
+
+      // Afficher les suggestions (limité à 5)
+      suggestions.slice(0, 5).forEach(suggestion => {
+        const chip = document.createElement('span');
+        chip.className = 'suggestion-chip';
+        chip.textContent = suggestion;
+        chip.addEventListener('click', function() {
+          document.getElementById('lessonTitle').value = suggestion;
+          suggestionsContainer.innerHTML = '';
+        });
+        suggestionsContainer.appendChild(chip);
+      });
+    }
+
+    function showContentSuggestions(input) {
+      const suggestionsContainer = document.getElementById('contentSuggestions');
+      suggestionsContainer.innerHTML = '';
+
+      if (!input) return;
+
+      // Filtrer les suggestions en fonction de la saisie
+      const inputLower = input.toLowerCase();
+      const suggestions = smartSuggestions.lessonContents.filter(suggestion => 
+        suggestion.toLowerCase().includes(inputLower)
+      );
+
+      // Afficher les suggestions (limité à 5)
+      suggestions.slice(0, 5).forEach(suggestion => {
+        const chip = document.createElement('span');
+        chip.className = 'suggestion-chip';
+        chip.textContent = suggestion;
+        chip.addEventListener('click', function() {
+          const contentInput = document.getElementById('lessonContent');
+          formatText('insertText', suggestion, 'lessonContent');
+          suggestionsContainer.innerHTML = '';
+        });
+        suggestionsContainer.appendChild(chip);
+      });
+    }
+
+    function showHomeworkSuggestions(input) {
+      const suggestionsContainer = document.getElementById('homeworkSuggestions');
+      suggestionsContainer.innerHTML = '';
+
+      if (!input) return;
+
+      // Filtrer les suggestions en fonction de la saisie
+      const inputLower = input.toLowerCase();
+      const suggestions = smartSuggestions.homework.filter(suggestion => 
+        suggestion.toLowerCase().includes(inputLower)
+      );
+
+      // Afficher les suggestions (limité à 5)
+      suggestions.slice(0, 5).forEach(suggestion => {
+        const chip = document.createElement('span');
+        chip.className = 'suggestion-chip';
+        chip.textContent = suggestion;
+        chip.addEventListener('click', function() {
+          const homeworkInput = document.getElementById('homework');
+          formatText('insertText', suggestion, 'homework');
+          suggestionsContainer.innerHTML = '';
+        });
+        suggestionsContainer.appendChild(chip);
+      });
+    }
+
+    // Fonctions pour l'éditeur de texte enrichi
+    function formatText(command, value = null, targetId) {
+      const target = document.getElementById(targetId);
+      target.focus();
+      document.execCommand(command, false, value);
+    }
+
+    function applyColor(command, color, targetId) {
+      const target = document.getElementById(targetId);
+      target.focus();
+      document.execCommand(command, false, color);
+    }
+  </script>
+</body>
+</html>

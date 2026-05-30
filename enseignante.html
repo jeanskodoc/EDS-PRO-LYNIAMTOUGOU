@@ -1,0 +1,3255 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Système de Gestion des Évaluations - Lycée Niamtougou</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --info-color: #17a2b8;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --border-color: #bdc3c7;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding: 20px;
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-retour {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background-color: var(--light-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .btn-retour:hover {
+            background-color: #e9ecef;
+        }
+
+        .refresh-button {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            text-align: center;
+            font-size: 24px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: var(--transition);
+            z-index: 1000;
+        }
+        
+        .refresh-button:hover {
+            background-color: var(--secondary-color);
+            transform: rotate(360deg);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .school-info {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .school-info::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="white" opacity="0.1"/><circle cx="80" cy="40" r="1.5" fill="white" opacity="0.1"/><circle cx="60" cy="80" r="1" fill="white" opacity="0.1"/><circle cx="40" cy="60" r="1.2" fill="white" opacity="0.1"/></svg>');
+        }
+
+        .school-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #fff, #f0f8ff);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .school-logo-text {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 2;
+        }
+
+        .school-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        .school-subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 300;
+            position: relative;
+            z-index: 2;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 15px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .auth-section {
+            display: block;
+        }
+
+        .auth-section.hidden {
+            display: none;
+        }
+
+        .login-form {
+            padding: 40px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #219653;
+        }
+
+        .btn-warning {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background-color: #e67e22;
+        }
+
+        .btn-danger {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+
+        .btn-info {
+            background-color: var(--info-color);
+            color: white;
+        }
+
+        .btn-info:hover {
+            background-color: #138496;
+        }
+
+        .btn-secondary {
+            background-color: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #7f8c8d;
+        }
+
+        .btn-sm {
+            padding: 8px 15px;
+            font-size: 14px;
+        }
+
+        .error-message {
+            background: var(--accent-color);
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .success-message {
+            background: var(--success-color);
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .info-message {
+            background: var(--info-color);
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .teacher-info {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .teacher-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .teacher-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .detail-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+        }
+
+        .detail-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--dark-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 25px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 2px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .students-table {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+
+        .table-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 15px 20px;
+            display: grid;
+            grid-template-columns: 1fr 100px 150px 150px 150px 150px 80px;
+            gap: 15px;
+            font-weight: 600;
+            align-items: center;
+        }
+
+        .student-row {
+            padding: 15px 20px;
+            display: grid;
+            grid-template-columns: 1fr 100px 150px 150px 150px 150px 80px;
+            gap: 15px;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.3s ease;
+        }
+
+        .student-row:hover {
+            background: #f8f9ff;
+        }
+
+        .student-row:last-child {
+            border-bottom: none;
+        }
+
+        .grade-input, .comment-input, .parent-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .grade-input:focus, .comment-input:focus, .parent-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+
+        .stats {
+            background: linear-gradient(135deg, #ffecd2, #fcb69f);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #8b4513;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .logout-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 107, 107, 0.9);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .logout-btn:hover {
+            background: rgba(220, 53, 69, 0.9);
+            transform: translateY(-2px);
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .evaluation-filter {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .filter-controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        
+        .evaluations-list {
+            margin-top: 20px;
+        }
+        
+        .evaluation-item {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .evaluation-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .evaluation-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: var(--primary-color);
+        }
+        
+        .evaluation-date {
+            color: #718096;
+            font-size: 0.9rem;
+        }
+        
+        .evaluation-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .evaluation-stats {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .no-evaluations {
+            text-align: center;
+            padding: 20px;
+            color: #718096;
+            font-style: italic;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .admin-panel {
+            padding: 40px;
+        }
+
+        .teacher-list {
+            background: #f8f9ff;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .teacher-item {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .teacher-info-panel {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .credentials {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            background: #f0f8ff;
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+        }
+
+        .add-teacher-form {
+            background: #f0f8ff;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .database-actions {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9ff;
+            border-radius: 15px;
+        }
+
+        .date-range-picker {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #adb5bd;
+        }
+
+        /* Analytics Dashboard */
+        .analytics-dashboard {
+            background: linear-gradient(135deg, #f8f9ff, #e8f4ff);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .analytics-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .analytics-title {
+            font-size: 1.2rem;
+            color: var(--dark-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chart-container {
+            height: 250px;
+            position: relative;
+            margin-top: 15px;
+        }
+
+        .distribution-bar {
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin: 10px 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .distribution-fill {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            transition: width 1s ease;
+        }
+
+        .distribution-label {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .whatsapp-config {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .config-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #25D366;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+        }
+
+        .whatsapp-preview {
+            background: white;
+            color: #333;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .whatsapp-status {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .table-header, .student-row {
+                grid-template-columns: 1fr 100px 150px 150px 120px 120px 80px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .table-header, .student-row {
+                grid-template-columns: 1fr 80px 120px 120px 100px 100px 70px;
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                margin: 0;
+                border-radius: 15px;
+            }
+
+            .school-info {
+                padding: 20px 15px;
+            }
+
+            .card-body {
+                padding: 15px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .table-header {
+                display: none;
+            }
+
+            .student-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+                padding: 15px;
+                border: 1px solid var(--border-color);
+                border-radius: 10px;
+                margin-bottom: 15px;
+                background: white;
+                position: relative;
+                display: block !important;
+            }
+
+            .student-row input, .student-row select, .student-row textarea {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .button-group {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .teacher-item {
+                grid-template-columns: 1fr;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-controls {
+                flex-direction: column;
+            }
+
+            .date-range-picker {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .school-name {
+                font-size: 1.4rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .card-header {
+                padding: 12px 15px;
+                font-size: 1.1rem;
+            }
+
+            .logout-btn {
+                top: 10px;
+                right: 10px;
+                padding: 8px 15px;
+                font-size: 14px;
+            }
+        }
+
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            
+            body {
+                background: white !important;
+            }
+            
+            .container {
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                background: white !important;
+            }
+            
+            .form-section {
+                page-break-inside: avoid;
+            }
+            
+            .student-row {
+                border: 1px solid #ddd !important;
+            }
+        }
+
+        /* Animation pour le chargement */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading {
+            animation: spin 1s linear infinite;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: var(--dark-color);
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+
+        .badge-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .badge-warning {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .badge-danger {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .badge-info {
+            background-color: var(--info-color);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Bouton Actualiser -->
+    <button onclick="window.location.reload()" class="refresh-button" aria-label="Actualiser la page">
+        <i class="fas fa-sync-alt"></i>
+    </button>
+
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-chalkboard-teacher"></i> Système de Gestion des Évaluations</h1>
+            <button class="btn-retour" onclick="history.back()">
+                <i class="fas fa-arrow-left"></i> Retour
+            </button>
+        </div>
+
+        <div class="school-info">
+            <div class="school-logo">
+                <div class="school-logo-text">LN</div>
+            </div>
+            <div class="school-name">Lycée Niamtougou</div>
+            <div class="school-subtitle">République Togolaise</div>
+        </div>
+
+        <!-- Section de connexion -->
+        <div id="login-section" class="auth-section">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-sign-in-alt"></i> Connexion Enseignant
+                </div>
+                <div class="card-body">
+                    <div class="login-form">
+                        <div id="error-message" class="error-message" style="display: none;"></div>
+                        <div id="success-message" class="success-message" style="display: none;"></div>
+                        
+                        <form id="loginForm">
+                            <div class="form-group">
+                                <label for="username"><i class="fas fa-user"></i> Identifiant :</label>
+                                <input type="text" id="username" name="username" required placeholder="Ex: mathematiques_6eme">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="password"><i class="fas fa-lock"></i> Mot de passe :</label>
+                                <input type="password" id="password" name="password" required placeholder="Entrez votre mot de passe">
+                            </div>
+                            
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-door-open"></i> Se connecter
+                            </button>
+                        </form>
+                        
+                        <div class="button-group">
+                            <button type="button" class="btn-warning" onclick="showAdminPanel()">
+                                <i class="fas fa-cogs"></i> Panneau Administrateur
+                            </button>
+                            <button type="button" class="btn-info" onclick="showAnalyticsPanel()">
+                                <i class="fas fa-chart-bar"></i> Tableau de Bord Analytics
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section Analytics -->
+        <div id="analytics-section" class="auth-section hidden">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-bar"></i> Tableau de Bord Analytics
+                </div>
+                <div class="card-body">
+                    <div class="analytics-dashboard">
+                        <h2><i class="fas fa-chart-line"></i> Analyses Statistiques</h2>
+                        <div id="analytics-content">
+                            <!-- Le contenu analytics sera généré dynamiquement -->
+                        </div>
+                        <div class="button-group">
+                            <button type="button" class="btn-secondary" onclick="showLoginSection()">
+                                <i class="fas fa-arrow-left"></i> Retour à la connexion
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section panneau administrateur -->
+        <div id="admin-section" class="auth-section hidden">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-user-shield"></i> Panneau Administrateur
+                </div>
+                <div class="card-body">
+                    <div class="admin-panel">
+                        <!-- Formulaire d'ajout d'enseignant -->
+                        <div class="add-teacher-form">
+                            <h3><i class="fas fa-user-plus"></i> Ajouter un enseignant</h3>
+                            <form id="addTeacherForm">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Nom de l'enseignant :</label>
+                                        <input type="text" id="teacherName" required placeholder="Ex: KOLA Jean">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Matière enseignée :</label>
+                                        <select id="teacherSubject" required>
+                                            <option value="">Sélectionner une matière</option>
+                                            <option value="mathematiques">Mathématiques</option>
+                                            <option value="francais">Français</option>
+                                            <option value="physique-chimie">Physique-Chimie</option>
+                                            <option value="svt">Sciences de la Vie et de la Terre</option>
+                                            <option value="histoire-geographie">Histoire-Géographie</option>
+                                            <option value="anglais">Anglais</option>
+                                            <option value="allemand">Allemand</option>
+                                            <option value="espagnol">Espagnol</option>
+                                            <option value="philosophie">Philosophie</option>
+                                            <option value="litterature">Littérature</option>
+                                            <option value="ecm">Éducation Civique et Morale</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Classe enseignée :</label>
+                                        <select id="teacherClass" required>
+                                            <option value="">Sélectionner une classe</option>
+                                            <option value="6eme">6ème</option>
+                                            <option value="5eme">5ème</option>
+                                            <option value="4eme">4ème</option>
+                                            <option value="3eme">3ème</option>
+                                            <option value="seconde-l">Seconde L</option>
+                                            <option value="seconde-cd">Seconde CD</option>
+                                            <option value="premiere-a4">Première A4</option>
+                                            <option value="premiere-a5">Première A5</option>
+                                            <option value="premiere-c4">Première C4</option>
+                                            <option value="premiere-d">Première D</option>
+                                            <option value="terminale-a4">Terminale A4</option>
+                                            <option value="terminale-a5">Terminale A5</option>
+                                            <option value="terminale-c4">Terminale C4</option>
+                                            <option value="terminale-d">Terminale D</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn-success">
+                                    <i class="fas fa-plus"></i> Ajouter l'enseignant
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <!-- Liste des enseignants -->
+                        <div class="teacher-list">
+                            <h3><i class="fas fa-list"></i> Liste des enseignants</h3>
+                            <div id="teachersList"></div>
+                        </div>
+
+                        <!-- Gestion de la base de données -->
+                        <div class="database-actions">
+                            <h3><i class="fas fa-database"></i> Gestion de la base de données</h3>
+                            <div class="date-range-picker">
+                                <label for="startDate">Date de début :</label>
+                                <input type="date" id="startDate">
+                                <label for="endDate">Date de fin :</label>
+                                <input type="date" id="endDate">
+                            </div>
+                            <div class="button-group">
+                                <button type="button" class="btn-primary" onclick="exportDatabase()">
+                                    <i class="fas fa-save"></i> Sauvegarder la base
+                                </button>
+                                <button type="button" class="btn-primary" onclick="importDatabase()">
+                                    <i class="fas fa-upload"></i> Importer une sauvegarde
+                                </button>
+                                <button type="button" class="btn-danger" onclick="deleteDataByDate()">
+                                    <i class="fas fa-trash"></i> Supprimer par date
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="button-group">
+                            <button type="button" class="btn-secondary" onclick="showLoginSection()">
+                                <i class="fas fa-arrow-left"></i> Retour à la connexion
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section principale après connexion -->
+        <div id="main-content" class="auth-section hidden">
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Déconnexion
+            </button>
+            
+            <div class="card">
+                <div class="card-body">
+                    <!-- Informations de l'enseignant -->
+                    <div class="teacher-info">
+                        <div class="teacher-header">
+                            <h2 id="teacher-name-display">Nom de l'enseignant</h2>
+                            <div>
+                                <button id="print-btn" class="btn-primary btn-sm no-print" onclick="printEvaluation()">
+                                    <i class="fas fa-print"></i> Imprimer
+                                </button>
+                                <button id="view-evaluations-btn" class="btn-primary btn-sm no-print" onclick="toggleEvaluationsView()">
+                                    <i class="fas fa-list"></i> Évaluations
+                                </button>
+                                <button id="view-analytics-btn" class="btn-info btn-sm no-print" onclick="showTeacherAnalytics()">
+                                    <i class="fas fa-chart-bar"></i> Analytics
+                                </button>
+                            </div>
+                        </div>
+                        <div class="teacher-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Matière</div>
+                                <div class="detail-value" id="teacher-subject-display">-</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Classe principale</div>
+                                <div class="detail-value" id="teacher-class-display">-</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Évaluations enregistrées</div>
+                                <div class="detail-value" id="total-evaluations">0</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Dernière évaluation</div>
+                                <div class="detail-value" id="last-evaluation">-</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Configuration WhatsApp -->
+                    <div class="whatsapp-config no-print">
+                        <div class="config-toggle">
+                            <div>
+                                <h4><i class="fab fa-whatsapp"></i> Envoi automatique WhatsApp</h4>
+                                <p>Envoyer automatiquement les notes aux parents après enregistrement</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="whatsapp-auto-send" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="whatsapp-preview" id="whatsapp-preview">
+                            <strong>Prévisualisation du message WhatsApp :</strong><br>
+                            <div id="whatsapp-message-preview">Le message sera généré ici...</div>
+                        </div>
+                        <div class="whatsapp-status">
+                            <span id="whatsapp-status">Prêt à envoyer les notes aux parents</span>
+                        </div>
+                    </div>
+
+                    <!-- Filtre et liste des évaluations -->
+                    <div id="evaluations-view" class="hidden">
+                        <div class="evaluation-filter">
+                            <h3><i class="fas fa-filter"></i> Filtre des évaluations</h3>
+                            <div class="filter-controls">
+                                <select id="filter-class">
+                                    <option value="">Toutes les classes</option>
+                                    <option value="6eme">6ème</option>
+                                    <option value="5eme">5ème</option>
+                                    <option value="4eme">4ème</option>
+                                    <option value="3eme">3ème</option>
+                                    <option value="seconde-l">Seconde L</option>
+                                    <option value="seconde-cd">Seconde CD</option>
+                                    <option value="premiere-a4">Première A4</option>
+                                    <option value="premiere-a5">Première A5</option>
+                                    <option value="premiere-c4">Première C4</option>
+                                    <option value="premiere-d">Première D</option>
+                                    <option value="terminale-a4">Terminale A4</option>
+                                    <option value="terminale-a5">Terminale A5</option>
+                                    <option value="terminale-c4">Terminale C4</option>
+                                    <option value="terminale-d">Terminale D</option>
+                                </select>
+                                <select id="filter-type">
+                                    <option value="">Tous les types</option>
+                                    <option value="controle">Contrôle écrit</option>
+                                    <option value="interrogation">Interrogation orale</option>
+                                    <option value="devoir">Devoir maison</option>
+                                    <option value="tp">Travaux pratiques</option>
+                                    <option value="expose">Exposé</option>
+                                </select>
+                                <input type="date" id="filter-start-date" placeholder="Date de début">
+                                <input type="date" id="filter-end-date" placeholder="Date de fin">
+                                <button class="btn-primary btn-sm" onclick="applyEvaluationFilter()">
+                                    <i class="fas fa-filter"></i> Filtrer
+                                </button>
+                                <button class="btn-secondary btn-sm" onclick="resetEvaluationFilter()">
+                                    <i class="fas fa-undo"></i> Réinitialiser
+                                </button>
+                            </div>
+                            <div id="evaluations-list" class="evaluations-list">
+                                <!-- Les évaluations seront affichées ici -->
+                            </div>
+                        </div>
+                        <div class="button-group">
+                            <button class="btn-secondary" onclick="toggleEvaluationsView()">
+                                <i class="fas fa-arrow-left"></i> Retour au formulaire
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Analytics de l'enseignant -->
+                    <div id="teacher-analytics-view" class="hidden">
+                        <div class="analytics-dashboard">
+                            <h2><i class="fas fa-chart-line"></i> Analytics - Performance des Élèves</h2>
+                            <div id="teacher-analytics-content">
+                                <!-- Le contenu analytics de l'enseignant sera généré dynamiquement -->
+                            </div>
+                            <div class="button-group">
+                                <button class="btn-secondary" onclick="hideTeacherAnalytics()">
+                                    <i class="fas fa-arrow-left"></i> Retour au formulaire
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Formulaire d'évaluation -->
+                    <div id="evaluation-form-view">
+                        <div class="evaluation-form">
+                            <form id="gradeForm">
+                                <!-- Informations générales -->
+                                <div class="form-section">
+                                    <h2 class="section-title">
+                                        <i class="fas fa-info-circle"></i> Informations de l'évaluation
+                                    </h2>
+                                    <div class="form-grid">
+                                        <div class="form-group">
+                                            <label for="teacher">Nom de l'enseignant :</label>
+                                            <input type="text" id="teacher" name="teacher" required readonly>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="cycle">Cycle :</label>
+                                            <select id="cycle" name="cycle" required onchange="updateClasses()">
+                                                <option value="">Sélectionner un cycle</option>
+                                                <option value="college">Collège</option>
+                                                <option value="lycee">Lycée</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="class">Classe :</label>
+                                            <select id="class" name="class" required onchange="updateWhatsAppPreview()">
+                                                <option value="">Sélectionner d'abord un cycle</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="subject">Matière :</label>
+                                            <select id="subject" name="subject" required readonly>
+                                                <option value="">Matière automatiquement définie</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="evaluation-date">Date de l'évaluation :</label>
+                                            <input type="date" id="evaluation-date" name="evaluation-date" required onchange="updateWhatsAppPreview()">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="evaluation-type">Type d'évaluation :</label>
+                                            <select id="evaluation-type" name="evaluation-type" required onchange="updateWhatsAppPreview()">
+                                                <option value="">Type d'évaluation</option>
+                                                <option value="controle">Contrôle écrit</option>
+                                                <option value="interrogation">Interrogation orale</option>
+                                                <option value="devoir">Devoir maison</option>
+                                                <option value="tp">Travaux pratiques</option>
+                                                <option value="expose">Exposé</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="max-grade">Note maximale :</label>
+                                            <select id="max-grade" name="max-grade" required onchange="updateWhatsAppPreview()">
+                                                <option value="20">Sur 20</option>
+                                                <option value="10">Sur 10</option>
+                                                <option value="5">Sur 5</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="evaluation-title">Titre de l'évaluation :</label>
+                                        <input type="text" id="evaluation-title" name="evaluation-title" placeholder="Ex: Contrôle sur les fractions" required onchange="updateWhatsAppPreview()">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="comments">Commentaires généraux :</label>
+                                        <textarea id="comments" name="comments" rows="3" placeholder="Observations sur l'évaluation..." onchange="updateWhatsAppPreview()"></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- Liste des élèves et notes -->
+                                <div class="form-section">
+                                    <h2 class="section-title">
+                                        <i class="fas fa-users"></i> Notes des élèves
+                                    </h2>
+                                    <div class="button-group no-print">
+                                        <button type="button" class="btn-success btn-sm" onclick="addStudent()">
+                                            <i class="fas fa-plus"></i> Ajouter un élève
+                                        </button>
+                                        <button type="button" class="btn-info btn-sm" onclick="importParentContacts()">
+                                            <i class="fas fa-upload"></i> Importer contacts parents
+                                        </button>
+                                        <button type="button" class="btn-warning btn-sm" onclick="sendTestWhatsApp()">
+                                            <i class="fab fa-whatsapp"></i> Test WhatsApp
+                                        </button>
+                                    </div>
+                                    <div class="students-table">
+                                        <div class="table-header">
+                                            <div>Nom et Prénom de l'élève</div>
+                                            <div>Note obtenue</div>
+                                            <div>Appréciation</div>
+                                            <div>Nom du parent</div>
+                                            <div>Téléphone parent</div>
+                                            <div>Commentaire</div>
+                                            <div class="no-print">Action</div>
+                                        </div>
+                                        <div id="students-list">
+                                            <!-- Les lignes d'élèves seront ajoutées ici dynamiquement -->
+                                        </div>
+                                    </div>
+
+                                    <!-- Statistiques en temps réel -->
+                                    <div class="stats">
+                                        <h3><i class="fas fa-chart-bar"></i> Statistiques de la classe</h3>
+                                        <div class="stats-grid">
+                                            <div class="stat-item">
+                                                <div class="stat-value" id="total-students">0</div>
+                                                <div class="stat-label">Élèves</div>
+                                            </div>
+                                            <div class="stat-item">
+                                                <div class="stat-value" id="average-grade">-</div>
+                                                <div class="stat-label">Moyenne</div>
+                                            </div>
+                                            <div class="stat-item">
+                                                <div class="stat-value" id="highest-grade">-</div>
+                                                <div class="stat-label">Note max</div>
+                                            </div>
+                                            <div class="stat-item">
+                                                <div class="stat-value" id="lowest-grade">-</div>
+                                                <div class="stat-label">Note min</div>
+                                            </div>
+                                            <div class="stat-item">
+                                                <div class="stat-value" id="whatsapp-ready">0</div>
+                                                <div class="stat-label">Parents contactés</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="submit-section">
+                                    <div class="button-group no-print">
+                                        <button type="button" class="btn-warning" id="syncButton" onclick="syncData()">
+                                            <i class="fas fa-sync"></i> Synchroniser
+                                        </button>
+                                        <button type="button" class="btn-success" onclick="sendAllWhatsApp()">
+                                            <i class="fab fa-whatsapp"></i> Envoyer à tous
+                                        </button>
+                                        <button type="button" class="btn-primary" onclick="saveCurrentEvaluation()">
+                                            <i class="fas fa-save"></i> Sauvegarder
+                                        </button>
+                                        <button type="submit" class="btn-primary">
+                                            <i class="fas fa-paper-plane"></i> Enregistrer & Envoyer
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Base de données des élèves par classe avec contacts parents
+        const studentsDatabase = {
+            "6eme": [
+                { 
+                    id: 1, 
+                    name: "ADJOVI Kossi",
+                    parentName: "ADJOVI Komi",
+                    parentPhone: "+22890123456"
+                },
+                { 
+                    id: 2, 
+                    name: "AGBANOU Akouvi",
+                    parentName: "AGBANOU Yao",
+                    parentPhone: "+22890123457"
+                },
+                { 
+                    id: 3, 
+                    name: "AKAKPO Yao",
+                    parentName: "AKAKPO Koffi",
+                    parentPhone: "+22890123458"
+                },
+                { 
+                    id: 4, 
+                    name: "AMEGANVI Koffi",
+                    parentName: "AMEGANVI Essowè",
+                    parentPhone: "+22890123459"
+                },
+                { 
+                    id: 5, 
+                    name: "ATCHO Komie",
+                    parentName: "ATCHO Mawuli",
+                    parentPhone: "+22890123460"
+                }
+            ],
+            "5eme": [],
+            "4eme": [],
+            "3eme": [],
+            "seconde-l": [
+                { 
+                    id: 1, 
+                    name: "KOMBATE Kossi",
+                    parentName: "KOMBATE Mawunyo",
+                    parentPhone: "+22890123461"
+                },
+                { 
+                    id: 2, 
+                    name: "KONOU Kafui",
+                    parentName: "KONOU Dossou",
+                    parentPhone: "+22890123462"
+                },
+                { 
+                    id: 3, 
+                    name: "KOSSI Mawuko",
+                    parentName: "KOSSI Mensah",
+                    parentPhone: "+22890123463"
+                },
+                { 
+                    id: 4, 
+                    name: "KOUVAHEY Kossi",
+                    parentName: "KOUVAHEY Koffi",
+                    parentPhone: "+22890123464"
+                },
+                { 
+                    id: 5, 
+                    name: "LOKOSSOU Kossivi",
+                    parentName: "LOKOSSOU Yao",
+                    parentPhone: "+22890123465"
+                }
+            ],
+            "seconde-cd": [],
+            "premiere-a4": [],
+            "premiere-a5": [],
+            "premiere-c4": [],
+            "premiere-d": [],
+            "terminale-a4": [],
+            "terminale-a5": [],
+            "terminale-c4": [],
+            "terminale-d": []
+        };
+
+        // Enseignants pré-enregistrés
+        let teachers = [
+            {
+                id: 1,
+                name: "KOLA M.Essohouna",
+                subject: "mathematiques",
+                class: "6eme",
+                username: "math_6eme",
+                password: "math123",
+                evaluations: [],
+                whatsappEnabled: true
+            }
+        ];
+
+        // Configuration WhatsApp
+        const whatsappConfig = {
+            enabled: true,
+            autoSend: true,
+            messageTemplate: `*Lycée Niamtougou - Résultat d'évaluation*
+
+👨‍🏫 Enseignant: {teacher}
+📚 Matière: {subject}
+👥 Classe: {class}
+📝 Évaluation: {title}
+📅 Date: {date}
+📊 Note: {grade}/{maxGrade}
+🎯 Appréciation: {appreciation}
+
+💬 Commentaire: {comment}
+
+📈 Statistiques classe:
+• Moyenne: {average}
+• Note max: {maxNote}
+• Note min: {minNote}
+
+🏫 *Lycée Niamtougou - Excellence et Discipline*`,
+            countryCode: '+228'
+        };
+
+        // Charger les enseignants depuis le localStorage si disponibles
+        function loadTeachersFromStorage() {
+            const savedTeachers = localStorage.getItem('teachers');
+            const savedConfig = localStorage.getItem('whatsappConfig');
+            const savedStudents = localStorage.getItem('studentsDatabase');
+            
+            if (savedTeachers) {
+                teachers = JSON.parse(savedTeachers);
+            }
+            if (savedConfig) {
+                Object.assign(whatsappConfig, JSON.parse(savedConfig));
+            }
+            if (savedStudents) {
+                Object.assign(studentsDatabase, JSON.parse(savedStudents));
+            }
+        }
+
+        // Sauvegarder les enseignants dans le localStorage
+        function saveTeachersToStorage() {
+            localStorage.setItem('teachers', JSON.stringify(teachers));
+            localStorage.setItem('whatsappConfig', JSON.stringify(whatsappConfig));
+            localStorage.setItem('studentsDatabase', JSON.stringify(studentsDatabase));
+        }
+
+        // Fonction pour vérifier les identifiants
+        function checkCredentials(username, password) {
+            return teachers.find(teacher => 
+                teacher.username === username && teacher.password === password
+            );
+        }
+
+        // Fonction pour exporter la base de données
+        function exportDatabase() {
+            const data = {
+                teachers: teachers,
+                students: studentsDatabase,
+                config: whatsappConfig,
+                exportedAt: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `lycee_niamtougou_backup_${new Date().toISOString().slice(0,10)}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showMessage('success', 'Base de données exportée avec succès');
+        }
+
+        // Fonction pour importer une sauvegarde
+        function importDatabase() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = e => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = event => {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        
+                        if (data.teachers && data.students) {
+                            teachers = data.teachers;
+                            Object.assign(studentsDatabase, data.students);
+                            if (data.config) {
+                                Object.assign(whatsappConfig, data.config);
+                            }
+                            saveTeachersToStorage();
+                            renderTeachersList();
+                            showMessage('success', 'Base de données importée avec succès');
+                        } else {
+                            showMessage('error', 'Format de fichier invalide');
+                        }
+                    } catch (error) {
+                        showMessage('error', 'Erreur lors de la lecture du fichier');
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+
+        // Fonction pour supprimer les données par date
+        function deleteDataByDate() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            
+            if (!startDate || !endDate) {
+                showMessage('error', 'Veuillez sélectionner une plage de dates');
+                return;
+            }
+            
+            if (confirm(`Êtes-vous sûr de vouloir supprimer toutes les évaluations entre ${startDate} et ${endDate} ?`)) {
+                let deletedCount = 0;
+                
+                teachers.forEach(teacher => {
+                    teacher.evaluations = teacher.evaluations.filter(eval => {
+                        const evalDate = new Date(eval.date).toISOString().slice(0, 10);
+                        if (evalDate >= startDate && evalDate <= endDate) {
+                            deletedCount++;
+                            return false;
+                        }
+                        return true;
+                    });
+                });
+                
+                saveTeachersToStorage();
+                showMessage('success', `${deletedCount} évaluations supprimées entre ${startDate} et ${endDate}`);
+            }
+        }
+
+        // Fonction pour sauvegarder l'évaluation en cours
+        function saveCurrentEvaluation() {
+            const evaluationData = collectEvaluationData();
+            
+            if (!evaluationData) return;
+            
+            // Trouver l'enseignant connecté
+            const teacher = teachers.find(t => t.name === evaluationData.teacher);
+            if (!teacher) return;
+            
+            // Ajouter l'évaluation à l'enseignant
+            teacher.evaluations.push(evaluationData);
+            
+            // Sauvegarder dans le localStorage
+            saveTeachersToStorage();
+            
+            // Mettre à jour le nombre d'évaluations
+            document.getElementById('total-evaluations').textContent = teacher.evaluations.length;
+            document.getElementById('last-evaluation').textContent = formatDate(evaluationData.date);
+            
+            // Afficher un message de confirmation
+            showMessage('success', 'Évaluation sauvegardée avec succès');
+            
+            // Envoyer par WhatsApp si activé
+            if (whatsappConfig.autoSend && document.getElementById('whatsapp-auto-send').checked) {
+                sendWhatsAppToParents(evaluationData);
+            }
+        }
+
+        // Fonction pour collecter les données du formulaire
+        function collectEvaluationData() {
+            // Validation des champs obligatoires
+            if (!document.getElementById('evaluation-date').value || 
+                !document.getElementById('evaluation-title').value) {
+                showMessage('error', 'Veuillez remplir tous les champs obligatoires');
+                return null;
+            }
+            
+            // Récupérer les données du formulaire
+            const evaluationData = {
+                teacher: document.getElementById('teacher').value,
+                cycle: document.getElementById('cycle').value,
+                class: document.getElementById('class').value,
+                subject: document.getElementById('subject').value,
+                date: document.getElementById('evaluation-date').value,
+                type: document.getElementById('evaluation-type').value,
+                maxGrade: document.getElementById('max-grade').value,
+                title: document.getElementById('evaluation-title').value,
+                comments: document.getElementById('comments').value,
+                students: [],
+                stats: {
+                    average: document.getElementById('average-grade').textContent,
+                    highest: document.getElementById('highest-grade').textContent,
+                    lowest: document.getElementById('lowest-grade').textContent,
+                    count: document.getElementById('total-students').textContent
+                },
+                timestamp: new Date().toISOString(),
+                whatsappSent: false
+            };
+            
+            // Récupérer les données des élèves
+            let whatsappReady = 0;
+            document.querySelectorAll('.student-row').forEach(row => {
+                const studentData = {
+                    name: row.querySelector('.student-name').value,
+                    grade: row.querySelector('.grade-input').value,
+                    appreciation: row.querySelector('.appreciation').value,
+                    parentName: row.querySelector('.parent-name').value,
+                    parentPhone: row.querySelector('.parent-phone').value,
+                    comment: row.querySelector('.comment-input').value
+                };
+                
+                evaluationData.students.push(studentData);
+                
+                // Vérifier si le parent peut être contacté
+                if (studentData.parentPhone && studentData.parentPhone.trim().length > 0) {
+                    whatsappReady++;
+                }
+            });
+            
+            // Mettre à jour le compteur WhatsApp
+            document.getElementById('whatsapp-ready').textContent = whatsappReady;
+            
+            return evaluationData;
+        }
+
+        // Fonction pour afficher la section principale après connexion
+        function showMainContent(teacher) {
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('admin-section').classList.add('hidden');
+            document.getElementById('analytics-section').classList.add('hidden');
+            document.getElementById('main-content').classList.remove('hidden');
+            
+            // Mettre à jour les informations de l'enseignant
+            document.getElementById('teacher-name-display').textContent = teacher.name;
+            document.getElementById('teacher-subject-display').textContent = getSubjectName(teacher.subject);
+            document.getElementById('teacher-class-display').textContent = getClassName(teacher.class);
+            document.getElementById('total-evaluations').textContent = teacher.evaluations.length;
+            
+            // Configurer WhatsApp
+            document.getElementById('whatsapp-auto-send').checked = teacher.whatsappEnabled !== false;
+            
+            // Dernière évaluation
+            if (teacher.evaluations.length > 0) {
+                const latestEval = teacher.evaluations.reduce((latest, current) => {
+                    return new Date(current.date) > new Date(latest.date) ? current : latest;
+                });
+                document.getElementById('last-evaluation').textContent = formatDate(latestEval.date);
+            } else {
+                document.getElementById('last-evaluation').textContent = '-';
+            }
+
+            // Remplir les informations du formulaire
+            document.getElementById('teacher').value = teacher.name;
+            document.getElementById('subject').value = teacher.subject;
+            
+            // Définir le cycle en fonction de la classe
+            const cycleSelect = document.getElementById('cycle');
+            const isCollege = ['6eme', '5eme', '4eme', '3eme'].includes(teacher.class);
+            cycleSelect.value = isCollege ? 'college' : 'lycee';
+            
+            // Mettre à jour les classes disponibles
+            updateClasses();
+            
+            // Sélectionner la classe de l'enseignant
+            setTimeout(() => {
+                document.getElementById('class').value = teacher.class;
+                // Charger les élèves de cette classe
+                loadStudentsForClass(teacher.class);
+                // Mettre à jour la prévisualisation WhatsApp
+                updateWhatsAppPreview();
+            }, 100);
+        }
+
+        // Fonction pour obtenir le nom complet de la matière
+        function getSubjectName(subjectCode) {
+            const subjects = {
+                "mathematiques": "Mathématiques",
+                "francais": "Français",
+                "physique-chimie": "Physique-Chimie",
+                "svt": "Sciences de la Vie et de la Terre",
+                "histoire-geographie": "Histoire-Géographie",
+                "anglais": "Anglais",
+                "allemand": "Allemand",
+                "espagnol": "Espagnol",
+                "philosophie": "Philosophie",
+                "ecm": "Éducation Civique et Morale",
+            };
+            return subjects[subjectCode] || subjectCode;
+        }
+
+        // Fonction pour obtenir le nom complet de la classe
+        function getClassName(classCode) {
+            const classes = {
+                "6eme": "6ème",
+                "5eme": "5ème",
+                "4eme": "4ème",
+                "3eme": "3ème",
+                "seconde-l": "Seconde L",
+                "seconde-cd": "Seconde C4",
+                "premiere-a4": "Première A4",
+                "premiere-a5": "Première A5",
+                "premiere-c4": "Première C4",
+                "premiere-d": "Première D",
+                "terminale-a4": "Terminale A4",
+                "terminale-a5": "Terminale A5",
+                "terminale-c4": "Terminale C4",
+                "terminale-d": "Terminale D"
+            };
+            return classes[classCode] || classCode;
+        }
+
+        // Fonction pour formater la date
+        function formatDate(dateString) {
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            return new Date(dateString).toLocaleDateString('fr-FR', options);
+        }
+
+        // Fonction pour charger les élèves d'une classe spécifique
+        function loadStudentsForClass(classCode) {
+            const studentsList = document.getElementById('students-list');
+            studentsList.innerHTML = ''; // Vider la liste actuelle
+            
+            const students = studentsDatabase[classCode] || [];
+            
+            if (students.length === 0) {
+                studentsList.innerHTML = '<div class="student-row"><div>Aucun élève trouvé pour cette classe.</div></div>';
+                return;
+            }
+            
+            let whatsappReady = 0;
+            
+            students.forEach(student => {
+                const studentId = `student-${classCode}-${student.id}`;
+                const studentRow = document.createElement('div');
+                studentRow.className = 'student-row';
+                studentRow.id = studentId;
+                
+                studentRow.innerHTML = `
+                    <div>
+                        <input type="text" class="student-name" value="${student.name}" readonly>
+                    </div>
+                    <div>
+                        <input type="number" class="grade-input" placeholder="Note" min="0" max="20" step="0.25" required oninput="updateStats(); updateWhatsAppPreview()">
+                    </div>
+                    <div>
+                        <select class="appreciation" onchange="updateWhatsAppPreview()">
+                            <option value="">Choisir...</option>
+                            <option value="excellent">Excellent</option>
+                            <option value="tres-bien">Très bien</option>
+                            <option value="bien">Bien</option>
+                            <option value="assez-bien">Assez bien</option>
+                            <option value="passable">Passable</option>
+                            <option value="insuffisant">Insuffisant</option>
+                            <option value="mediocre">Médiocre</option>
+                        </select>
+                    </div>
+                    <div>
+                        <input type="text" class="parent-name" placeholder="Nom du parent" value="${student.parentName || ''}" onchange="updateStats(); updateWhatsAppPreview()">
+                    </div>
+                    <div>
+                        <input type="tel" class="parent-phone" placeholder="Téléphone parent" value="${student.parentPhone || ''}" onchange="updateStats(); updateWhatsAppPreview()">
+                    </div>
+                    <div>
+                        <textarea class="comment-input" placeholder="Commentaire sur l'élève..." onchange="updateWhatsAppPreview()"></textarea>
+                    </div>
+                    <div class="no-print">
+                        <button type="button" class="btn-danger btn-sm" onclick="removeStudent('${studentId}')">
+                            <i class="fas fa-trash"></i> Supprimer
+                        </button>
+                    </div>
+                `;
+                
+                studentsList.appendChild(studentRow);
+                
+                // Compter les parents avec téléphone
+                if (student.parentPhone && student.parentPhone.trim().length > 0) {
+                    whatsappReady++;
+                }
+            });
+            
+            document.getElementById('whatsapp-ready').textContent = whatsappReady;
+            updateStats();
+        }
+
+        // Fonction pour ajouter un élève manuellement
+        function addStudent() {
+            const container = document.getElementById('students-list');
+            const studentId = `manual-${Date.now()}`;
+            
+            const studentRow = document.createElement('div');
+            studentRow.className = 'student-row';
+            studentRow.id = `student-${studentId}`;
+            
+            studentRow.innerHTML = `
+                <div>
+                    <input type="text" class="student-name" placeholder="Nom et Prénom" required>
+                </div>
+                <div>
+                    <input type="number" class="grade-input" placeholder="Note" min="0" max="20" step="0.25" required oninput="updateStats(); updateWhatsAppPreview()">
+                </div>
+                <div>
+                    <select class="appreciation" onchange="updateWhatsAppPreview()">
+                        <option value="">Choisir...</option>
+                        <option value="excellent">Excellent</option>
+                        <option value="tres-bien">Très bien</option>
+                        <option value="bien">Bien</option>
+                        <option value="assez-bien">Assez bien</option>
+                        <option value="passable">Passable</option>
+                        <option value="insuffisant">Insuffisant</option>
+                        <option value="mediocre">Médiocre</option>
+                    </select>
+                </div>
+                <div>
+                    <input type="text" class="parent-name" placeholder="Nom du parent" onchange="updateStats(); updateWhatsAppPreview()">
+                </div>
+                <div>
+                    <input type="tel" class="parent-phone" placeholder="Téléphone parent" onchange="updateStats(); updateWhatsAppPreview()">
+                </div>
+                <div>
+                    <textarea class="comment-input" placeholder="Commentaire sur l'élève..." onchange="updateWhatsAppPreview()"></textarea>
+                </div>
+                <div class="no-print">
+                    <button type="button" class="btn-danger btn-sm" onclick="removeStudent('${studentId}')">
+                        <i class="fas fa-trash"></i> Supprimer
+                    </button>
+                </div>
+            `;
+            
+            container.appendChild(studentRow);
+            updateStats();
+            updateWhatsAppPreview();
+        }
+
+        // Fonction pour supprimer un élève
+        function removeStudent(id) {
+            const element = document.getElementById(`student-${id}`);
+            if (element) {
+                element.remove();
+                updateStats();
+                updateWhatsAppPreview();
+            }
+        }
+
+        // Fonction pour mettre à jour les statistiques
+        function updateStats() {
+            const students = document.querySelectorAll('.student-row');
+            const grades = [];
+            let whatsappReady = 0;
+            
+            students.forEach(student => {
+                const gradeInput = student.querySelector('.grade-input');
+                const parentPhone = student.querySelector('.parent-phone');
+                
+                if (gradeInput && gradeInput.value) {
+                    grades.push(parseFloat(gradeInput.value));
+                }
+                
+                if (parentPhone && parentPhone.value && parentPhone.value.trim().length > 0) {
+                    whatsappReady++;
+                }
+            });
+            
+            document.getElementById('total-students').textContent = students.length;
+            document.getElementById('whatsapp-ready').textContent = whatsappReady;
+            
+            if (grades.length > 0) {
+                const sum = grades.reduce((a, b) => a + b, 0);
+                const avg = sum / grades.length;
+                const max = Math.max(...grades);
+                const min = Math.min(...grades);
+                
+                document.getElementById('average-grade').textContent = avg.toFixed(2);
+                document.getElementById('highest-grade').textContent = max.toFixed(2);
+                document.getElementById('lowest-grade').textContent = min.toFixed(2);
+            } else {
+                document.getElementById('average-grade').textContent = '-';
+                document.getElementById('highest-grade').textContent = '-';
+                document.getElementById('lowest-grade').textContent = '-';
+            }
+        }
+
+        // Mettre à jour les classes disponibles selon le cycle sélectionné
+        function updateClasses() {
+            const cycle = document.getElementById('cycle').value;
+            const classSelect = document.getElementById('class');
+            
+            classSelect.innerHTML = '<option value="">Sélectionner une classe</option>';
+            
+            if (cycle === 'college') {
+                ['6eme', '5eme', '4eme', '3eme'].forEach(cls => {
+                    const option = document.createElement('option');
+                    option.value = cls;
+                    option.textContent = getClassName(cls);
+                    classSelect.appendChild(option);
+                });
+            } else if (cycle === 'lycee') {
+                ['seconde-l', 'seconde-cd', 'premiere-a4', 'premiere-a5', 'premiere-c4', 'premiere-d', 'terminale-a4', 'terminale-a5', 'terminale-c4', 'terminale-d'].forEach(cls => {
+                    const option = document.createElement('option');
+                    option.value = cls;
+                    option.textContent = getClassName(cls);
+                    classSelect.appendChild(option);
+                });
+            }
+            
+            // Ajouter un écouteur d'événement pour charger les élèves quand une classe est sélectionnée
+            classSelect.addEventListener('change', function() {
+                if (this.value) {
+                    loadStudentsForClass(this.value);
+                    updateWhatsAppPreview();
+                }
+            });
+        }
+
+        // Fonction pour afficher la liste des enseignants
+        function renderTeachersList() {
+            const container = document.getElementById('teachersList');
+            container.innerHTML = '';
+            
+            if (teachers.length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><p>Aucun enseignant enregistré.</p></div>';
+                return;
+            }
+            
+            teachers.forEach(teacher => {
+                const item = document.createElement('div');
+                item.className = 'teacher-item';
+                
+                item.innerHTML = `
+                    <div class="teacher-info-panel">${teacher.name}</div>
+                    <div class="teacher-info-panel">${getSubjectName(teacher.subject)}</div>
+                    <div class="teacher-info-panel">${getClassName(teacher.class)}</div>
+                    <div class="credentials">
+                        <div><strong>Identifiant:</strong> ${teacher.username}</div>
+                        <div><strong>Mot de passe:</strong> ${teacher.password}</div>
+                        <div><strong>WhatsApp:</strong> ${teacher.whatsappEnabled !== false ? 'Activé' : 'Désactivé'}</div>
+                    </div>
+                `;
+                
+                container.appendChild(item);
+            });
+        }
+
+        // Fonction pour ajouter un nouvel enseignant
+        document.getElementById('addTeacherForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('teacherName').value;
+            const subject = document.getElementById('teacherSubject').value;
+            const classCode = document.getElementById('teacherClass').value;
+            
+            // Générer un identifiant et un mot de passe automatiquement
+            const subjectPart = subject.split('-')[0] || subject;
+            const username = `${subjectPart}_${classCode}`.toLowerCase();
+            const password = generatePassword();
+            
+            const newTeacher = {
+                id: teachers.length + 1,
+                name,
+                subject,
+                class: classCode,
+                username,
+                password,
+                evaluations: [],
+                whatsappEnabled: true
+            };
+            
+            teachers.push(newTeacher);
+            saveTeachersToStorage();
+            
+            // Afficher un message de succès
+            const successElement = document.getElementById('success-message');
+            successElement.textContent = `Enseignant ${name} ajouté avec succès! Identifiant: ${username}, Mot de passe: ${password}`;
+            successElement.style.display = 'block';
+            
+            // Réinitialiser le formulaire
+            this.reset();
+            
+            // Mettre à jour la liste
+            renderTeachersList();
+            
+            setTimeout(() => {
+                successElement.style.display = 'none';
+            }, 5000);
+        });
+
+        // Fonction pour générer un mot de passe aléatoire
+        function generatePassword() {
+            const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+            let password = '';
+            for (let i = 0; i < 6; i++) {
+                password += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return password;
+        }
+
+        // Fonction pour imprimer l'évaluation
+        function printEvaluation() {
+            window.print();
+        }
+
+        // Fonction pour envoyer un message WhatsApp individuel
+        function sendIndividualWhatsApp(studentData, evaluationData) {
+            if (!studentData.parentPhone || studentData.parentPhone.trim().length === 0) {
+                return { success: false, reason: 'Pas de numéro de téléphone' };
+            }
+            
+            let phoneNumber = studentData.parentPhone.trim();
+            
+            // Ajouter le code pays si nécessaire
+            if (!phoneNumber.startsWith('+')) {
+                phoneNumber = whatsappConfig.countryCode + phoneNumber.replace(/^0+/, '');
+            }
+            
+            // Préparer le message
+            let message = whatsappConfig.messageTemplate
+                .replace('{teacher}', evaluationData.teacher)
+                .replace('{subject}', getSubjectName(evaluationData.subject))
+                .replace('{class}', getClassName(evaluationData.class))
+                .replace('{title}', evaluationData.title)
+                .replace('{date}', formatDate(evaluationData.date))
+                .replace('{grade}', studentData.grade || '-')
+                .replace('{maxGrade}', evaluationData.maxGrade)
+                .replace('{appreciation}', getAppreciationText(studentData.appreciation))
+                .replace('{comment}', studentData.comment || 'Aucun commentaire')
+                .replace('{average}', evaluationData.stats.average)
+                .replace('{maxNote}', evaluationData.stats.highest)
+                .replace('{minNote}', evaluationData.stats.lowest);
+            
+            // Ajouter le nom de l'élève et du parent
+            message = `📋 *Résultat pour: ${studentData.name}*\n👨‍👩‍👧 Parent: ${studentData.parentName || 'Non spécifié'}\n\n` + message;
+            
+            // Encoder le message pour l'URL
+            const encodedMessage = encodeURIComponent(message);
+            
+            // Ouvrir WhatsApp avec le message pré-rempli
+            window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+            
+            return { success: true, phoneNumber };
+        }
+
+        // Fonction pour envoyer à tous les parents
+        function sendAllWhatsApp() {
+            const evaluationData = collectEvaluationData();
+            if (!evaluationData) return;
+            
+            const students = evaluationData.students;
+            let sentCount = 0;
+            let failedCount = 0;
+            
+            document.getElementById('whatsapp-status').textContent = 'Envoi en cours...';
+            document.getElementById('whatsapp-status').style.color = 'orange';
+            
+            students.forEach((student, index) => {
+                setTimeout(() => {
+                    const result = sendIndividualWhatsApp(student, evaluationData);
+                    
+                    if (result.success) {
+                        sentCount++;
+                        showMessage('info', `Message envoyé au parent de ${student.name}`);
+                    } else {
+                        failedCount++;
+                        showMessage('warning', `Pas de numéro pour ${student.name}`);
+                    }
+                    
+                    // Mettre à jour le statut
+                    document.getElementById('whatsapp-status').textContent = 
+                        `Envoyés: ${sentCount} | Échoués: ${failedCount} | Total: ${students.length}`;
+                    
+                    if (sentCount + failedCount === students.length) {
+                        document.getElementById('whatsapp-status').textContent = 
+                            `Envoi terminé! ${sentCount} messages envoyés sur ${students.length}`;
+                        document.getElementById('whatsapp-status').style.color = sentCount > 0 ? 'white' : 'yellow';
+                        
+                        if (sentCount > 0) {
+                            showMessage('success', `${sentCount} messages WhatsApp envoyés avec succès!`);
+                        }
+                    }
+                }, index * 1000); // Délai de 1 seconde entre chaque envoi
+            });
+        }
+
+        // Fonction pour envoyer un test WhatsApp
+        function sendTestWhatsApp() {
+            const testStudent = {
+                name: "ÉLÈVE TEST",
+                grade: "15",
+                appreciation: "bien",
+                parentName: "PARENT TEST",
+                parentPhone: "+22890123456",
+                comment: "Ceci est un test d'envoi WhatsApp"
+            };
+            
+            const testEvaluation = {
+                teacher: document.getElementById('teacher').value || "Enseignant Test",
+                subject: document.getElementById('subject').value || "mathematiques",
+                class: document.getElementById('class').value || "6eme",
+                title: document.getElementById('evaluation-title').value || "Test d'évaluation",
+                date: document.getElementById('evaluation-date').value || new Date().toISOString().split('T')[0],
+                maxGrade: document.getElementById('max-grade').value || "20",
+                stats: {
+                    average: "14.5",
+                    highest: "18",
+                    lowest: "10"
+                }
+            };
+            
+            sendIndividualWhatsApp(testStudent, testEvaluation);
+            showMessage('info', 'Test WhatsApp ouvert dans une nouvelle fenêtre');
+        }
+
+        // Fonction pour envoyer automatiquement aux parents après sauvegarde
+        function sendWhatsAppToParents(evaluationData) {
+            if (!whatsappConfig.enabled || !document.getElementById('whatsapp-auto-send').checked) {
+                return;
+            }
+            
+            const studentsWithPhone = evaluationData.students.filter(s => s.parentPhone && s.parentPhone.trim().length > 0);
+            
+            if (studentsWithPhone.length === 0) {
+                showMessage('warning', 'Aucun numéro de parent disponible pour l\'envoi WhatsApp');
+                return;
+            }
+            
+            document.getElementById('whatsapp-status').textContent = 'Envoi automatique en cours...';
+            document.getElementById('whatsapp-status').style.color = 'orange';
+            
+            let sentCount = 0;
+            
+            studentsWithPhone.forEach((student, index) => {
+                setTimeout(() => {
+                    sendIndividualWhatsApp(student, evaluationData);
+                    sentCount++;
+                    
+                    if (sentCount === studentsWithPhone.length) {
+                        document.getElementById('whatsapp-status').textContent = 
+                            `${sentCount} messages WhatsApp envoyés automatiquement`;
+                        document.getElementById('whatsapp-status').style.color = 'lightgreen';
+                        showMessage('success', `${sentCount} messages WhatsApp envoyés aux parents!`);
+                    }
+                }, index * 2000); // Délai de 2 secondes entre chaque envoi
+            });
+        }
+
+        // Fonction pour obtenir le texte d'appréciation
+        function getAppreciationText(appreciation) {
+            const appreciations = {
+                'excellent': '⭐ Excellent',
+                'tres-bien': '👍 Très bien',
+                'bien': '✅ Bien',
+                'assez-bien': '🙂 Assez bien',
+                'passable': '😐 Passable',
+                'insuffisant': '😕 Insuffisant',
+                'mediocre': '❌ Médiocre'
+            };
+            return appreciations[appreciation] || appreciation;
+        }
+
+        // Fonction pour mettre à jour la prévisualisation WhatsApp
+        function updateWhatsAppPreview() {
+            const teacher = document.getElementById('teacher').value || "Enseignant";
+            const subject = getSubjectName(document.getElementById('subject').value || "mathematiques");
+            const className = getClassName(document.getElementById('class').value || "6eme");
+            const title = document.getElementById('evaluation-title').value || "Titre de l'évaluation";
+            const date = document.getElementById('evaluation-date').value ? 
+                formatDate(document.getElementById('evaluation-date').value) : "Date non définie";
+            const maxGrade = document.getElementById('max-grade').value || "20";
+            
+            // Calculer les statistiques actuelles
+            const students = document.querySelectorAll('.student-row');
+            const grades = [];
+            students.forEach(student => {
+                const grade = student.querySelector('.grade-input');
+                if (grade && grade.value) grades.push(parseFloat(grade.value));
+            });
+            
+            const average = grades.length > 0 ? (grades.reduce((a, b) => a + b, 0) / grades.length).toFixed(2) : "N/A";
+            const maxNote = grades.length > 0 ? Math.max(...grades).toFixed(2) : "N/A";
+            const minNote = grades.length > 0 ? Math.min(...grades).toFixed(2) : "N/A";
+            
+            let preview = whatsappConfig.messageTemplate
+                .replace('{teacher}', teacher)
+                .replace('{subject}', subject)
+                .replace('{class}', className)
+                .replace('{title}', title)
+                .replace('{date}', date)
+                .replace('{grade}', 'XX')
+                .replace('{maxGrade}', maxGrade)
+                .replace('{appreciation}', 'Appréciation')
+                .replace('{comment}', 'Commentaire personnalisé')
+                .replace('{average}', average)
+                .replace('{maxNote}', maxNote)
+                .replace('{minNote}', minNote);
+            
+            preview = `📋 *Exemple de message pour un élève:*\n\n` + preview;
+            
+            document.getElementById('whatsapp-message-preview').textContent = preview;
+        }
+
+        // Fonction pour importer les contacts parents
+        function importParentContacts() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.csv,.json,.txt';
+            
+            input.onchange = e => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = event => {
+                    try {
+                        const content = event.target.result;
+                        let importedData = [];
+                        
+                        if (file.name.endsWith('.csv')) {
+                            // Parser CSV
+                            const lines = content.split('\n');
+                            const headers = lines[0].split(',').map(h => h.trim());
+                            
+                            for (let i = 1; i < lines.length; i++) {
+                                if (lines[i].trim() === '') continue;
+                                
+                                const values = lines[i].split(',');
+                                const student = {};
+                                
+                                headers.forEach((header, index) => {
+                                    student[header] = values[index] ? values[index].trim() : '';
+                                });
+                                
+                                importedData.push(student);
+                            }
+                        } else if (file.name.endsWith('.json')) {
+                            // Parser JSON
+                            importedData = JSON.parse(content);
+                        } else {
+                            // Format texte simple
+                            const lines = content.split('\n');
+                            lines.forEach(line => {
+                                if (line.trim() === '') return;
+                                
+                                const parts = line.split('|').map(p => p.trim());
+                                if (parts.length >= 3) {
+                                    importedData.push({
+                                        name: parts[0],
+                                        parentName: parts[1],
+                                        parentPhone: parts[2]
+                                    });
+                                }
+                            });
+                        }
+                        
+                        // Appliquer les contacts aux élèves actuels
+                        applyParentContacts(importedData);
+                        showMessage('success', `${importedData.length} contacts parents importés`);
+                        
+                    } catch (error) {
+                        showMessage('error', 'Erreur lors de l\'importation des contacts');
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+
+        // Fonction pour appliquer les contacts parents importés
+        function applyParentContacts(contacts) {
+            const studentRows = document.querySelectorAll('.student-row');
+            
+            studentRows.forEach(row => {
+                const studentName = row.querySelector('.student-name').value;
+                const contact = contacts.find(c => 
+                    c.name && studentName && 
+                    c.name.toLowerCase().includes(studentName.toLowerCase()) ||
+                    studentName.toLowerCase().includes(c.name.toLowerCase())
+                );
+                
+                if (contact) {
+                    if (contact.parentName) {
+                        row.querySelector('.parent-name').value = contact.parentName;
+                    }
+                    if (contact.parentPhone) {
+                        row.querySelector('.parent-phone').value = contact.parentPhone;
+                    }
+                }
+            });
+            
+            updateStats();
+            updateWhatsAppPreview();
+        }
+
+        // Fonction pour synchroniser les données
+        function syncData() {
+            const syncButton = document.getElementById('syncButton');
+            
+            // Simuler un chargement
+            syncButton.classList.add('loading');
+            syncButton.disabled = true;
+            
+            // Ici vous pourriez ajouter une requête à un serveur
+            // Pour cet exemple, nous simulons juste une synchronisation locale
+            
+            setTimeout(() => {
+                // Recharger les données depuis le localStorage
+                loadTeachersFromStorage();
+                
+                // Afficher un message de confirmation
+                showMessage('success', 'Données synchronisées avec succès');
+                
+                // Réactiver le bouton
+                syncButton.classList.remove('loading');
+                syncButton.disabled = false;
+            }, 1500);
+        }
+
+        // Fonction pour afficher des messages
+        function showMessage(type, text) {
+            const element = document.getElementById(`${type}-message`);
+            if (element) {
+                element.textContent = text;
+                element.style.display = 'block';
+                
+                setTimeout(() => {
+                    element.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // Fonction pour basculer entre la vue formulaire et la vue évaluations
+        function toggleEvaluationsView() {
+            const evaluationsView = document.getElementById('evaluations-view');
+            const evaluationFormView = document.getElementById('evaluation-form-view');
+            const analyticsView = document.getElementById('teacher-analytics-view');
+            
+            if (evaluationsView.classList.contains('hidden')) {
+                evaluationsView.classList.remove('hidden');
+                evaluationFormView.classList.add('hidden');
+                analyticsView.classList.add('hidden');
+                loadTeacherEvaluations();
+            } else {
+                evaluationsView.classList.add('hidden');
+                evaluationFormView.classList.remove('hidden');
+                analyticsView.classList.add('hidden');
+            }
+        }
+
+        // Fonction pour afficher les analytics de l'enseignant
+        function showTeacherAnalytics() {
+            const teacher = getCurrentTeacher();
+            if (!teacher) return;
+            
+            const analyticsView = document.getElementById('teacher-analytics-view');
+            const evaluationFormView = document.getElementById('evaluation-form-view');
+            const evaluationsView = document.getElementById('evaluations-view');
+            
+            analyticsView.classList.remove('hidden');
+            evaluationFormView.classList.add('hidden');
+            evaluationsView.classList.add('hidden');
+            
+            displayTeacherAnalytics(teacher);
+        }
+
+        // Fonction pour cacher les analytics
+        function hideTeacherAnalytics() {
+            document.getElementById('teacher-analytics-view').classList.add('hidden');
+            document.getElementById('evaluation-form-view').classList.remove('hidden');
+        }
+
+        // Fonction pour afficher le tableau de bord analytics global
+        function showAnalyticsPanel() {
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('admin-section').classList.add('hidden');
+            document.getElementById('main-content').classList.add('hidden');
+            document.getElementById('analytics-section').classList.remove('hidden');
+            
+            displayGlobalAnalytics();
+        }
+
+        // Fonction pour afficher les analytics globaux
+        function displayGlobalAnalytics() {
+            const container = document.getElementById('analytics-content');
+            
+            // Calculer les statistiques globales
+            let totalEvaluations = 0;
+            let totalStudents = 0;
+            let totalTeachers = teachers.length;
+            let subjectStats = {};
+            let classStats = {};
+            let gradeDistribution = { excellent: 0, good: 0, average: 0, poor: 0 };
+            let whatsappStats = { sent: 0, total: 0 };
+            
+            teachers.forEach(teacher => {
+                totalEvaluations += teacher.evaluations.length;
+                
+                teacher.evaluations.forEach(eval => {
+                    totalStudents += eval.students.length;
+                    
+                    // Statistiques par matière
+                    subjectStats[eval.subject] = (subjectStats[eval.subject] || 0) + 1;
+                    
+                    // Statistiques par classe
+                    classStats[eval.class] = (classStats[eval.class] || 0) + 1;
+                    
+                    // Distribution des notes
+                    eval.students.forEach(student => {
+                        const grade = parseFloat(student.grade);
+                        if (!isNaN(grade)) {
+                            if (grade >= 16) gradeDistribution.excellent++;
+                            else if (grade >= 12) gradeDistribution.good++;
+                            else if (grade >= 8) gradeDistribution.average++;
+                            else gradeDistribution.poor++;
+                        }
+                    });
+                    
+                    // Statistiques WhatsApp
+                    if (eval.whatsappSent) whatsappStats.sent++;
+                    whatsappStats.total++;
+                });
+            });
+            
+            const averageStudentsPerEval = totalEvaluations > 0 ? (totalStudents / totalEvaluations).toFixed(1) : 0;
+            const whatsappRate = whatsappStats.total > 0 ? ((whatsappStats.sent / whatsappStats.total) * 100).toFixed(1) : 0;
+            
+            container.innerHTML = `
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <h3 class="analytics-title"><i class="fas fa-chart-pie"></i> Vue d'ensemble</h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-value">${totalTeachers}</div>
+                                <div class="stat-label">Enseignants</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">${totalEvaluations}</div>
+                                <div class="stat-label">Évaluations</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">${totalStudents}</div>
+                                <div class="stat-label">Notes saisies</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">${averageStudentsPerEval}</div>
+                                <div class="stat-label">Moy/évaluation</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="analytics-card">
+                        <h3 class="analytics-title"><i class="fas fa-book"></i> Par matière</h3>
+                        <div id="subject-chart" class="chart-container">
+                            ${Object.entries(subjectStats).map(([subject, count]) => `
+                                <div>
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span>${getSubjectName(subject)}</span>
+                                        <span>${count}</span>
+                                    </div>
+                                    <div class="distribution-bar">
+                                        <div class="distribution-fill" style="width: ${(count / totalEvaluations * 100)}%"></div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="analytics-card">
+                        <h3 class="analytics-title"><i class="fas fa-graduation-cap"></i> Distribution des notes</h3>
+                        <div class="chart-container">
+                            <div class="distribution-label">
+                                <span>⭐ Excellent (16-20)</span>
+                                <span>${gradeDistribution.excellent}</span>
+                            </div>
+                            <div class="distribution-bar">
+                                <div class="distribution-fill" style="width: ${(gradeDistribution.excellent / totalStudents * 100)}%; background: #27ae60"></div>
+                            </div>
+                            
+                            <div class="distribution-label">
+                                <span>✅ Bon (12-15.9)</span>
+                                <span>${gradeDistribution.good}</span>
+                            </div>
+                            <div class="distribution-bar">
+                                <div class="distribution-fill" style="width: ${(gradeDistribution.good / totalStudents * 100)}%; background: #3498db"></div>
+                            </div>
+                            
+                            <div class="distribution-label">
+                                <span>😐 Moyen (8-11.9)</span>
+                                <span>${gradeDistribution.average}</span>
+                            </div>
+                            <div class="distribution-bar">
+                                <div class="distribution-fill" style="width: ${(gradeDistribution.average / totalStudents * 100)}%; background: #f39c12"></div>
+                            </div>
+                            
+                            <div class="distribution-label">
+                                <span>❌ Faible (0-7.9)</span>
+                                <span>${gradeDistribution.poor}</span>
+                            </div>
+                            <div class="distribution-bar">
+                                <div class="distribution-fill" style="width: ${(gradeDistribution.poor / totalStudents * 100)}%; background: #e74c3c"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="analytics-card">
+                        <h3 class="analytics-title"><i class="fab fa-whatsapp"></i> Communications WhatsApp</h3>
+                        <div style="text-align: center; padding: 20px;">
+                            <div style="font-size: 2.5rem; font-weight: bold; color: #25D366;">${whatsappRate}%</div>
+                            <div style="margin-top: 10px;">Taux d'envoi WhatsApp</div>
+                            <div style="margin-top: 20px; font-size: 0.9rem; color: #666;">
+                                ${whatsappStats.sent} / ${whatsappStats.total} évaluations
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="analytics-card">
+                        <h3 class="analytics-title"><i class="fas fa-calendar"></i> Activité par classe</h3>
+                        <div id="class-chart" class="chart-container">
+                            ${Object.entries(classStats).map(([cls, count]) => `
+                                <div>
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span>${getClassName(cls)}</span>
+                                        <span>${count}</span>
+                                    </div>
+                                    <div class="distribution-bar">
+                                        <div class="distribution-fill" style="width: ${(count / totalEvaluations * 100)}%; background: #9b59b6"></div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="analytics-card">
+                        <h3 class="analytics-title"><i class="fas fa-chart-line"></i> Recommandations</h3>
+                        <div style="padding: 10px;">
+                            <ul style="list-style-type: none; padding-left: 0;">
+                                ${gradeDistribution.poor > totalStudents * 0.3 ? 
+                                    '<li><i class="fas fa-exclamation-triangle text-warning"></i> <strong>Attention:</strong> Plus de 30% des notes sont faibles. Pensez à revoir la difficulté des évaluations.</li>' : 
+                                    '<li><i class="fas fa-check-circle text-success"></i> La distribution des notes est équilibrée.</li>'}
+                                
+                                ${whatsappRate < 50 ? 
+                                    '<li><i class="fas fa-comment-slash text-warning"></i> <strong>Amélioration:</strong> Seulement ' + whatsappRate + '% des évaluations sont communiquées par WhatsApp.</li>' : 
+                                    '<li><i class="fas fa-comment-check text-success"></i> Bon taux de communication avec les parents.</li>'}
+                                
+                                ${totalEvaluations < 5 ? 
+                                    '<li><i class="fas fa-clipboard-check text-info"></i> <strong>Suggestion:</strong> Encouragez les enseignants à enregistrer plus d\'évaluations.</li>' : 
+                                    '<li><i class="fas fa-clipboard-list text-success"></i> Bon niveau d\'activité des enseignants.</li>'}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Fonction pour afficher les analytics de l'enseignant
+        function displayTeacherAnalytics(teacher) {
+            const container = document.getElementById('teacher-analytics-content');
+            
+            if (teacher.evaluations.length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-chart-line"></i><p>Aucune donnée d\'évaluation disponible pour l\'analyse.</p></div>';
+                return;
+            }
+            
+            // Calculer les statistiques de l'enseignant
+            let classStats = {};
+            let typeStats = {};
+            let monthlyStats = {};
+            let gradeTrend = [];
+            let studentPerformance = {};
+            
+            teacher.evaluations.forEach(eval => {
+                // Statistiques par classe
+                classStats[eval.class] = (classStats[eval.class] || 0) + 1;
+                
+                // Statistiques par type
+                typeStats[eval.type] = (typeStats[eval.type] || 0) + 1;
+                
+                // Statistiques mensuelles
+                const month = new Date(eval.date).toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' });
+                monthlyStats[month] = (monthlyStats[month] || 0) + 1;
+                
+                // Tendances des notes
+                gradeTrend.push({
+                    date: eval.date,
+                    average: parseFloat(eval.stats.average),
+                    highest: parseFloat(eval.stats.highest),
+                    lowest: parseFloat(eval.stats.lowest)
+                });
+                
+                // Performance des élèves
+                eval.students.forEach(student => {
+                    if (!studentPerformance[student.name]) {
+                        studentPerformance[student.name] = {
+                            grades: [],
+                            count: 0,
+                            average: 0
+                        };
+                    }
+                    
+                    const grade = parseFloat(student.grade);
+                    if (!isNaN(grade)) {
+                        studentPerformance[student.name].grades.push(grade);
+                        studentPerformance[student.name].count++;
+                        studentPerformance[student.name].average = 
+                            studentPerformance[student.name].grades.reduce((a, b) => a + b, 0) / 
+                            studentPerformance[student.name].grades.length;
+                    }
+                });
+            });
+            
+            // Trier les élèves par performance
+            const topStudents = Object.entries(studentPerformance)
+                .sort((a, b) => b[1].average - a[1].average)
+                .slice(0, 5);
+            
+            const bottomStudents = Object.entries(studentPerformance)
+                .sort((a, b) => a[1].average - b[1].average)
+                .slice(0, 5);
+            
+            // Trier les données par date
+            gradeTrend.sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            container.innerHTML = `
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <h3 class="analytics-title"><i class="fas fa-chart-pie"></i> Vue d'ensemble</h3>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-value">${teacher.evaluations.length}</div>
+                                <div class="stat-label">Évaluations</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">${Object.keys(classStats).length}</div>
+                                <div class="stat-label">Classes différentes</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">${gradeTrend.length > 0 ? gradeTrend[gradeTrend.length-1].average.toFixed(1) : 'N/A'}</div>
+                                <div class="stat-label">Dernière moyenne</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-value">${Object.keys(studentPerformance).length}</div>
+                                <div class="stat-label">Élèves évalués</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="analytics-card">
+                        <h3 class="analytics-title"><i class="fas fa-graduation-cap"></i> Meilleurs élèves</h3>
+                        <div style="padding: 10px;">
+                            ${topStudents.map(([name, data], index) => `
+                                <div style="margin-bottom: 10px; padding: 10px; background: #f8f9fa; border-radius: 8px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <span><strong>${index + 1}.</strong> ${name}</span>
+                                        <span style="font-weight: bold; color: #27ae60;">${data.average.toFixed(2)}/20</span>
+                                    </div>
+                                    <div style="font-size: 0.8rem; color: #666;">
+                                        ${data.count} évaluation${data.count > 1 ? 's' : ''}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="analytics-card">
+                        <h3 class="analytics-title"><i class="fas fa-chart-line"></i> Évolution des moyennes</h3>
+                        <div style="padding: 10px; height: 200px; position: relative;">
+                            <div style="position: absolute; bottom: 0; left: 0; right: 0; display: flex; height: 150px; align-items: flex-end;">
+                                ${gradeTrend.map((stat, index) => {
+                                    const height = (stat.average / 20 * 100) + '%';
+                                    const width = (100 / gradeTrend.length) + '%';
+                                    const color = stat.average >= 10 ? '#27ae60' : '#e74c3c';
+                                    return `
+                                        <div style="width: ${width}; text-align: center;">
+                                            <div style="height: ${height}; background: ${color}; margin: 0 2px; border-radius: 4px 4px 0 0;"></div>
+                                            <div style="font-size: 0.7rem; margin-top: 5px; transform: rotate(-45deg); white-space: nowrap;">
+                                                ${new Date(stat.date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })}
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="analytics-card">
+                        <h3 class="analytics-title"><i class="fas fa-calendar-alt"></i> Activité mensuelle</h3>
+                        <div style="padding: 10px;">
+                            ${Object.entries(monthlyStats).map(([month, count]) => `
+                                <div style="margin-bottom: 8px;">
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span>${month}</span>
+                                        <span>${count}</span>
+                                    </div>
+                                    <div class="distribution-bar">
+                                        <div class="distribution-fill" style="width: ${(count / Math.max(...Object.values(monthlyStats)) * 100)}%"></div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="analytics-card">
+                        <h3 class="analytics-title"><i class="fas fa-users"></i> Élèves à suivre</h3>
+                        <div style="padding: 10px;">
+                            ${bottomStudents.map(([name, data], index) => `
+                                <div style="margin-bottom: 10px; padding: 10px; background: #fff5f5; border-radius: 8px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <span><strong>${index + 1}.</strong> ${name}</span>
+                                        <span style="font-weight: bold; color: #e74c3c;">${data.average.toFixed(2)}/20</span>
+                                    </div>
+                                    <div style="font-size: 0.8rem; color: #666;">
+                                        ${data.count} évaluation${data.count > 1 ? 's' : ''}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="analytics-card">
+                        <h3 class="analytics-title"><i class="fas fa-lightbulb"></i> Recommandations</h3>
+                        <div style="padding: 10px;">
+                            <ul style="list-style-type: none; padding-left: 0;">
+                                ${gradeTrend.length >= 2 && gradeTrend[gradeTrend.length-1].average < gradeTrend[gradeTrend.length-2].average ? 
+                                    '<li><i class="fas fa-arrow-down text-danger"></i> <strong>Attention:</strong> La dernière moyenne est en baisse par rapport à l\'évaluation précédente.</li>' : 
+                                    '<li><i class="fas fa-arrow-up text-success"></i> La performance des élèves est stable ou en amélioration.</li>'}
+                                
+                                ${bottomStudents.length > 0 && bottomStudents[0][1].average < 8 ? 
+                                    '<li><i class="fas fa-user-friends text-warning"></i> <strong>Suivi:</strong> ' + bottomStudents[0][0] + ' a une moyenne de ' + bottomStudents[0][1].average.toFixed(1) + '/20. Un suivi individuel est recommandé.</li>' : 
+                                    '<li><i class="fas fa-check-circle text-success"></i> Tous les élèves ont des résultats acceptables.</li>'}
+                                
+                                ${Object.keys(classStats).length === 1 ? 
+                                    '<li><i class="fas fa-chalkboard-teacher text-info"></i> <strong>Diversification:</strong> Vous n\'évaluez qu\'une seule classe. Pensez à diversifier si possible.</li>' : 
+                                    '<li><i class="fas fa-chalkboard text-success"></i> Bonne diversification des classes évaluées.</li>'}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Fonction pour charger les évaluations de l'enseignant
+        function loadTeacherEvaluations(filter = {}) {
+            const teacher = getCurrentTeacher();
+            if (!teacher) return;
+            
+            const evaluationsList = document.getElementById('evaluations-list');
+            evaluationsList.innerHTML = '';
+            
+            let evaluations = teacher.evaluations;
+            
+            // Appliquer les filtres
+            if (filter.class) {
+                evaluations = evaluations.filter(e => e.class === filter.class);
+            }
+            if (filter.type) {
+                evaluations = evaluations.filter(e => e.type === filter.type);
+            }
+            if (filter.startDate) {
+                evaluations = evaluations.filter(e => new Date(e.date) >= new Date(filter.startDate));
+            }
+            if (filter.endDate) {
+                evaluations = evaluations.filter(e => new Date(e.date) <= new Date(filter.endDate));
+            }
+            
+            if (evaluations.length === 0) {
+                evaluationsList.innerHTML = '<div class="no-evaluations">Aucune évaluation trouvée avec ces critères</div>';
+                return;
+            }
+            
+            // Trier par date (du plus récent au plus ancien)
+            evaluations.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            evaluations.forEach(evaluation => {
+                const evaluationItem = document.createElement('div');
+                evaluationItem.className = 'evaluation-item';
+                
+                evaluationItem.innerHTML = `
+                    <div class="evaluation-header">
+                        <div class="evaluation-title">${evaluation.title}</div>
+                        <div class="evaluation-date">${formatDate(evaluation.date)}</div>
+                    </div>
+                    <div class="evaluation-details">
+                        <div>
+                            <strong>Classe:</strong> ${getClassName(evaluation.class)}
+                        </div>
+                        <div>
+                            <strong>Type:</strong> ${getEvaluationTypeName(evaluation.type)}
+                        </div>
+                        <div>
+                            <strong>Note max:</strong> ${evaluation.maxGrade}
+                        </div>
+                        <div>
+                            <strong>WhatsApp:</strong> ${evaluation.whatsappSent ? '✅ Envoyé' : '❌ Non envoyé'}
+                        </div>
+                    </div>
+                    <div class="evaluation-stats">
+                        <strong>Statistiques:</strong> 
+                        ${evaluation.stats.count} élèves - 
+                        Moyenne: ${evaluation.stats.average} - 
+                        Max: ${evaluation.stats.highest} - 
+                        Min: ${evaluation.stats.lowest}
+                    </div>
+                    <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn-primary btn-sm" onclick="viewEvaluationDetails('${teacher.id}', '${evaluation.timestamp}')">
+                            <i class="fas fa-eye"></i> Voir détails
+                        </button>
+                        ${!evaluation.whatsappSent ? `
+                            <button class="btn-success btn-sm" onclick="resendWhatsApp('${teacher.id}', '${evaluation.timestamp}')">
+                                <i class="fab fa-whatsapp"></i> Renvoyer WhatsApp
+                            </button>
+                        ` : ''}
+                        <button class="btn-info btn-sm" onclick="exportEvaluationAsJson('${teacher.id}', '${evaluation.timestamp}')">
+                            <i class="fas fa-file-export"></i> Exporter en JSON
+                        </button>
+                    </div>
+                `;
+                
+                evaluationsList.appendChild(evaluationItem);
+            });
+        }
+
+        // Fonction pour exporter une évaluation en JSON
+        function exportEvaluationAsJson(teacherId, timestamp) {
+            const teacher = teachers.find(t => t.id == teacherId);
+            if (!teacher) return;
+            
+            const evaluation = teacher.evaluations.find(e => e.timestamp === timestamp);
+            if (!evaluation) return;
+            
+            // Préparer les données pour l'export
+            const exportData = {
+                evaluation: evaluation,
+                metadata: {
+                    exportedAt: new Date().toISOString(),
+                    exportedBy: teacher.name,
+                    version: "1.0"
+                }
+            };
+            
+            // Convertir en JSON
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            // Générer un nom de fichier
+            const fileName = `evaluation_${evaluation.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_${evaluation.date}.json`;
+            
+            // Créer un lien de téléchargement
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', fileName);
+            linkElement.click();
+            
+            // Afficher un message de confirmation
+            showMessage('success', 'Évaluation exportée en format JSON');
+        }
+
+        // Fonction pour obtenir le nom du type d'évaluation
+        function getEvaluationTypeName(type) {
+            const types = {
+                'controle': 'Contrôle écrit',
+                'interrogation': 'Interrogation orale',
+                'devoir': 'Devoir maison',
+                'tp': 'Travaux pratiques',
+                'expose': 'Exposé'
+            };
+            return types[type] || type;
+        }
+
+        // Fonction pour appliquer le filtre
+        function applyEvaluationFilter() {
+            const filter = {
+                class: document.getElementById('filter-class').value,
+                type: document.getElementById('filter-type').value,
+                startDate: document.getElementById('filter-start-date').value,
+                endDate: document.getElementById('filter-end-date').value
+            };
+            
+            loadTeacherEvaluations(filter);
+        }
+
+        // Fonction pour réinitialiser le filtre
+        function resetEvaluationFilter() {
+            document.getElementById('filter-class').value = '';
+            document.getElementById('filter-type').value = '';
+            document.getElementById('filter-start-date').value = '';
+            document.getElementById('filter-end-date').value = '';
+            
+            loadTeacherEvaluations();
+        }
+
+        // Fonction pour afficher les détails d'une évaluation
+        function viewEvaluationDetails(teacherId, timestamp) {
+            const teacher = teachers.find(t => t.id == teacherId);
+            if (!teacher) return;
+            
+            const evaluation = teacher.evaluations.find(e => e.timestamp === timestamp);
+            if (!evaluation) return;
+            
+            let details = `Détails de l'évaluation:\n\n`;
+            details += `Titre: ${evaluation.title}\n`;
+            details += `Classe: ${getClassName(evaluation.class)}\n`;
+            details += `Date: ${formatDate(evaluation.date)}\n`;
+            details += `Type: ${getEvaluationTypeName(evaluation.type)}\n`;
+            details += `Note maximale: ${evaluation.maxGrade}\n\n`;
+            details += `Commentaires: ${evaluation.comments || 'Aucun'}\n\n`;
+            details += `Statistiques:\n`;
+            details += `- Nombre d'élèves: ${evaluation.stats.count}\n`;
+            details += `- Moyenne: ${evaluation.stats.average}\n`;
+            details += `- Meilleure note: ${evaluation.stats.highest}\n`;
+            details += `- Plus basse note: ${evaluation.stats.lowest}\n\n`;
+            details += `WhatsApp: ${evaluation.whatsappSent ? '✅ Envoyé aux parents' : '❌ Non envoyé'}\n\n`;
+            details += `Liste des élèves:\n`;
+            
+            evaluation.students.forEach((student, index) => {
+                details += `${index + 1}. ${student.name}: ${student.grade}/${evaluation.maxGrade} (${getAppreciationText(student.appreciation)})\n`;
+                details += `   Parent: ${student.parentName || 'Non spécifié'}\n`;
+                details += `   Téléphone: ${student.parentPhone || 'Non spécifié'}\n`;
+                details += `   Commentaire: ${student.comment || 'Aucun'}\n\n`;
+            });
+            
+            alert(details);
+        }
+
+        // Fonction pour renvoyer un message WhatsApp
+        function resendWhatsApp(teacherId, timestamp) {
+            const teacher = teachers.find(t => t.id == teacherId);
+            if (!teacher) return;
+            
+            const evaluation = teacher.evaluations.find(e => e.timestamp === timestamp);
+            if (!evaluation) return;
+            
+            if (confirm('Voulez-vous renvoyer cette évaluation par WhatsApp aux parents ?')) {
+                sendWhatsAppToParents(evaluation);
+                evaluation.whatsappSent = true;
+                saveTeachersToStorage();
+                loadTeacherEvaluations();
+                showMessage('success', 'WhatsApp envoyé à nouveau aux parents');
+            }
+        }
+
+        // Fonction pour obtenir l'enseignant connecté
+        function getCurrentTeacher() {
+            const username = document.getElementById('username').value;
+            return teachers.find(teacher => teacher.username === username);
+        }
+
+        // Gestion de la soumission du formulaire principal
+        document.getElementById('gradeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const evaluationData = collectEvaluationData();
+            if (!evaluationData) return;
+            
+            // Trouver l'enseignant connecté
+            const teacher = teachers.find(t => t.name === evaluationData.teacher);
+            if (!teacher) return;
+            
+            // Ajouter l'évaluation à l'enseignant
+            teacher.evaluations.push(evaluationData);
+            
+            // Sauvegarder dans le localStorage
+            saveTeachersToStorage();
+            
+            // Mettre à jour le nombre d'évaluations
+            document.getElementById('total-evaluations').textContent = teacher.evaluations.length;
+            document.getElementById('last-evaluation').textContent = formatDate(evaluationData.date);
+            
+            // Afficher un message de confirmation
+            showMessage('success', 'Les notes ont été enregistrées avec succès');
+            
+            // Envoyer par WhatsApp si activé
+            if (whatsappConfig.autoSend && document.getElementById('whatsapp-auto-send').checked) {
+                sendWhatsAppToParents(evaluationData);
+                evaluationData.whatsappSent = true;
+            }
+            
+            // Réinitialiser le formulaire
+            this.reset();
+            
+            // Recharger les élèves de la classe
+            loadStudentsForClass(evaluationData.class);
+            
+            // Revenir à la date du jour
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('evaluation-date').value = today;
+        });
+
+        // Gestion de la soumission du formulaire de connexion
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            const teacher = checkCredentials(username, password);
+            
+            if (teacher) {
+                showMainContent(teacher);
+            } else {
+                const errorElement = document.getElementById('error-message');
+                errorElement.textContent = "Identifiant ou mot de passe incorrect";
+                errorElement.style.display = 'block';
+                
+                setTimeout(() => {
+                    errorElement.style.display = 'none';
+                }, 3000);
+            }
+        });
+
+        // Gestion du toggle WhatsApp
+        document.getElementById('whatsapp-auto-send').addEventListener('change', function() {
+            const teacher = getCurrentTeacher();
+            if (teacher) {
+                teacher.whatsappEnabled = this.checked;
+                saveTeachersToStorage();
+            }
+        });
+
+        // Fonctions pour basculer entre les sections
+        function showAdminPanel() {
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('admin-section').classList.remove('hidden');
+            document.getElementById('analytics-section').classList.add('hidden');
+            document.getElementById('main-content').classList.add('hidden');
+            
+            // Charger la liste des enseignants
+            renderTeachersList();
+        }
+
+        function showLoginSection() {
+            document.getElementById('login-section').classList.remove('hidden');
+            document.getElementById('admin-section').classList.add('hidden');
+            document.getElementById('analytics-section').classList.add('hidden');
+            document.getElementById('main-content').classList.add('hidden');
+        }
+
+        function logout() {
+            showLoginSection();
+            document.getElementById('loginForm').reset();
+        }
+
+        // Au chargement de la page, charger les données existantes
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTeachersFromStorage();
+            
+            // Écouteurs d'événements pour mettre à jour les statistiques en temps réel
+            document.getElementById('students-list').addEventListener('input', function(e) {
+                if (e.target.classList.contains('grade-input') || 
+                    e.target.classList.contains('parent-phone')) {
+                    updateStats();
+                }
+            });
+            
+            // Définir la date du jour comme date par défaut
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('evaluation-date').value = today;
+            document.getElementById('filter-end-date').value = today;
+            
+            // Initialiser la prévisualisation WhatsApp
+            updateWhatsAppPreview();
+            
+            // Sauvegarder automatiquement toutes les 2 minutes
+            setInterval(() => {
+                const teacher = getCurrentTeacher();
+                if (teacher && document.getElementById('main-content') && 
+                    !document.getElementById('main-content').classList.contains('hidden')) {
+                    const evaluationData = collectEvaluationData();
+                    if (evaluationData) {
+                        // Sauvegarder une version temporaire
+                        localStorage.setItem('autosave_evaluation', JSON.stringify(evaluationData));
+                        console.log('Sauvegarde automatique effectuée à', new Date().toLocaleTimeString());
+                    }
+                }
+            }, 120000); // 2 minutes
+        });
+    </script>
+</body>
+</html>
