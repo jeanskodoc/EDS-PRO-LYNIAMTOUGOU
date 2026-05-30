@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lycée Niamtougou - Portail Scolaire</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; -webkit-tap-highlight-color: transparent; }
+        html { font-size: 16px; }
+        body {
+            min-height: 100vh; min-height: 100dvh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: clamp(10px, 3vw, 30px);
+            background: linear-gradient(135deg, #006B3F 0%, #FFCE00 50%, #D21034 100%) fixed;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: url('EDS.jpeg') center/cover no-repeat fixed;
+            opacity: 0.3;
+            z-index: 0;
+        }
+        .container {
+            width: 100%;
+            max-width: min(92vw, 600px);
+            background: rgba(255,255,255,0.95);
+            border-radius: max(12px, 2.5vw);
+            padding: clamp(20px, 4vw, 40px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(10px);
+            max-height: 98dvh;
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
+        .container::-webkit-scrollbar { width: 4px; }
+        .container::-webkit-scrollbar-thumb { background: #006B3F; border-radius: 4px; }
+        h1 {
+            text-align: center;
+            color: #006B3F;
+            font-size: clamp(1.2rem, 4.5vw, 2rem);
+            margin-bottom: 2px;
+            line-height: 1.2;
+        }
+        h2 {
+            text-align: center;
+            color: #D21034;
+            font-size: clamp(0.8rem, 2.5vw, 1rem);
+            font-weight: 400;
+            margin-bottom: clamp(12px, 3vw, 25px);
+        }
+        .school-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: clamp(10px, 2.5vw, 20px);
+        }
+        .school-badge i {
+            font-size: clamp(1.5rem, 5vw, 2.2rem);
+            color: #FFCE00;
+            background: #006B3F;
+            padding: clamp(6px, 1.2vw, 10px);
+            border-radius: 50%;
+            width: clamp(40px, 7vw, 60px);
+            height: clamp(40px, 7vw, 60px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .auth-toggle {
+            display: flex;
+            gap: 0;
+            margin-bottom: clamp(15px, 3vw, 25px);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #006B3F;
+        }
+        .auth-toggle button {
+            flex: 1;
+            padding: clamp(10px, 2vw, 14px);
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: clamp(0.75rem, 2.2vw, 0.95rem);
+            transition: all 0.2s ease;
+            min-height: 44px;
+            touch-action: manipulation;
+        }
+        .auth-toggle button:first-child { background: #006B3F; color: white; }
+        .auth-toggle button:last-child { background: #f5f5f5; color: #555; }
+        .auth-toggle button.active-first { background: #006B3F; color: white; }
+        .auth-toggle button.active-first:last-child { background: #f5f5f5; color: #555; }
+        .auth-toggle button.active-last { background: #D21034; color: white; }
+        .auth-toggle button.active-last:first-child { background: #f5f5f5; color: #555; }
+        .auth-section { display: none; }
+        .auth-section.active { display: block; animation: fadeIn 0.3s ease; }
+        .tab-selector {
+            display: flex;
+            gap: clamp(6px, 1.2vw, 12px);
+            margin-bottom: clamp(15px, 3vw, 25px);
+        }
+        .tab-selector button {
+            flex: 1;
+            padding: clamp(10px, 2vw, 14px);
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background: #f5f5f5;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: clamp(0.7rem, 2vw, 0.9rem);
+            transition: all 0.2s ease;
+            color: #555;
+            min-height: 44px;
+            touch-action: manipulation;
+            word-break: break-word;
+        }
+        .tab-selector button.active { background: #006B3F; color: white; border-color: #006B3F; }
+        .tab-selector button:active:not(.active) { transform: scale(0.97); }
+        .form-section { display: none; }
+        .form-section.active { display: block; animation: fadeIn 0.3s ease; }
+        .form-group { margin-bottom: clamp(10px, 2vw, 18px); }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+            font-size: clamp(0.8rem, 2.2vw, 0.95rem);
+        }
+        .form-group label i { color: #006B3F; width: 18px; }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: clamp(10px, 1.8vw, 14px) clamp(10px, 2vw, 16px);
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: clamp(0.85rem, 2.5vw, 1rem);
+            transition: border 0.2s ease;
+            outline: none;
+            min-height: 44px;
+        }
+        .form-group input:focus, .form-group textarea:focus { border-color: #006B3F; }
+        .form-group textarea { resize: vertical; min-height: clamp(50px, 8vw, 70px); }
+        .credentials-box {
+            background: #e8f5e9;
+            border: 2px dashed #006B3F;
+            border-radius: 10px;
+            padding: clamp(12px, 2.5vw, 18px);
+            margin: 15px 0;
+            display: none;
+        }
+        .credentials-box.show { display: block; animation: fadeIn 0.3s ease; }
+        .credentials-box h4 { color: #006B3F; margin-bottom: 10px; text-align: center; font-size: clamp(0.85rem, 2.2vw, 1rem); }
+        .credential-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: clamp(6px, 1vw, 8px) 0;
+            font-size: clamp(0.8rem, 2.2vw, 0.95rem);
+            border-bottom: 1px solid rgba(0,107,63,0.2);
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+        .credential-row:last-child { border-bottom: none; }
+        .credential-row span:first-child { font-weight: 600; color: #333; flex-shrink: 0; }
+        .credential-row span:last-child { color: #D21034; font-weight: 600; font-family: monospace; word-break: break-all; text-align: right; }
+        .btn-submit {
+            width: 100%;
+            padding: clamp(12px, 2.5vw, 16px);
+            background: linear-gradient(135deg, #006B3F 0%, #008C45 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-height: 48px;
+            touch-action: manipulation;
+        }
+        .btn-submit:active { transform: scale(0.97) !important; box-shadow: none !important; }
+        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
+        .btn-login { background: linear-gradient(135deg, #D21034, #E63946); }
+        .status-message {
+            text-align: center;
+            padding: clamp(8px, 1.5vw, 12px);
+            border-radius: 8px;
+            margin-top: 12px;
+            display: none;
+            font-weight: 500;
+            font-size: clamp(0.8rem, 2.2vw, 0.95rem);
+            line-height: 1.3;
+        }
+        .status-message.success { display: block; background: #e8f5e9; color: #2e7d32; }
+        .status-message.error { display: block; background: #ffebee; color: #c62828; }
+        .status-message.info { display: block; background: #e3f2fd; color: #1565c0; }
+        .whatsapp-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: clamp(12px, 2.5vw, 16px);
+            background: #25D366;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: clamp(0.85rem, 2.5vw, 1rem);
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            min-height: 48px;
+            touch-action: manipulation;
+        }
+        .whatsapp-btn:active { transform: scale(0.97); background: #128C7E; }
+        .whatsapp-btn i { font-size: clamp(1rem, 3vw, 1.3rem); }
+        .redirect-info {
+            text-align: center;
+            margin-top: 15px;
+            font-size: clamp(0.8rem, 2.2vw, 0.9rem);
+            color: #666;
+            display: none;
+        }
+        .redirect-info.show { display: block; }
+        .steps {
+            display: flex;
+            justify-content: center;
+            gap: clamp(6px, 1.5vw, 10px);
+            margin-bottom: clamp(12px, 3vw, 22px);
+        }
+        .step {
+            width: clamp(26px, 5vw, 34px);
+            height: clamp(26px, 5vw, 34px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(0.7rem, 2vw, 0.85rem);
+            font-weight: 700;
+            background: #e0e0e0;
+            color: #999;
+            transition: all 0.3s ease;
+        }
+        .step.active { background: #006B3F; color: white; }
+        .step.done { background: #43e97b; color: white; }
+        .forgot-link { text-align: center; margin-top: 12px; font-size: clamp(0.8rem, 2.2vw, 0.9rem); }
+        .forgot-link a { color: #006B3F; text-decoration: none; font-weight: 600; display: inline-block; padding: 6px; }
+        .forgot-link a:active { text-decoration: underline; }
+
+        /* --- Responsive Media Queries --- */
+        @media (max-width: 360px) {
+            .container { padding: 15px 12px; border-radius: 12px; }
+            .auth-toggle button, .tab-selector button { font-size: 0.7rem; padding: 8px; min-height: 40px; }
+            .school-badge i { width: 36px; height: 36px; font-size: 1.2rem; }
+            .credential-row { flex-direction: column; align-items: flex-start; }
+            .credential-row span:last-child { text-align: left; width: 100%; }
+        }
+        @media (min-width: 361px) and (max-width: 480px) {
+            .container { padding: 20px 16px; }
+            .tab-selector button { font-size: 0.75rem; padding: 10px; }
+        }
+        @media (min-width: 481px) and (max-width: 768px) {
+            .container { padding: 28px 24px; }
+        }
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .container { padding: 32px 28px; max-width: 560px; }
+        }
+        @media (min-width: 1025px) {
+            .container { max-width: 600px; }
+        }
+        @media (orientation: landscape) and (max-height: 500px) {
+            body { align-items: flex-start; padding-top: 10px; }
+            .container { max-height: 98dvh; padding: 15px; }
+            .school-badge { margin-bottom: 8px; }
+            .school-badge i { width: 32px; height: 32px; font-size: 1rem; }
+            h1 { font-size: 1.1rem; }
+            h2 { font-size: 0.75rem; margin-bottom: 10px; }
+            .form-group { margin-bottom: 8px; }
+            .form-group input, .form-group textarea { padding: 8px 10px; min-height: 36px; font-size: 0.85rem; }
+            .btn-submit, .whatsapp-btn { padding: 10px; min-height: 40px; }
+            .steps { margin-bottom: 10px; }
+            .step { width: 24px; height: 24px; font-size: 0.65rem; }
+        }
+        @media (hover: none) and (pointer: coarse) {
+            .btn-submit:hover, .whatsapp-btn:hover, .auth-toggle button:hover, .tab-selector button:hover { transform: none; box-shadow: none; }
+            .forgot-link a:hover { text-decoration: none; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+        }
+        @media (-webkit-min-device-pixel-ratio: 2) {
+            .container { -webkit-font-smoothing: antialiased; }
+        }
+        @supports (padding: env(safe-area-inset-top)) {
+            body { padding-left: max(10px, env(safe-area-inset-left)); padding-right: max(10px, env(safe-area-inset-right)); }
+            .container { padding-left: max(clamp(15px, 4vw, 40px), env(safe-area-inset-left)); padding-right: max(clamp(15px, 4vw, 40px), env(safe-area-inset-right)); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="school-badge">
+            <i class="fas fa-graduation-cap"></i>
+        </div>
+        <h1>Lycée Niamtougou</h1>
+        <h2><i class="fas fa-school"></i> Portail Scolaire Numérique</h2>
+
+        <!-- Bascule Connexion / Inscription -->
+        <div class="auth-toggle" id="authToggle">
+            <button class="active-first" id="toggleLogin" onclick="showAuth('login')">
+                <i class="fas fa-sign-in-alt"></i> Connexion
+            </button>
+            <button id="toggleRegister" onclick="showAuth('register')">
+                <i class="fas fa-user-plus"></i> Inscription
+            </button>
+        </div>
+
+        <!-- Section CONNEXION -->
+        <div class="auth-section active" id="authLogin">
+            <div class="form-group">
+                <label><i class="fas fa-id-card"></i> Identifiant</label>
+                <input type="text" id="loginId" placeholder="Ex: ENS-12345 ou PAR-67890" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-lock"></i> Mot de passe</label>
+                <input type="password" id="loginPwd" placeholder="Votre mot de passe" autocomplete="off">
+            </div>
+            <button class="btn-submit btn-login" onclick="loginUser()">
+                <i class="fas fa-arrow-right"></i> Se connecter
+            </button>
+            <div class="forgot-link">
+                <a href="#" onclick="showAuth('register');return false;">
+                    <i class="fas fa-user-plus"></i> Pas encore inscrit ? Créer un compte
+                </a>
+            </div>
+            <div class="status-message" id="loginStatus"></div>
+        </div>
+
+        <!-- Section INSCRIPTION -->
+        <div class="auth-section" id="authRegister">
+            <div class="steps">
+                <div class="step active" id="step1">1</div>
+                <div class="step" id="step2">2</div>
+                <div class="step" id="step3">3</div>
+            </div>
+
+            <div class="tab-selector">
+                <button id="btnTeacher" class="active" onclick="showForm('teacher')">
+                    <i class="fas fa-chalkboard-teacher"></i> Enseignant
+                </button>
+                <button id="btnParent" onclick="showForm('parent')">
+                    <i class="fas fa-users"></i> Parent d'élève
+                </button>
+            </div>
+
+            <!-- Formulaire Enseignant -->
+            <div class="form-section active" id="formTeacher">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Nom(s)</label>
+                    <input type="text" id="tNom" placeholder="Nom(s) de l'enseignant" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-user-tag"></i> Prénom(s)</label>
+                    <input type="text" id="tPrenom" placeholder="Prénom(s)" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-book"></i> Matière(s)</label>
+                    <input type="text" id="tMatiere" placeholder="Ex: Mathématiques, Physique" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-layer-group"></i> Classe(s)</label>
+                    <input type="text" id="tClasse" placeholder="Ex: 6ème A, 5ème B, Terminale C" required>
+                </div>
+                <button class="btn-submit" onclick="registerTeacher()">
+                    <i class="fas fa-paper-plane"></i> S'inscrire
+                </button>
+            </div>
+
+            <!-- Formulaire Parent -->
+            <div class="form-section" id="formParent">
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Nom(s) du parent</label>
+                    <input type="text" id="pNom" placeholder="Votre nom" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-user-tag"></i> Prénom(s) du parent</label>
+                    <input type="text" id="pPrenom" placeholder="Votre prénom" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-user-graduate"></i> Élève(s)</label>
+                    <textarea id="pEleves" placeholder="Ex: Koffi Ama, Mensah Yao" required></textarea>
+                </div>
+                <button class="btn-submit" onclick="registerParent()">
+                    <i class="fas fa-paper-plane"></i> S'inscrire
+                </button>
+            </div>
+
+            <!-- Identifiants générés -->
+            <div class="credentials-box" id="credentialsBox">
+                <h4><i class="fas fa-key"></i> Identifiants de connexion</h4>
+                <div class="credential-row">
+                    <span>Identifiant</span>
+                    <span id="displayId">-</span>
+                </div>
+                <div class="credential-row">
+                    <span>Mot de passe</span>
+                    <span id="displayPwd">-</span>
+                </div>
+                <div class="credential-row">
+                    <span>Statut</span>
+                    <span id="displayStatus">-</span>
+                </div>
+            </div>
+
+            <div class="status-message" id="regStatus"></div>
+
+            <a class="whatsapp-btn" id="whatsappLink" href="#" target="_blank" style="display:none;">
+                <i class="fab fa-whatsapp"></i> Envoyer les identifiants par WhatsApp
+            </a>
+            <button class="btn-submit" id="btnWhatsappDone" style="display:none;margin-top:10px;" onclick="whatsappDone()">
+                <i class="fas fa-check"></i> J'ai envoyé → Accéder au Portail
+            </button>
+
+            <div class="redirect-info" id="redirectInfo">
+                <i class="fas fa-spinner fa-spin"></i> Redirection vers le portail...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let waOpened = false;
+        let waTimer = null;
+
+        // --- Bascule Connexion / Inscription ---
+        function showAuth(mode) {
+            document.querySelectorAll('.auth-section').forEach(el => el.classList.remove('active'));
+            document.getElementById('authToggle').querySelectorAll('button').forEach(b => {
+                b.className = '';
+            });
+            if (mode === 'login') {
+                document.getElementById('authLogin').classList.add('active');
+                document.getElementById('toggleLogin').className = 'active-first';
+                document.getElementById('toggleRegister').className = '';
+            } else {
+                document.getElementById('authRegister').classList.add('active');
+                document.getElementById('toggleLogin').className = '';
+                document.getElementById('toggleRegister').className = 'active-last';
+                document.getElementById('loginStatus').className = 'status-message';
+            }
+        }
+
+        // --- Bascule Enseignant / Parent ---
+        function showForm(type) {
+            document.querySelectorAll('.form-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-selector button').forEach(el => el.classList.remove('active'));
+            if (type === 'teacher') {
+                document.getElementById('formTeacher').classList.add('active');
+                document.getElementById('btnTeacher').classList.add('active');
+            } else {
+                document.getElementById('formParent').classList.add('active');
+                document.getElementById('btnParent').classList.add('active');
+            }
+            document.getElementById('credentialsBox').classList.remove('show');
+            document.getElementById('regStatus').className = 'status-message';
+            document.getElementById('whatsappLink').style.display = 'none';
+            document.getElementById('btnWhatsappDone').style.display = 'none';
+            document.getElementById('redirectInfo').classList.remove('show');
+            resetSteps();
+        }
+
+        function resetSteps() {
+            document.getElementById('step1').className = 'step active';
+            document.getElementById('step2').className = 'step';
+            document.getElementById('step3').className = 'step';
+        }
+
+        // --- CONNEXION ---
+        function loginUser() {
+            const id = document.getElementById('loginId').value.trim();
+            const pwd = document.getElementById('loginPwd').value.trim();
+            const statusEl = document.getElementById('loginStatus');
+
+            if (!id || !pwd) {
+                statusEl.className = 'status-message error';
+                statusEl.textContent = 'Veuillez entrer votre identifiant et mot de passe';
+                return;
+            }
+
+            const users = JSON.parse(localStorage.getItem('ln_users') || '[]');
+            const found = users.find(u => u.id === id && u.pwd === pwd);
+
+            if (found) {
+                statusEl.className = 'status-message success';
+                statusEl.textContent = 'Connexion réussie ! Redirection...';
+                setTimeout(() => redirectToPortal(found), 1000);
+            } else {
+                statusEl.className = 'status-message error';
+                statusEl.textContent = 'Identifiant ou mot de passe incorrect. Vérifiez ou inscrivez-vous.';
+            }
+        }
+
+        // --- INSCRIPTION ENSEIGNANT ---
+        function registerTeacher() {
+            const nom = document.getElementById('tNom').value.trim();
+            const prenom = document.getElementById('tPrenom').value.trim();
+            const matiere = document.getElementById('tMatiere').value.trim();
+            const classe = document.getElementById('tClasse').value.trim();
+
+            if (!nom || !prenom || !matiere || !classe) {
+                showRegStatus('Veuillez remplir tous les champs', 'error');
+                return;
+            }
+
+            const id = generateId('ENS');
+            const pwd = generatePassword();
+            const user = { id, pwd, nom, prenom, statut: 'Enseignant', matiere, classe, date: new Date().toISOString() };
+            saveUser(user);
+        }
+
+        // --- INSCRIPTION PARENT ---
+        function registerParent() {
+            const nom = document.getElementById('pNom').value.trim();
+            const prenom = document.getElementById('pPrenom').value.trim();
+            const eleves = document.getElementById('pEleves').value.trim();
+
+            if (!nom || !prenom || !eleves) {
+                showRegStatus('Veuillez remplir tous les champs', 'error');
+                return;
+            }
+
+            const id = generateId('PAR');
+            const pwd = generatePassword();
+            const user = { id, pwd, nom, prenom, statut: 'Parent', eleves, date: new Date().toISOString() };
+            saveUser(user);
+        }
+
+        // --- GÉNÉRATION ID & PASSWORD ---
+        function generateId(prefix) {
+            return prefix + '-' + String(Math.floor(10000 + Math.random() * 90000));
+        }
+
+        function generatePassword() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let pwd = '';
+            for (let i = 0; i < 8; i++) pwd += chars.charAt(Math.floor(Math.random() * chars.length));
+            return pwd;
+        }
+
+        // --- SAUVEGARDE & ENVOI WHATSAPP ---
+        function saveUser(user) {
+            currentUser = user;
+
+            // Sauvegarder
+            const users = JSON.parse(localStorage.getItem('ln_users') || '[]');
+            users.push(user);
+            localStorage.setItem('ln_users', JSON.stringify(users));
+
+            // Afficher identifiants
+            document.getElementById('displayId').textContent = user.id;
+            document.getElementById('displayPwd').textContent = user.pwd;
+            document.getElementById('displayStatus').textContent = user.statut;
+            document.getElementById('credentialsBox').classList.add('show');
+
+            showRegStatus('Inscription réussie ! Envoyez vos identifiants par WhatsApp.', 'success');
+
+            // Étapes
+            document.getElementById('step1').classList.remove('active');
+            document.getElementById('step1').classList.add('done');
+            document.getElementById('step2').classList.add('active');
+
+            // WhatsApp
+            const text = encodeURIComponent(
+                '*Inscription Portail Scolaire - Lycée Niamtougou*%0A%0A' +
+                `*Identifiant :* ${user.id}%0A` +
+                `*Mot de passe :* ${user.pwd}%0A` +
+                `*Statut :* ${user.statut}%0A%0A` +
+                `*Nom :* ${user.nom}%0A` +
+                `*Prénom :* ${user.prenom}%0A` +
+                (user.matiere ? `*Matière(s) :* ${user.matiere}%0A` : '') +
+                (user.classe ? `*Classe(s) :* ${user.classe}%0A` : '') +
+                (user.eleves ? `*Élève(s) :* ${user.eleves}%0A` : '') +
+                `%0A_Date : ${new Date().toLocaleDateString('fr-FR')}_`
+            );
+            const waLink = document.getElementById('whatsappLink');
+            waLink.href = `https://wa.me/22892871605?text=${text}`;
+            waLink.style.display = 'flex';
+
+            // Bouton "J'ai envoyé"
+            document.getElementById('btnWhatsappDone').style.display = 'block';
+        }
+
+        function whatsappDone() {
+            document.getElementById('step2').classList.remove('active');
+            document.getElementById('step2').classList.add('done');
+            document.getElementById('step3').classList.add('active');
+
+            document.getElementById('btnWhatsappDone').style.display = 'none';
+            document.getElementById('whatsappLink').style.display = 'none';
+
+            document.getElementById('redirectInfo').classList.add('show');
+            setTimeout(() => redirectToPortal(currentUser), 1500);
+        }
+
+        // --- REDIRECTION ---
+        function redirectToPortal(user) {
+            const params = new URLSearchParams({
+                id: user.id,
+                nom: user.nom,
+                prenom: user.prenom,
+                statut: user.statut
+            });
+            window.location.href = 'PORTAIL.html?' + params.toString();
+        }
+
+        // --- STATUS ---
+        function showRegStatus(msg, type) {
+            const el = document.getElementById('regStatus');
+            el.textContent = msg;
+            el.className = 'status-message ' + type;
+        }
+
+        // --- VÉRIFICATION SESSION EXISTANTE ---
+        document.addEventListener('DOMContentLoaded', function() {
+            const saved = localStorage.getItem('ln_current_user');
+            if (saved) {
+                const u = JSON.parse(saved);
+                // Vérifier que l'utilisateur existe toujours dans la base
+                const users = JSON.parse(localStorage.getItem('ln_users') || '[]');
+                if (users.find(x => x.id === u.id)) {
+                    redirectToPortal(u);
+                    return;
+                }
+            }
+            // Si un utilisateur vient d'être inscrit via l'URL, on pré-remplit l'ID
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('id')) {
+                document.getElementById('loginId').value = params.get('id');
+                showAuth('login');
+            }
+        });
+
+        // --- Connexion avec Entrée ---
+        document.getElementById('loginPwd').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') loginUser();
+        });
+    </script>
+</body>
+</html>
