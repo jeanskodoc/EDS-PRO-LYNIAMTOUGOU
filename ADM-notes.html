@@ -142,6 +142,33 @@
   .chart-box h3{font-size:.9375rem;color:var(--text);margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
   .chart-wrap{position:relative;height:280px;width:100%}
 
+  .file-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem}
+  .file-card{background:var(--bg-card);border-radius:var(--radius-lg);padding:1rem;border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden}
+  .file-card-hd{display:flex;justify-content:space-between;gap:.75rem;align-items:flex-start;margin-bottom:.75rem}
+  .file-card-hd h3{font-size:1rem;line-height:1.3}
+  .file-card-meta{font-size:.8125rem;color:var(--text-secondary);display:flex;flex-wrap:wrap;gap:.5rem}
+  .file-card-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem;margin-top:.75rem}
+  .file-stat{background:var(--g-50);border:1px solid var(--border);border-radius:var(--radius);padding:.6rem;text-align:center}
+  .file-stat .val{font-size:1.125rem;font-weight:700;line-height:1}
+  .file-stat .lbl{font-size:.72rem;color:var(--text-secondary);margin-top:.125rem}
+  .file-card .bar-track{margin-top:.5rem}
+  .file-card .bar-fill{background:var(--p-500)}
+  .file-card .file-chip{display:inline-flex;align-items:center;gap:.35rem;padding:.25rem .55rem;border-radius:999px;background:var(--p-50);color:var(--p-700);font-size:.72rem;font-weight:600}
+
+  .student-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.75rem;margin-bottom:1rem}
+  .student-kpi{background:var(--g-50);border:1px solid var(--border);border-radius:var(--radius);padding:.75rem}
+  .student-kpi .kpi-val{font-size:1.25rem;font-weight:700;line-height:1;margin-bottom:.125rem}
+  .student-kpi .kpi-lbl{font-size:.75rem;color:var(--text-secondary)}
+
+  .rank-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1rem;margin-top:1rem}
+  .rank-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow);padding:1rem}
+  .rank-card h3{font-size:1rem;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem}
+  .rank-list{display:grid;gap:.5rem}
+  .rank-item{display:flex;justify-content:space-between;gap:.75rem;align-items:center;padding:.65rem .75rem;border-radius:var(--radius);background:var(--g-50);border:1px solid var(--border)}
+  .rank-item .name{font-weight:600}
+  .rank-item .meta{font-size:.75rem;color:var(--text-secondary)}
+  .compare-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;margin-top:1rem}
+
   .student-hd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;padding-bottom:1rem;border-bottom:2px solid var(--border);flex-direction:column;gap:.75rem}
   .student-hd h3{font-size:1.375rem;margin-bottom:.25rem}
   .student-class{background:var(--p-100);color:var(--p-700);padding:.375rem .875rem;border-radius:999px;font-size:.8125rem;font-weight:600;display:inline-block}
@@ -186,6 +213,7 @@
     .stat-grid{grid-template-columns:repeat(4,1fr)}
     .btn-grid{grid-template-columns:repeat(4,1fr)}
     .student-hd{flex-direction:row}
+    .file-card-stats{grid-template-columns:repeat(4,minmax(0,1fr))}
   }
 }
 
@@ -225,6 +253,7 @@
         <button class="tab" data-tab="types" role="tab"><i class="fas fa-tags"></i><span>Par Type</span><span class="tab-badge" data-badge="types">0</span></button>
         <button class="tab" data-tab="teachers" role="tab"><i class="fas fa-chalkboard-teacher"></i><span>Par Enseignant</span><span class="tab-badge" data-badge="teachers">0</span></button>
         <button class="tab" data-tab="students" role="tab"><i class="fas fa-user-graduate"></i><span>Analyse Élève</span><span class="tab-badge" data-badge="students">0</span></button>
+        <button class="tab" data-tab="files" role="tab"><i class="fas fa-file-import"></i><span>Fichiers</span><span class="tab-badge" data-badge="files">0</span></button>
       </div>
     </nav>
 
@@ -242,6 +271,7 @@
         <button class="btn btn-success" id="saveBtn"><i class="fas fa-save"></i> Sauvegarder</button>
         <button class="btn btn-danger" id="clearBtn"><i class="fas fa-trash-alt"></i> Effacer</button>
         <button class="btn btn-outline" id="exportBtn"><i class="fas fa-download"></i> Exporter</button>
+        <button class="btn btn-outline" id="pdfBtn"><i class="fas fa-file-pdf"></i> Exporter PDF</button>
       </div>
     </section>
 
@@ -270,9 +300,11 @@
       <div class="chart-grid">
         <div class="chart-box"><h3><i class="fas fa-chart-line"></i> Progression</h3><div class="chart-wrap"><canvas id="chartProgress"></canvas></div></div>
         <div class="chart-box"><h3><i class="fas fa-balance-scale"></i> Par matière</h3><div class="chart-wrap"><canvas id="chartSubjects"></canvas></div></div>
+        <div class="chart-box"><h3><i class="fas fa-chart-pie"></i> Répartition des notes</h3><div class="chart-wrap"><canvas id="chartDistribution"></canvas></div></div>
       </div>
       <div class="card" id="studentDetail"><div class="empty"><i class="fas fa-user-graduate"></i><h3>Sélectionnez un élève</h3><p>Cliquez sur un élève depuis les autres onglets</p></div></div>
     </div>
+    <div class="tab-content" id="pane-files" role="tabpanel"><div class="file-grid" id="filesView"></div></div>
 
     <div class="empty" id="emptyState"><i class="fas fa-database"></i><h3>Aucune donnée</h3><p>Importez des fichiers JSON pour commencer l'analyse</p></div>
   </main>
@@ -287,7 +319,7 @@ class App {
     this.evals = []; this.files = new Set();
     this.students = new Map(); this.classes = new Map();
     this.subjects = new Map(); this.types = new Map(); this.teachers = new Map();
-    this.selected = null; this.charts = { progress: null, subjects: null };
+    this.fileSummaries = []; this.selected = null; this.charts = { progress: null, subjects: null, distribution: null, fileComparison: null };
     this.storeKey = 'adm_school_evals'; this.init();
   }
 
@@ -318,6 +350,7 @@ class App {
     document.getElementById('saveBtn').addEventListener('click',()=>this.save());
     document.getElementById('clearBtn').addEventListener('click',()=>this.clear());
     document.getElementById('exportBtn').addEventListener('click',()=>this.export());
+    document.getElementById('pdfBtn').addEventListener('click',()=>this.exportPdf());
 
     let rt; window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>this.resizeCharts(),200)});
     this.load();
@@ -386,12 +419,43 @@ class App {
       const te=this.teachers.get(e.teacher); te.evals.push(e); te.students.add(e.studentName); te.classes.add(e.class); te.subjects.add(e.subject);
     }
     this.calcStats();
+    this.buildFileSummaries();
   }
 
   calcStats(){
     for(const[,s]of this.students){const g=s.evals.map(e=>e.grade);s.stats={count:g.length,total:g.reduce((a,b)=>a+b,0),average:g.length?g.reduce((a,b)=>a+b,0)/g.length:0,best:g.length?Math.max(...g):0,worst:g.length?Math.min(...g):20}}
     for(const[,c]of this.classes){const g=c.evals.map(e=>e.grade);const sa={};c.students.forEach(n=>{const sg=c.evals.filter(e=>e.studentName===n).map(e=>e.grade);sa[n]=sg.length?sg.reduce((a,b)=>a+b,0)/sg.length:0});c.stats={count:g.length,total:g.reduce((a,b)=>a+b,0),average:g.length?g.reduce((a,b)=>a+b,0)/g.length:0,students:c.students.size,bestStudent:Object.entries(sa).sort((a,b)=>b[1]-a[1])[0]?.[0]||'',worstStudent:Object.entries(sa).sort((a,b)=>a[1]-b[1])[0]?.[0]||''}}
     for(const m of[this.subjects,this.types,this.teachers]){for(const[,v]of m){const g=v.evals.map(e=>e.grade);v.stats={count:g.length,total:g.reduce((a,b)=>a+b,0),average:g.length?g.reduce((a,b)=>a+b,0)/g.length:0}}}
+  }
+
+  buildFileSummaries(){
+    const grouped = new Map();
+    for(const e of this.evals){
+      const key = e.fileName || 'Importé';
+      if(!grouped.has(key)) grouped.set(key,{fileName:key,evals:[],students:new Set(),classes:new Set(),subjects:new Set(),teachers:new Set(),dates:[]});
+      const g = grouped.get(key);
+      g.evals.push(e);
+      g.students.add(e.studentName);
+      g.classes.add(e.class);
+      g.subjects.add(e.subject);
+      g.teachers.add(e.teacher);
+      if(e.date) g.dates.push(e.date);
+    }
+    this.fileSummaries = [...grouped.values()].map(g=>{
+      const grades=g.evals.map(e=>e.grade);
+      return {
+        fileName: g.fileName,
+        count: g.evals.length,
+        students: g.students.size,
+        classes: g.classes.size,
+        subjects: g.subjects.size,
+        teachers: g.teachers.size,
+        average: grades.length ? grades.reduce((a,b)=>a+b,0)/grades.length : 0,
+        best: grades.length ? Math.max(...grades) : 0,
+        worst: grades.length ? Math.min(...grades) : 20,
+        latestDate: g.dates.sort((a,b)=>new Date(b)-new Date(a))[0] || ''
+      };
+    }).sort((a,b)=>new Date(b.latestDate||0)-new Date(a.latestDate||0));
   }
 
   populateFilters(){
@@ -421,12 +485,15 @@ class App {
   }
 
   renderAll(){this.renderOverview();this.renderViews();this.updateBadges();if(this.selected&&this.students.has(this.selected))this.renderStudent()}
-  renderViews(){this.renderClasses();this.renderSubjects();this.renderTypes();this.renderTeachers()}
+  renderViews(){this.renderClasses();this.renderSubjects();this.renderTypes();this.renderTeachers();this.renderFiles()}
 
   renderOverview(){
     const nS=this.students.size,nE=this.evals.length,nC=this.classes.size;
     const avg=nE?this.evals.reduce((a,b)=>a+b.grade,0)/nE:0;
     const str=[...this.students.values()].filter(s=>s.stats.average<10).length;
+    const sortedStudents=[...this.students.entries()].map(([name,data])=>({name,average:data.stats.average,count:data.stats.count,classes:[...data.classes].join(', '),subjects:[...data.subjects].join(', '),teachers:[...data.teachers].join(', '),best:data.stats.best,worst:data.stats.worst})).sort((a,b)=>b.average-a.average);
+    const topStudents=sortedStudents.slice(0,10);
+    const bottomStudents=[...sortedStudents].reverse().slice(0,10);
     document.getElementById('overviewCards').innerHTML=`
       <div class="summary-card p"><h3><i class="fas fa-user-graduate"></i> \u00c9l\u00e8ves</h3><div class="val">${nS}</div><div class="sub"><i class="fas fa-chart-line"></i> ${nS} uniques</div></div>
       <div class="summary-card s"><h3><i class="fas fa-file-alt"></i> \u00c9valuations</h3><div class="val">${nE}</div><div class="sub"><i class="fas fa-database"></i> ${this.files.size} fichier(s)</div></div>
@@ -440,6 +507,35 @@ class App {
         <div class="stat-box"><div class="val" style="color:var(--d-700)">${nE?Math.min(...this.evals.map(e=>e.grade)).toFixed(1):0}</div><div class="lbl">Plus basse note</div></div>
         <div class="stat-box"><div class="val" style="color:var(--w-700)">${nS?((str/nS)*100).toFixed(1):0}%</div><div class="lbl">En difficult\u00e9</div></div>
       </div></div></div>`;
+    document.getElementById('overviewExtra').insertAdjacentHTML('beforeend',`
+      <div class="rank-grid">
+        <div class="rank-card">
+          <h3><i class="fas fa-trophy"></i> Top 10 élèves</h3>
+          <div class="rank-list">
+            ${topStudents.length?topStudents.map((st,i)=>`
+              <div class="rank-item">
+                <div>
+                  <div class="name">${this.esc(st.name)}</div>
+                  <div class="meta">${st.count} évaluation(s) • ${this.esc(st.classes || '-') }</div>
+                </div>
+                <span class="badge ${st.average>=16?'badge-a':st.average>=14?'badge-b':st.average>=10?'badge-c':'badge-d'}">${st.average.toFixed(1)}/20</span>
+              </div>`).join(''):'<div class="empty"><p>Aucune donnée</p></div>'}
+          </div>
+        </div>
+        <div class="rank-card">
+          <h3><i class="fas fa-triangle-exclamation"></i> Bottom 10 élèves</h3>
+          <div class="rank-list">
+            ${bottomStudents.length?bottomStudents.map((st,i)=>`
+              <div class="rank-item">
+                <div>
+                  <div class="name">${this.esc(st.name)}</div>
+                  <div class="meta">${st.count} évaluation(s) • ${this.esc(st.subjects || '-') }</div>
+                </div>
+                <span class="badge ${st.average>=16?'badge-a':st.average>=14?'badge-b':st.average>=10?'badge-c':'badge-d'}">${st.average.toFixed(1)}/20</span>
+              </div>`).join(''):'<div class="empty"><p>Aucune donnée</p></div>'}
+          </div>
+        </div>
+      </div>`);
   }
 
   renderClasses(){
@@ -516,6 +612,58 @@ class App {
     c.innerHTML=h;
   }
 
+  renderFiles(){
+    const c=document.getElementById('filesView');
+    if(!c)return;
+    if(this.charts.fileComparison){this.charts.fileComparison.destroy();this.charts.fileComparison=null}
+    if(!this.fileSummaries.length){
+      c.innerHTML='<div class="empty"><i class="fas fa-file-import"></i><h3>Aucun fichier analysé</h3><p>Importez des fichiers JSON pour voir le détail par fichier</p></div>';
+      return;
+    }
+    const compareSection=`
+      <div class="chart-box" style="margin-bottom:1rem">
+        <h3><i class="fas fa-chart-column"></i> Comparaison entre fichiers</h3>
+        <div class="chart-wrap"><canvas id="chartFiles"></canvas></div>
+      </div>
+      <div class="table-wrap" style="margin-bottom:1rem">
+        <table class="table">
+          <thead><tr><th>Fichier</th><th>Évals</th><th>Élèves</th><th>Classes</th><th>Matières</th><th>Moyenne</th><th>Meilleure</th><th>Plus basse</th></tr></thead>
+          <tbody>
+            ${this.fileSummaries.map(f=>`<tr><td>${this.esc(f.fileName)}</td><td>${f.count}</td><td>${f.students}</td><td>${f.classes}</td><td>${f.subjects}</td><td><span class="badge ${f.average>=12?'badge-a':f.average>=10?'badge-b':f.average>=8?'badge-c':'badge-d'}">${f.average.toFixed(1)}/20</span></td><td>${f.best.toFixed(1)}</td><td>${f.worst.toFixed(1)}</td></tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+    c.innerHTML=compareSection+this.fileSummaries.map(f=>`
+      <div class="file-card">
+        <div class="file-card-hd">
+          <div>
+            <h3>${this.esc(f.fileName)}</h3>
+            <div class="file-card-meta">
+              <span class="file-chip"><i class="fas fa-users"></i> ${f.students} élève(s)</span>
+              <span class="file-chip"><i class="fas fa-book"></i> ${f.subjects} matière(s)</span>
+              <span class="file-chip"><i class="fas fa-chalkboard-teacher"></i> ${f.teachers} enseignant(s)</span>
+            </div>
+          </div>
+          <span class="badge ${f.average>=12?'badge-a':f.average>=10?'badge-b':f.average>=8?'badge-c':'badge-d'}">${f.average.toFixed(1)}/20</span>
+        </div>
+        <div class="file-card-stats">
+          <div class="file-stat"><div class="val">${f.count}</div><div class="lbl">Évaluations</div></div>
+          <div class="file-stat"><div class="val">${f.classes}</div><div class="lbl">Classes</div></div>
+          <div class="file-stat"><div class="val">${f.best.toFixed(1)}</div><div class="lbl">Meilleure note</div></div>
+          <div class="file-stat"><div class="val">${f.worst.toFixed(1)}</div><div class="lbl">Plus basse note</div></div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:${Math.min(100,(f.average/20)*100)}%"></div></div>
+        <div class="text-sm text-muted mt-4"><i class="fas fa-calendar"></i> ${f.latestDate?this.fmtDate(f.latestDate):'Date inconnue'}</div>
+      </div>
+    `).join('');
+    const labels=this.fileSummaries.map(f=>f.fileName);
+    const averages=this.fileSummaries.map(f=>f.average);
+    const ctx=document.getElementById('chartFiles')?.getContext('2d');
+    if(ctx){
+      this.charts.fileComparison=new Chart(ctx,{type:'bar',data:{labels,datasets:[{label:'Moyenne par fichier',data:averages,backgroundColor:averages.map(v=>v>=12?'#22c55e':v>=10?'#3b82f6':v>=8?'#eab308':'#ef4444'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#1e293b',titleColor:'#fff',bodyColor:'#fff',cornerRadius:6,displayColors:false}},scales:{y:{beginAtZero:true,max:20,grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{size:11}},title:{display:true,text:'Note /20',font:{size:12,weight:'bold'}}},x:{grid:{display:false},ticks:{font:{size:11},maxRotation:35,minRotation:0},title:{display:true,text:'Fichier',font:{size:12,weight:'bold'}}}}}});
+    }
+  }
+
   selectStudent(nm){this.selected=nm;this.showTab('students');this.renderStudent()}
 
   renderStudent(){
@@ -523,15 +671,27 @@ class App {
     if(!this.selected||!this.students.has(this.selected)){det.innerHTML='<div class="empty"><i class="fas fa-user-graduate"></i><h3>S\u00e9lectionnez un \u00e9l\u00e8ve</h3><p>Cliquez sur un \u00e9l\u00e8ve dans les autres onglets</p></div>';return}
     const st=this.students.get(this.selected), s=st.stats;
     const sorted=[...st.evals].sort((a,b)=>new Date(b.date)-new Date(a.date));
+    const split=Math.ceil(sorted.length/2);
+    const firstHalf=sorted.slice(0,split).map(e=>e.grade);
+    const secondHalf=sorted.slice(split).map(e=>e.grade);
+    const avgOf=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:0;
+    const delta=secondHalf.length?avgOf(secondHalf)-avgOf(firstHalf):0;
+    const trend=delta>0.5?'progress':delta<-0.5?'decline':'stable';
     det.innerHTML=`
       <div class="student-hd">
         <div><h3>${this.esc(this.selected)}</h3><div class="student-class">${[...st.classes].join(', ')}</div></div>
-        <div class="stat-grid" style="margin:0;min-width:100%">
-          <div class="stat-box"><div class="val" style="color:${s.average>=12?'var(--s-700)':s.average>=10?'var(--p-700)':'var(--d-700)'}">${s.average.toFixed(1)}/20</div><div class="lbl">Moyenne</div></div>
-          <div class="stat-box"><div class="val" style="color:var(--s-700)">${s.best.toFixed(1)}</div><div class="lbl">Meilleure</div></div>
-          <div class="stat-box"><div class="val" style="color:${s.worst<8?'var(--d-700)':'var(--w-700)'}">${s.worst.toFixed(1)}</div><div class="lbl">Plus basse</div></div>
-          <div class="stat-box"><div class="val" style="color:var(--p-700)">${s.count}</div><div class="lbl">\u00c9valuations</div></div>
+        <div class="student-kpis">
+          <div class="student-kpi"><div class="kpi-val" style="color:${s.average>=12?'var(--s-700)':s.average>=10?'var(--p-700)':'var(--d-700)'}">${s.average.toFixed(1)}/20</div><div class="kpi-lbl">Moyenne</div></div>
+          <div class="student-kpi"><div class="kpi-val" style="color:var(--s-700)">${s.best.toFixed(1)}</div><div class="kpi-lbl">Meilleure note</div></div>
+          <div class="student-kpi"><div class="kpi-val" style="color:${s.worst<8?'var(--d-700)':'var(--w-700)'}">${s.worst.toFixed(1)}</div><div class="kpi-lbl">Plus basse note</div></div>
+          <div class="student-kpi"><div class="kpi-val" style="color:var(--p-700)">${s.count}</div><div class="kpi-lbl">\u00c9valuations</div></div>
+          <div class="student-kpi"><div class="kpi-val" style="color:${trend==='progress'?'var(--s-700)':trend==='decline'?'var(--d-700)':'var(--w-700)'}">${delta>0?'+':''}${delta.toFixed(1)}</div><div class="kpi-lbl">Tendance r\u00e9cente</div></div>
         </div>
+      </div>
+      <div class="tags mb-4">
+        <span class="tag"><i class="fas fa-book"></i> ${st.subjects.size} mati\u00e8re(s)</span>
+        <span class="tag"><i class="fas fa-chalkboard-teacher"></i> ${st.teachers.size} enseignant(s)</span>
+        <span class="tag"><i class="fas fa-chart-line"></i> ${trend==='progress'?'Progression':trend==='decline'?'Baisse':'Stable'}</span>
       </div>
       <h4 class="flex gap-2 items-center mb-2 text-sm"><i class="fas fa-history"></i> Historique</h4>
       <div class="table-wrap"><table class="table"><thead><tr><th>Date</th><th>Mati\u00e8re</th><th>Type</th><th>Note</th><th>Appr\u00e9ciation</th><th>Enseignant</th></tr></thead><tbody>
@@ -543,6 +703,7 @@ class App {
   renderStudentCharts(st){
     if(this.charts.progress){this.charts.progress.destroy();this.charts.progress=null}
     if(this.charts.subjects){this.charts.subjects.destroy();this.charts.subjects=null}
+    if(this.charts.distribution){this.charts.distribution.destroy();this.charts.distribution=null}
     const evals=[...st.evals].sort((a,b)=>new Date(a.date)-new Date(b.date));
     if(!evals.length)return;
     const dates=evals.map(e=>this.fmtDate(e.date)), grades=evals.map(e=>e.grade);
@@ -552,6 +713,10 @@ class App {
     const names=Object.keys(sb), avgs=names.map(n=>sb[n].reduce((a,b)=>a+b,0)/sb[n].length);
     const ctx2=document.getElementById('chartSubjects').getContext('2d');
     this.charts.subjects=new Chart(ctx2,{type:'bar',data:{labels:names,datasets:[{label:'Moyenne',data:avgs,backgroundColor:avgs.map(v=>v>=12?'#22c55e':v>=10?'#3b82f6':v>=8?'#eab308':'#ef4444'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#1e293b',titleColor:'#fff',bodyColor:'#fff',cornerRadius:6,displayColors:false}},scales:{y:{beginAtZero:true,max:20,grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{size:11}},title:{display:true,text:'Note /20',font:{size:12,weight:'bold'}}},x:{grid:{display:false},ticks:{font:{size:11}},title:{display:true,text:'Mati\u00e8re',font:{size:12,weight:'bold'}}}}}});
+    const bands={Excellent:0,Bon:0,Moyen:0,Faible:0};
+    evals.forEach(e=>{if(e.grade>=16)bands.Excellent++;else if(e.grade>=12)bands.Bon++;else if(e.grade>=8)bands.Moyen++;else bands.Faible++;});
+    const ctx3=document.getElementById('chartDistribution').getContext('2d');
+    this.charts.distribution=new Chart(ctx3,{type:'doughnut',data:{labels:Object.keys(bands),datasets:[{data:Object.values(bands),backgroundColor:['#22c55e','#3b82f6','#eab308','#ef4444'],borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:12,padding:12,font:{size:11}}},tooltip:{backgroundColor:'#1e293b',titleColor:'#fff',bodyColor:'#fff',cornerRadius:6,displayColors:true}}}});
   }
 
   showTab(name){
@@ -563,7 +728,7 @@ class App {
   }
 
   updateBadges(){
-    const m={overview:this.evals.length,classes:this.classes.size,subjects:this.subjects.size,types:this.types.size,teachers:this.teachers.size,students:this.students.size};
+    const m={overview:this.evals.length,classes:this.classes.size,subjects:this.subjects.size,types:this.types.size,teachers:this.teachers.size,students:this.students.size,files:this.fileSummaries.length||this.files.size};
     Object.entries(m).forEach(([k,v])=>{const b=document.querySelector(`[data-badge="${k}"]`);if(b)b.textContent=v})
   }
 
@@ -572,8 +737,61 @@ class App {
 
   save(){if(!this.evals.length){this.toast('Aucune donn\u00e9e \u00e0 sauvegarder','error');return}try{localStorage.setItem(this.storeKey,JSON.stringify({evals:this.evals,files:[...this.files],savedAt:new Date().toISOString()}));this.toast('Donn\u00e9es sauvegard\u00e9es')}catch(e){this.toast('Erreur de sauvegarde','error')}}
   load(){try{const r=localStorage.getItem(this.storeKey);if(!r)return;const d=JSON.parse(r);this.evals=d.evals||[];this.files=new Set(d.files||[]);this.organize();this.render();if(this.evals.length)this.toast(`${this.evals.length} \u00e9valuation(s) charg\u00e9e(s)`,'info')}catch(e){this.toast('Erreur de chargement','error')}}
-  clear(){if(!confirm('Effacer toutes les donn\u00e9es ?'))return;this.evals=[];this.files.clear();this.students.clear();this.classes.clear();this.subjects.clear();this.types.clear();this.teachers.clear();this.selected=null;localStorage.removeItem(this.storeKey);Object.values(this.charts).forEach(c=>c?.destroy());this.charts={progress:null,subjects:null};this.render();this.toast('Donn\u00e9es effac\u00e9es','info')}
+  clear(){if(!confirm('Effacer toutes les donn\u00e9es ?'))return;this.evals=[];this.files.clear();this.fileSummaries=[];this.students.clear();this.classes.clear();this.subjects.clear();this.types.clear();this.teachers.clear();this.selected=null;localStorage.removeItem(this.storeKey);Object.values(this.charts).forEach(c=>c?.destroy());this.charts={progress:null,subjects:null,distribution:null,fileComparison:null};this.render();this.toast('Donn\u00e9es effac\u00e9es','info')}
   export(){if(!this.evals.length){this.toast('Aucune donn\u00e9e \u00e0 exporter','error');return}const d={allEvaluations:this.evals,exportedAt:new Date().toISOString(),summary:{totalStudents:this.students.size,totalEvaluations:this.evals.length,totalClasses:this.classes.size,totalSubjects:this.subjects.size}};const b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=`evaluations_${new Date().toISOString().split('T')[0]}.json`;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(u);this.toast('Donn\u00e9es export\u00e9es')}
+  exportPdf(){
+    if(!this.evals.length){this.toast('Aucune donn\u00e9e \u00e0 exporter','error');return}
+    const avg=this.evals.reduce((a,b)=>a+b.grade,0)/this.evals.length;
+    const str=[...this.students.values()].filter(s=>s.stats.average<10).length;
+    const top=[...this.students.entries()].map(([name,data])=>({name,avg:data.stats.average,count:data.stats.count})).sort((a,b)=>b.avg-a.avg).slice(0,10);
+    const bottom=[...this.students.entries()].map(([name,data])=>({name,avg:data.stats.average,count:data.stats.count})).sort((a,b)=>a.avg-b.avg).slice(0,10);
+    const fileRows=this.fileSummaries.map(f=>`<tr><td>${this.esc(f.fileName)}</td><td>${f.count}</td><td>${f.students}</td><td>${f.classes}</td><td>${f.subjects}</td><td>${f.average.toFixed(1)}/20</td></tr>`).join('');
+    const topRows=top.map((s,i)=>`<tr><td>${i+1}</td><td>${this.esc(s.name)}</td><td>${s.avg.toFixed(1)}/20</td><td>${s.count}</td></tr>`).join('');
+    const bottomRows=bottom.map((s,i)=>`<tr><td>${i+1}</td><td>${this.esc(s.name)}</td><td>${s.avg.toFixed(1)}/20</td><td>${s.count}</td></tr>`).join('');
+    const report=`
+      <!DOCTYPE html>
+      <html lang="fr"><head><meta charset="UTF-8"><title>Rapport d'analyse PDF</title>
+      <style>
+        body{font-family:Arial,sans-serif;padding:24px;color:#111827}
+        h1,h2,h3{margin:0 0 12px}
+        .meta{color:#6b7280;font-size:12px;margin-bottom:18px}
+        .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+        .card{border:1px solid #d1d5db;border-radius:10px;padding:12px}
+        .card .v{font-size:24px;font-weight:700}
+        table{width:100%;border-collapse:collapse;margin-top:10px}
+        th,td{border:1px solid #d1d5db;padding:8px;font-size:12px;text-align:left;vertical-align:top}
+        th{background:#f3f4f6}
+        .section{margin-top:20px}
+        .muted{color:#6b7280;font-size:12px}
+      </style></head><body>
+      <h1>Rapport d'analyse complet</h1>
+      <div class="meta">Généré le ${new Date().toLocaleString('fr-FR')}</div>
+      <div class="grid">
+        <div class="card"><div class="muted">Élèves</div><div class="v">${this.students.size}</div></div>
+        <div class="card"><div class="muted">Évaluations</div><div class="v">${this.evals.length}</div></div>
+        <div class="card"><div class="muted">Moyenne générale</div><div class="v">${avg.toFixed(1)}/20</div></div>
+        <div class="card"><div class="muted">Élèves en difficulté</div><div class="v">${str}</div></div>
+      </div>
+      <div class="section">
+        <h2>Comparaison des fichiers</h2>
+        <table><thead><tr><th>Fichier</th><th>Évals</th><th>Élèves</th><th>Classes</th><th>Matières</th><th>Moyenne</th></tr></thead><tbody>${fileRows||'<tr><td colspan="6">Aucun fichier</td></tr>'}</tbody></table>
+      </div>
+      <div class="section">
+        <h2>Top 10 élèves</h2>
+        <table><thead><tr><th>#</th><th>Élève</th><th>Moyenne</th><th>Évals</th></tr></thead><tbody>${topRows||'<tr><td colspan="4">Aucune donnée</td></tr>'}</tbody></table>
+      </div>
+      <div class="section">
+        <h2>Bottom 10 élèves</h2>
+        <table><thead><tr><th>#</th><th>Élève</th><th>Moyenne</th><th>Évals</th></tr></thead><tbody>${bottomRows||'<tr><td colspan="4">Aucune donnée</td></tr>'}</tbody></table>
+      </div>
+      </body></html>`;
+    const w=window.open('','_blank');
+    if(!w){this.toast('Impossible d\'ouvrir la fenêtre PDF','error');return}
+    w.document.open(); w.document.write(report); w.document.close();
+    w.focus();
+    setTimeout(()=>{w.print()},500);
+    this.toast('Ouverture du rapport PDF');
+  }
 
   uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
   fmtDate(d){if(!d)return'';try{return new Date(d).toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit',year:'numeric'})}catch{return d}}
